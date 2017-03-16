@@ -14,6 +14,11 @@ environment:
       PYTHON_ARCH: "64"
       CONDA_PY: "34"
       CONDA_NPY: "18"
+      #- PYTHON: "C:\\Python35_64"
+      #- PYTHON_VERSION: "3.5"
+      #- PYTHON_ARCH: "64"
+      #- CONDA_PY: "35"
+      #- CONDA_NPY: "18"
  
 
 install:
@@ -27,5 +32,5 @@ build: false
 
 
 test_script:
-  - "%CMD_IN_ENV% conda build conda-recipe --quiet"
+  - "%CMD_IN_ENV% conda build continuous-integration\\appveyor\\conda-recipe --quiet"
   - python continuous-integration\appveyor\move-conda-package.py conda-recipe
