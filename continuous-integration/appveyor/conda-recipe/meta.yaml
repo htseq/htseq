@@ -1,0 +1,24 @@
+package:
+  name: htseq
+
+requirements:
+  build:
+    - python
+    - cython
+    - numpy
+    - setuptools
+    - pysam
+
+  run:
+    - python
+    - numpy
+
+test:
+    requires:
+        - nose
+    commands:
+        - nosetests --exe pyappveyordemo
+
+about:
+  home: https://github.com/simon-anders/htseq
+  license: GPL
