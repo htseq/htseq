@@ -93,8 +93,6 @@ matrix:
 before_install:
   - ./.travis_before_install.sh
 
-install:
-  - ./.travis_install.sh
- 
 script:
+  - ./.travis_install.sh
   - ./.travis_test.sh
