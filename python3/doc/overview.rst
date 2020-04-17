@@ -24,18 +24,35 @@ from high-throughput sequencing assays.
 
 * For downloads and installation instructions, see :ref:`install`.
 
+Authors
+=======
 
-Paper
-=====
+HTSeq is currently developed by `Fabio Zanini`_ at University of New South Wales in Sydney
+(fabio *dot* zanini *at* unsw *dot* edu *dot* au) and `Simon Anders`_
+(anders *at* embl *dot* de) at `EMBL Heidelberg`_ (`Genome Biology Unit`_).
 
-HTSeq is described in the following publication (which is currently under review but already
-available as preprint):
+.. _`Fabio Zanini`: http://fabilab.org
+.. _`Simon Anders`: http://www.embl.de/research/units/genome_biology/huber/members/index.php?s_personId=6001
+.. _`EMBL Heidelberg`: http://www.embl.de/
+.. _`Genome Biology Unit`: http://www.embl.de/research/units/genome_biology/index.html
+
+
+Citation
+========
+
+HTSeq is described in the following publications:
+
+  | Fabio Zanini et al.
+  | * HTSeq 2.0 -- Efficient manipulation of high-throughput sequencing data with long genomes
+  | in preparation (2020)
+
+and:
 
   | Simon Anders, Paul Theodor Pyl, Wolfgang Huber
   | *HTSeq --- A Python framework to work with high-throughput sequencing data*
-  | bioRxiv preprint (2014), `doi: 10.1101/002824`_
+  | Bioinformatics (2014), in print, online at `doi:10.1093/bioinformatics/btu638`_
 
-.. _`doi: 10.1101/002824`: http://dx.doi.org/10.1101/002824
+.. _`doi:10.1093/bioinformatics/btu638`: https://doi.org/10.1093/bioinformatics/btu638
 
 If you use HTSeq in research, please cite this paper in your publication.   
 
@@ -145,17 +162,6 @@ Documentation overview
    * :ref:`modindex`
    * :ref:`search`
 
-
-Author
-======
-
-HTSeq is developed by `Simon Anders`_ at `EMBL Heidelberg`_ (`Genome Biology
-Unit`_). Please do not hesitate to contact me (anders *at* embl *dot* de) if you
-have any comments or questions.
-
-.. _`Simon Anders`: http://www.embl.de/research/units/genome_biology/huber/members/index.php?s_personId=6001
-.. _`EMBL Heidelberg`: http://www.embl.de/
-.. _`Genome Biology Unit`: http://www.embl.de/research/units/genome_biology/index.html
 
 License
 =======

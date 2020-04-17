@@ -19,12 +19,12 @@ each exon as a feature, e.g., in order to check for alternative splicing.
 For comparative ChIP-Seq, the features might be binding region from a 
 pre-determined list.
 
-Special care must be taken to decide how to deal with reads that overlap more
-than one feature. The ``htseq-count`` script allows to choose between three
-modes. Of course, if none of these fits your needs, you can write your own
-script with HTSeq. See the chapter :ref:`tour` for a step-by-step guide on 
-how to do so. See also the FAQ at the end, if the following explanation seems 
-to technical.
+Special care must be taken to decide how to deal with reads that align to or
+overlap with more than one feature. The ``htseq-count`` script allows to
+choose between three modes. Of course, if none of these fits your needs,
+you can write your own script with HTSeq. See the chapter :ref:`tour` for a
+step-by-step guide on how to do so. See also the FAQ at the end, if the
+following explanation seems too technical.
 
 The three overlap resolution modes of ``htseq-count`` work as follows. For 
 each position `i` in the read, a set `S(i)` is defined as the set of all 
@@ -38,11 +38,36 @@ features overlapping position `i`. Then, consider the set `S`, which is
 * the intersection of all non-empty sets `S(i)` for mode ``intersection-nonempty``.
 
 If `S` contains precisely one feature, the read (or read pair) is counted for this feature. If
-it contains more than one feature, the read (or read pair) is counted as ``ambiguous`` (and
-not counted for any features), and if ``S`` is empty, the read (or read pair) is counted
-as ``no_feature``. 
+`S` is empty, the read (or read pair) is counted as ``no_feature``. If `S`
+contains more than one feature, ``htseq-count`` behaves differently based on
+the ``--nonunique`` option:
 
-The following figure illustrates the effect of these three modes:
+* ``--nonunique none`` (default): the read (or read pair) is counted as
+  ``ambiguous`` and not counted for any features. Also, if the read (or read
+  pair) aligns to more than one location in the reference, it is scored as
+  ``alignment_not_unique``.
+
+* ``--nonunique all``: the read (or read pair) is counted as ``ambiguous``
+  and is also counted in all features to which it was assigned. Also, if the
+  read (or read pair) aligns to more than one location in the reference, it is
+  scored as ``alignment_not_unique`` and also separately for each location.
+
+* ``--nonunique fraction``: the read (or read pair) is counted as ``ambiguous``
+  and is also counted fractionally in all features to which it was assigned. For 
+  example, if the read overlaps with 3 features, it will be counted 1/3 to each of them.
+
+* ``--nonunique random``: the read (or read pair) is counted as ``ambiguous``
+  and is also counted uniformly at random to ``one of`` the features to which it was 
+  assigned.
+
+Notice that when using ``--nonunique all`` the sum of all counts will not
+be equal to the number of reads (or read pairs), because those with multiple
+alignments or overlaps get scored multiple times. By contrast, with 
+``--nonunique fraction`` or ``--nonunique random``, the sum of all counts 
+will be equal to the number of reads (or read pairs).
+
+The following figure illustrates the effect of these three modes and the
+``--nonunique`` option:
 
 .. image:: count_modes.png
 
@@ -53,24 +78,25 @@ Usage
 After you have installed HTSeq (see :ref:`install`), you can run ``htseq-count`` from
 the command line::
 
-   htseq-count [options] <alignment_file> <gff_file>
+   htseq-count [options] <alignment_files> <gff_file>
    
-If the file ``htseq-qa`` is not in your path, you can, alternatively, call the script with
+If the file ``htseq-count`` is not in your path, you can, alternatively, call the script with
 
 ::
    
-   python -m HTSeq.scripts.count [options] <alignment_file> <gff_file>
+   python -m HTSeq.scripts.count [options] <alignment_files> <gff_file>
    
-The ``<alignment_file>`` contains the aligned reads in the SAM format. (Note that the 
-SAMtools_ contain Perl scripts to convert most alignment formats to SAM.)
-Make sure to use a splicing-aware aligner such as TopHat. HTSeq-count makes 
+The ``<alignment_files>`` are one or more files containing the aligned reads in SAM format.
+(SAMtools_ contain Perl scripts to convert most alignment formats to SAM.)
+Make sure to use a splicing-aware aligner such as STAR_. HTSeq-count makes 
 full use of the information in the CIGAR field.
 
-To read from standard input, use ``-`` as ``<alignment_file>``.
+To read from standard input, use ``-`` as ``<alignment_files>``.
 
 If you have paired-end data, pay attention to the ``-r`` option described below.
          
-.. _SAMtools: http://samtools.sourceforge.net/
+.. _SAMtools: http://www.htslib.org/
+.. _STAR: https://github.com/alexdobin/STAR
 
 The ``<gff_file>`` contains the features in the `GFF format`_.
 
@@ -86,8 +112,8 @@ was absent up to version 0.5.4). The special counters are:
   (set `S` as described above was empty).
    
 * ``__ambiguous``: reads (or read pairs) which could have been assigned to more than 
-  one feature and hence were not counted for any of these (set `S`
-  had mroe than one element).
+  one feature and hence were not counted for any of these, unless the
+  ``--nonunique all`` option was used (set `S` had more than one element).
   
 * ``__too_low_aQual``: reads (or read pairs) which were skipped due to the ``-a``
   option, see below
@@ -98,7 +124,9 @@ was absent up to version 0.5.4). The special counters are:
   These reads are recognized from the ``NH`` optional SAM field tag. 
   (If the aligner does not set this field, multiply aligned reads will 
   be counted multiple times, unless they getv filtered out by due to the ``-a`` option.)
-  
+  Note that if the ``--nonunique all`` option was used, these reads (or read pairs)
+  are still assigned to features.
+
 
 *Important:* The default for strandedness is *yes*. If your RNA-Seq data has not been made
 with a strand-specific protocol, this causes half of the reads to be lost.
@@ -114,6 +142,10 @@ Options
 
    Format of the input data. Possible values are ``sam`` (for text SAM files)
    and ``bam`` (for binary BAM files). Default is ``sam``.
+
+   DEPRECATED: Modern versions of samtools/htslibs, which HTSeq uses to access
+   SAM/BAM/CRAM files, have automatic file type detection. This flag will be
+   removed in future versions of htseq-count.
 
 .. cmdoption::  -r <order>, --order=<order>
 
@@ -131,9 +163,16 @@ Options
   ensures that most alignment mates appear close to each other in the data 
   and hence the  buffer is much less likely to overflow.
 
+.. cmdoption::  --max-reads-in-buffer=<number>
+
+  When <alignment_file> is paired end sorted by position, allow only so many
+  reads to stay in memory until the mates are found (raising this number will use
+  more memory). Has no effect for single end or paired end sorted by name.
+  (default: ``30000000``)
+
 .. cmdoption:: -s <yes/no/reverse>, --stranded=<yes/no/reverse>
 
-   whether the data is from a strand-specific assay (default: ``yes``)
+   Whether the data is from a strand-specific assay (default: ``yes``)
    
    For ``stranded=no``, a read is considered overlapping with a feature regardless
    of whether it is mapped to the same or the opposite strand as the feature.
@@ -144,14 +183,13 @@ Options
 
 .. cmdoption:: -a <minaqual>, --a=<minaqual>
 
-   skip all reads with alignment quality lower than the given
-   minimum value (default: 10 --- Note: the default used to be 0 until
-   version 0.5.4.)
-
+   Skip all reads with MAPQ alignment quality lower than the given
+   minimum value (default: 10). MAPQ is the 5th column of a SAM/BAM
+   file and its usage depends on the software used to map the reads.
 
 .. cmdoption:: -t <feature type>, --type=<feature type>
 
-   feature type (3rd column in GFF file) to be used, all
+   Feature type (3rd column in GTF file) to be used, all
    features of other type are ignored (default, suitable
    for RNA-Seq analysis using an `Ensembl GTF`_ file: ``exon``)
    
@@ -159,10 +197,19 @@ Options
 
 .. cmdoption:: -i <id attribute>, --idattr=<id attribute>
 
-   GFF attribute to be used as feature ID. Several GFF lines with the same
+   GTF attribute to be used as feature ID. Several GTF lines with the same
    feature ID will be considered as parts of the same feature. The feature ID
    is used to identity the counts in the output table. The default, suitable 
    for RNA-Seq analysis using an Ensembl GTF file, is ``gene_id``. 
+
+.. cmdoption:: --additional-attr=<id attributes>
+
+   Additional feature attributes, which will be printed as an additional column
+   after the primary attribute column but before the counts column(s). The
+   default is none, a suitable value to get gene names using an Ensembl GTF
+   file is ``gene_name``. To use more than one additional attribute, repeat
+   the option in the command line more than once, with a single attribute each
+   time, e.g. ``--additional-attr=gene_name --additional_attr=exon_number``.
 
 .. cmdoption::  -m <mode>, --mode=<mode>  
 
@@ -170,20 +217,44 @@ Options
    `<mode>` are ``union``, ``intersection-strict`` and ``intersection-nonempty``
    (default: ``union``)
 
+.. cmdoption:: --nonunique=<nonunique mode>
+
+   Mode to handle reads that align to or are assigned to more than one feature
+   in the overlap `<mode>` of choice (see -m option). `<nonunique mode>` are
+   ``none`` and ``all`` (default: ``none``)
+
+.. cmdoption:: --secondary-alignments=<mode>
+
+   Mode to handle secondary alignments (SAM flag 0x100). `<mode>` can be
+   ``score`` and ``ignore`` (default: ``score``)
+
+.. cmdoption:: --supplementary-alignments=<mode>
+
+   Mode to handle supplementary/chimeric alignments (SAM flag 0x800). `<mode>`
+   can be ``score`` and ``ignore`` (default: ``score``)
+
 .. cmdoption:: -o <samout>, --samout=<samout>
 
-   write out all SAM alignment records into an output SAM
-   file called <samout>, annotating each line with its
-   assignment to a feature or a special counter
-   (as an optional field with tag 'XF')
+   Write out all SAM alignment records into SAM files (one per input file
+   needed), annotating each line with its feature assignment (as an optional
+   field with tag 'XF')
+
+.. cmdoption:: -p <samout_format>, --samout-format=<samout_format>
+
+   Format to use with the --samout option, can be ``bam`` or ``sam``
+   (default: ``sam``).
    
 .. cmdoption:: -q, --quiet           
    
-   suppress progress report and warnings
+   Suppress progress report and warnings
 
 .. cmdoption:: -h, --help
 
    Show a usage summary and exit  
+
+.. cmdoption:: --version
+
+   Show software version and exit  
 
 
 Frequenctly asked questions
@@ -251,9 +322,8 @@ Frequenctly asked questions
    several years later, I have seen very few cases where the default ``union`` would not be appropriate
    and hence tend to recommend to just stick to ``union``.
 
-*I have a GTF file? How do I convert it to GFF?*
-   No need to do that, because GTF is a tightening of the GFF format. Hence, all GTF files are GFF files, too.
-   By default, htseq-count expects a GTF file.
+*I have a GTF file, how do I convert it to GFF?*
+   htseq-count expects a GTF file so there's no need to do that.
 
 *I have a GFF file, not a GTF file. How can I use it to count RNA-Seq reads?*
    The GTF format specifies, inter alia, that exons are marked by the word ``exon`` in the third column and
@@ -264,7 +334,7 @@ Frequenctly asked questions
    ``Parent``, ``GeneID`` or ``ID``. Make sure it is the gene ID and not the exon ID.
 
 *How can I count overlaps with features other than genes/exons?*
-   If you have GFF file listing your features, use it together with the ``--type`` and ``--idattr`` options.
+   If you have GTF file listing your features, use it together with the ``--type`` and ``--idattr`` options.
    If your feature intervals need to be computed, you are probably better off writing your own
    counting script (provided you have some knowledge of Python). Follow the tutorial in the other pages 
    of this documentation to see how to use HTSeq for this.

@@ -16,25 +16,19 @@ else
     export PATH="$HOME/miniconda/bin:$PATH"
     source $HOME/miniconda/bin/activate
   fi
-
-  # setuptools < 18.0 has issues with Cython as a dependency
-  if [ -n "${CYTHON_INSTALL}" ]; then
-    echo "Installing Cython separately..."
-    pip install "$CYTHON_INSTALL"
-    echo "Cython installed"
-  fi
   
-  if [ $TRAVIS_OS_NAME == 'linux' ]; then
-    sed -i "s|pysam>=0.9.0|$PYSAM_VERSION|" requirements.txt
-  elif [ $TRAVIS_OS_NAME == 'osx' ]; then
-    sed -i "" "s|pysam>=0.9.0|$PYSAM_VERSION|" requirements.txt
-  else
-    echo "OS not recognized: $TRAVIS_OS_NAME"
-    exit 1
-  fi
-  if [ $? != 0 ]; then
-      exit 1
-  fi
+  # Requirements should be installed by pip
+  #if [ $TRAVIS_OS_NAME == 'linux' ]; then
+  #  sed -i "s|pysam>=0.9.0|$PYSAM_VERSION|" requirements.txt
+  #elif [ $TRAVIS_OS_NAME == 'osx' ]; then
+  #  sed -i "" "s|pysam>=0.9.0|$PYSAM_VERSION|" requirements.txt
+  #else
+  #  echo "OS not recognized: $TRAVIS_OS_NAME"
+  #  exit 1
+  #fi
+  #if [ $? != 0 ]; then
+  #    exit 1
+  #fi
 
   echo "Installing requirements"
   pip install -r requirements.txt
@@ -50,14 +44,5 @@ else
   if [ $? != 0 ]; then
       exit 1
   fi
-  echo "HTSeq installed"
+  echo "HTSeq installed from pypi"
 fi
-
-## OSX makes wheels as well
-#if [ $TRAVIS_OS_NAME == 'osx' ]; then
-#  mkdir wheelhouse
-#  pip wheel . -w wheelhouse/
-#  if [ $? != 0 ]; then
-#      exit 1
-#  fi
-#fi

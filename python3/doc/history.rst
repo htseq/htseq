@@ -4,6 +4,179 @@
 Version history
 ***************
 
+Next version (current master)
+=============================
+
+Version 0.12.2
+==============
+2020-04-15
+
+New features:
+
+- Negative indices for ``StepVector`` (thanks to shouldsee for the original PR).
+- ``htseq-count-barcodes`` counts features in barcoded SAM/BAM files, e.g. 10X Genomics
+  single cell outputs. It supports cell barcodes, which result in different columns of
+  the output count table, and unique molecular identifiers.
+- ``htseq-count`` has new option ``-n`` for multicore parallel processing
+- ``htseq-count`` has new option ``-d`` for separating output columns by arbitrary character
+  (defalt TAB, ``,`` is also common)
+- ``htseq-count`` has new option ``-c`` for output into a file instead of stdout
+- ``htseq-count`` has new option ``--append-output`` for output into a file by appending to
+  any existing test (e.g. a header with the feature attribute names and sample names)
+- ``htseq-count`` has two new values for option ``--nonunique``, namely ``fraction``, which
+  will count an N-multimapper as 1/N for each feature, and ``random``, which will assign
+  the alignment to a random one of its N-multimapped features. This feature was added by
+  ewallace (thank you!).
+- ``htseq-qa`` got refactored and now accepts an options ``--primary-only`` which ignores
+  non-primary alignments in SAM/BAM files. This means that the final number of alignments
+  scored is equal to the number of reads even when multimapped reads are present.
+
+Testing improvements:
+
+- Extensive testing and installation changes for Mac OSX 10.14 and later versions
+- Testing Python 2.7, 3.6, 3.7, and 3.8 on OSX
+- Testing and deployment now uses conda environments
+
+Numerous bugfixes and doc improvements.
+
+This is the **last** version of ``HTSEQ`` supporting Python 2.7, as it is unmaintained since Jan 1st, 2020. ``HTSeq`` will support Python 3.5+ from the next version.
+
+Version 0.11.4
+==============
+2020-03-30
+
+Fix a bug with Python3 and no-quality BAM/SAM files.
+
+Version 0.11.3
+==============
+2020-03-01
+
+Updates in the documentation and new wheels to fix installation bugs.
+
+Version 0.11.2
+==============
+2019-01-07
+
+Bugfix release for ``htseq-count``:
+
+- fixed bug and changed how to use output SAM files via ``-o``: you now have
+  to specify the option once per input/output file
+
+Version 0.11.1
+==============
+2019-01-03
+
+Bugfix release for ``htseq-count``:
+
+- fixed bug and changed how to use of additional attributes via ``--additional-attr``
+
+Version 0.11.0
+==============
+2018-08-01
+
+- ``htseq-count`` ignores secondary and supplementary alignments by default
+- bugfix in the SAM output of ``htseq-count``
+- optional argument name in reverse complement function
+- better linting of Cython files
+
+Version 0.10.0
+==============
+2018-05-08
+
+- flush output of ``htseq-count`` (thanks dcroote)
+- pass memmap_dir to ChromVector.create (thanks wkopp)
+- ``BAM_Reader`` supports ``check_sq`` for PacBio reads (thanks jbloom)
+- a number of Bugfixes
+
+Version 0.9.1
+=============
+2017-07-26
+
+Bugfix release for ``htseq-count``:
+
+- ``--secondary-alignments`` and ``supplementary-alignments`` should now work for some corner cases of unmapped reads
+
+
+Version 0.9.0
+=============
+2017-07-11
+
+This release adds a few options to ``htseq-count``:
+
+- ``--secondary-alignments`` handles secondary alignments coming from the same read
+- ``--supplementary-alignments`` handles supplementary alignments (aka chimeric reads)
+
+Raw but fast iterators for FASTA and FASTQ files have been added.
+
+Support for the SAM CIGAR flags ``=`` and ``X`` (sequence match and mismatch) has been added.
+
+``Sequence`` objects can now be pickled/serialized.
+
+Binaries for linux and OSX are now provided on PyPI.
+
+Automation of the release process has been greatly extended, including OSX continuous integration builds.
+
+Several bugs have been fixed, and some parts of the code have been linted or modernized.
+
+Version 0.8.0
+=============
+2017-06-07
+
+This release adds a few options to ``htseq-count``:
+
+- ``--nonunique`` handles non-uniquely mapped reads
+- ``--additional-attr`` adds an optional column to the output (typically for human-readable gene names)
+- ``--max-reads-in-buffer`` allows increasing the buffer size when working with paired end, coordinate sorted files
+
+Moreover, ``htseq-count`` can now take more than one input file and prints the output with one column per input file.
+
+Finally, parts of the code have been streamlined or modernized, documentation has been moved to readthedocs,
+and other minor changes.
+
+Version 0.7.2
+=============
+
+2017-03-24
+
+This release effectively merges the Python2 and Python3 branches.
+
+Enhancements:
+
+- ``pip install HTSeq`` works for both Python 2.7 and 3.4+
+
+
+Version 0.7.1
+=============
+
+2017-03-16
+
+Enhancements:
+
+- installs from PyPI
+
+
+Version 0.7.0
+=============
+
+2017-02-07
+
+Enhancements:
+
+- understands SAMtools optional field B (used sometimes in STAR aligner)
+- write fasta files in a single line
+- better docstrings thanks to SWIG 3
+
+Bugfixes:
+
+- fixed tests and docs in .rst files
+
+Support bumps:
+
+- supports pysam >=0.9.0
+
+New maintainer: Fabio Zanini.
+
+
 Version 0.6.1
 =============
 
