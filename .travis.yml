@@ -6,86 +6,86 @@ language: python
 
 matrix:
   include:
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  PYPI="https://test.pypi.org/pypi/"
      python: 2.7
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  PYPI="https://test.pypi.org/pypi/"
      python: 3.5
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  PYPI="https://test.pypi.org/pypi/"
      python: 3.6
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  PYPI="https://test.pypi.org/pypi/"
      python: 3.7
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  PYPI="https://test.pypi.org/pypi/"
      python: 3.8
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' CONDA_PY='2.7' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  CONDA_PY='2.7' PYPI="https://test.pypi.org/pypi/"
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' CONDA_PY='3.6' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  CONDA_PY='3.6' PYPI="https://test.pypi.org/pypi/"
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' CONDA_PY='3.7' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  CONDA_PY='3.7' PYPI="https://test.pypi.org/pypi/"
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' CONDA_PY='3.8' PYPI="https://test.pypi.org/pypi/"
+   - env: CC=gcc  CONDA_PY='3.8' PYPI="https://test.pypi.org/pypi/"
      language: generic
      os: osx
      osx_image: xcode11
 
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI=""
+   - env: CC=gcc  PYPI=""
      python: 2.7
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI=""
+   - env: CC=gcc  PYPI=""
      python: 3.5
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI=""
+   - env: CC=gcc  PYPI=""
      python: 3.6
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI=""
+   - env: CC=gcc  PYPI=""
      python: 3.7
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYPI=""
+   - env: CC=gcc  PYPI=""
      python: 3.8
      os: linux
      dist: bionic
      sudo: required
-   - env: CC=gcc PYSAM_VERSION='pysam' PYTHON_VERSION='2.7' PYPI=""
+   - env: CC=gcc  CONDA_PY='2.7' PYPI=""
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' PYTHON_VERSION='3.6' PYPI=""
+   - env: CC=gcc  CONDA_PY='3.6' PYPI=""
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' PYTHON_VERSION='3.7' PYPI=""
+   - env: CC=gcc  CONDA_PY='3.7' PYPI=""
      language: generic
      os: osx
      osx_image: xcode11
-   - env: CC=gcc PYSAM_VERSION='pysam' PYTHON_VERSION='3.8' PYPI=""
+   - env: CC=gcc  CONDA_PY='3.8' PYPI=""
      language: generic
      os: osx
      osx_image: xcode11

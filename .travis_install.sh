@@ -17,9 +17,11 @@ else
     source $HOME/miniconda/bin/activate
     conda activate travis
 
-    ## Somehow we need this to execute the setup.py at all...
-    #pip install numpy
-    #pip install $PYSAM_VERSION
+    # FIXME: somehow we need this to execute the setup.py at all...
+    pip install numpy
+
+    # FIXME: pysam's wheels are many and intricated, for now maybe this works
+    pip install pysam
   fi
   
   # Requirements should be installed by pip
