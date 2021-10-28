@@ -1,4 +1,5 @@
 import pysam
+import HTSeq
 
 class CountParameters(object):
     """
@@ -159,3 +160,38 @@ class CountParameters(object):
         if len(self.feature_attr) == 0:
             sys.stderr.write(
                 "Warning: No features of type '%s' found.\n" % self.feature_type)
+
+    def get_args_for_count(self):
+        """
+        This prepares all the arguments required to run the counting function.
+        Each element contains the parameters to be passed to an instance of counting function.
+
+        Returns
+        -------
+        args : array
+            Array containing the arguments for the counting function.
+        """
+
+        args = []
+        for isam_file_idx, (sam_filename, samout_filename) in enumerate(zip(self.sam_filenames, self.samouts)):
+            args.append((
+                isam_file_idx,
+                sam_filename,
+                self.features,
+                self.feature_attr,
+                self.order,
+                self.max_buffer_size,
+                self.stranded,
+                self.overlap_mode,
+                self.multimapped_mode,
+                self.secondary_alignment_mode,
+                self.supplementary_alignment_mode,
+                self.feature_type,
+                self.id_attribute,
+                self.additional_attributes,
+                self.verbose,
+                self.minaqual,
+                self.samout_format,
+                samout_filename,
+                ))
+        return args
