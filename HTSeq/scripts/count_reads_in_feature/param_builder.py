@@ -3,7 +3,7 @@
 
 import argparse
 
-def get_help_message():
+def create_input_argument():
     """
     This creates an ArgumentParser object embedded with the message for --help
     argument when running htseq-count.
