@@ -2888,7 +2888,7 @@ namespace swig {
      public: 
       step_vector_pystyle_iterator( typename step_vector<T>::const_iterator first,
          typename step_vector<T>::const_iterator last_ );
-      std::pair< long int, T > next( );
+      std::pair< long int, T > __next__( );
       step_vector_pystyle_iterator<T> * __iter__( );
    };
 
@@ -2928,7 +2928,7 @@ namespace swig {
    }
 
    template< class T >
-   std::pair< long int, T > step_vector_pystyle_iterator<T>::next( )
+   std::pair< long int, T > step_vector_pystyle_iterator<T>::__next__( )
    {
       if( current == last )
          throw pystyle_stopiteration ();
@@ -3345,7 +3345,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__StepVector_Iterator_float_next(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_float___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   step_vector_pystyle_iterator< double > *arg1 = (step_vector_pystyle_iterator< double > *) 0 ;
   void *argp1 = 0 ;
@@ -3357,12 +3357,12 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_float_next(PyObject *SWIGUNUSEDP
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_double_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_float_next" "', argument " "1"" of type '" "step_vector_pystyle_iterator< double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_float___next__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< double > *""'"); 
   }
   arg1 = reinterpret_cast< step_vector_pystyle_iterator< double > * >(argp1);
   {
     try {
-      result = (arg1)->next();
+      result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
       PyErr_SetString( PyExc_StopIteration, "" );
       return NULL;
@@ -3900,7 +3900,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__StepVector_Iterator_int_next(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_int___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   step_vector_pystyle_iterator< int > *arg1 = (step_vector_pystyle_iterator< int > *) 0 ;
   void *argp1 = 0 ;
@@ -3912,12 +3912,12 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_int_next(PyObject *SWIGUNUSEDPAR
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_int_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_int_next" "', argument " "1"" of type '" "step_vector_pystyle_iterator< int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_int___next__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< int > *""'"); 
   }
   arg1 = reinterpret_cast< step_vector_pystyle_iterator< int > * >(argp1);
   {
     try {
-      result = (arg1)->next();
+      result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
       PyErr_SetString( PyExc_StopIteration, "" );
       return NULL;
@@ -4455,7 +4455,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__StepVector_Iterator_bool_next(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_bool___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   step_vector_pystyle_iterator< bool > *arg1 = (step_vector_pystyle_iterator< bool > *) 0 ;
   void *argp1 = 0 ;
@@ -4467,12 +4467,12 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_bool_next(PyObject *SWIGUNUSEDPA
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_bool_next" "', argument " "1"" of type '" "step_vector_pystyle_iterator< bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_bool___next__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< bool > *""'"); 
   }
   arg1 = reinterpret_cast< step_vector_pystyle_iterator< bool > * >(argp1);
   {
     try {
-      result = (arg1)->next();
+      result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
       PyErr_SetString( PyExc_StopIteration, "" );
       return NULL;
@@ -5005,7 +5005,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__StepVector_Iterator_obj_next(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_obj___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   step_vector_pystyle_iterator< AutoPyObjPtr > *arg1 = (step_vector_pystyle_iterator< AutoPyObjPtr > *) 0 ;
   void *argp1 = 0 ;
@@ -5017,12 +5017,12 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_obj_next(PyObject *SWIGUNUSEDPAR
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_obj_next" "', argument " "1"" of type '" "step_vector_pystyle_iterator< AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_obj___next__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< step_vector_pystyle_iterator< AutoPyObjPtr > * >(argp1);
   {
     try {
-      result = (arg1)->next();
+      result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
       PyErr_SetString( PyExc_StopIteration, "" );
       return NULL;
@@ -5350,7 +5350,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "_Pair_int_float_swigregister", _Pair_int_float_swigregister, METH_O, NULL},
 	 { "_Pair_int_float_swiginit", _Pair_int_float_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_float", _wrap_new__StepVector_Iterator_float, METH_VARARGS, NULL},
-	 { "_StepVector_Iterator_float_next", _wrap__StepVector_Iterator_float_next, METH_O, NULL},
+	 { "_StepVector_Iterator_float___next__", _wrap__StepVector_Iterator_float___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_float___iter__", _wrap__StepVector_Iterator_float___iter__, METH_O, NULL},
 	 { "delete__StepVector_Iterator_float", _wrap_delete__StepVector_Iterator_float, METH_O, NULL},
 	 { "_StepVector_Iterator_float_swigregister", _StepVector_Iterator_float_swigregister, METH_O, NULL},
@@ -5373,7 +5373,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "_Pair_int_int_swigregister", _Pair_int_int_swigregister, METH_O, NULL},
 	 { "_Pair_int_int_swiginit", _Pair_int_int_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_int", _wrap_new__StepVector_Iterator_int, METH_VARARGS, NULL},
-	 { "_StepVector_Iterator_int_next", _wrap__StepVector_Iterator_int_next, METH_O, NULL},
+	 { "_StepVector_Iterator_int___next__", _wrap__StepVector_Iterator_int___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_int___iter__", _wrap__StepVector_Iterator_int___iter__, METH_O, NULL},
 	 { "delete__StepVector_Iterator_int", _wrap_delete__StepVector_Iterator_int, METH_O, NULL},
 	 { "_StepVector_Iterator_int_swigregister", _StepVector_Iterator_int_swigregister, METH_O, NULL},
@@ -5396,7 +5396,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "_Pair_int_bool_swigregister", _Pair_int_bool_swigregister, METH_O, NULL},
 	 { "_Pair_int_bool_swiginit", _Pair_int_bool_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_bool", _wrap_new__StepVector_Iterator_bool, METH_VARARGS, NULL},
-	 { "_StepVector_Iterator_bool_next", _wrap__StepVector_Iterator_bool_next, METH_O, NULL},
+	 { "_StepVector_Iterator_bool___next__", _wrap__StepVector_Iterator_bool___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_bool___iter__", _wrap__StepVector_Iterator_bool___iter__, METH_O, NULL},
 	 { "delete__StepVector_Iterator_bool", _wrap_delete__StepVector_Iterator_bool, METH_O, NULL},
 	 { "_StepVector_Iterator_bool_swigregister", _StepVector_Iterator_bool_swigregister, METH_O, NULL},
@@ -5419,7 +5419,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "_Pair_int_obj_swigregister", _Pair_int_obj_swigregister, METH_O, NULL},
 	 { "_Pair_int_obj_swiginit", _Pair_int_obj_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_obj", _wrap_new__StepVector_Iterator_obj, METH_VARARGS, NULL},
-	 { "_StepVector_Iterator_obj_next", _wrap__StepVector_Iterator_obj_next, METH_O, NULL},
+	 { "_StepVector_Iterator_obj___next__", _wrap__StepVector_Iterator_obj___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_obj___iter__", _wrap__StepVector_Iterator_obj___iter__, METH_O, NULL},
 	 { "delete__StepVector_Iterator_obj", _wrap_delete__StepVector_Iterator_obj, METH_O, NULL},
 	 { "_StepVector_Iterator_obj_swigregister", _StepVector_Iterator_obj_swigregister, METH_O, NULL},

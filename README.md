@@ -55,7 +55,7 @@ pip install HTSeq
 To install a specific version:
 
 ```bash
-pip install 'HTSeq==0.14.0'
+pip install 'HTSeq==0.13.5'
 ```
 
 If this fails, please install all dependencies first:

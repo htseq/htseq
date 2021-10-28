@@ -18,7 +18,7 @@
      public: 
       step_vector_pystyle_iterator( typename step_vector<T>::const_iterator first,
          typename step_vector<T>::const_iterator last_ );
-      std::pair< long int, T > next( );
+      std::pair< long int, T > __next__( );
       step_vector_pystyle_iterator<T> * __iter__( );
    };
 
@@ -58,7 +58,7 @@
    }
 
    template< class T >
-   std::pair< long int, T > step_vector_pystyle_iterator<T>::next( )
+   std::pair< long int, T > step_vector_pystyle_iterator<T>::__next__( )
    {
       if( current == last )
          throw pystyle_stopiteration ();
@@ -75,7 +75,7 @@
                
 %}
 
-%exception next {
+%exception __next__ {
    try {
       $action
    } catch (pystyle_stopiteration &e) {
@@ -99,7 +99,7 @@ class step_vector_pystyle_iterator
   public: 
    step_vector_pystyle_iterator( typename step_vector<T>::const_iterator first,
       typename step_vector<T>::const_iterator last_ );
-   std::pair< long int, T > next( );
+   std::pair< long int, T > __next__( );
    step_vector_pystyle_iterator<T> * __iter__( );   
 };
 
@@ -258,7 +258,7 @@ class StepVector(object):
         """
         startvals = self._swigobj.get_values_pystyle(self.start)
         prevstart = self.start
-        prevval = startvals.next().second
+        prevval = next(startvals).second
         for pair in startvals:
             stepstart, value = pair.first, pair.second
             if merge_steps and value == prevval:
@@ -309,7 +309,7 @@ class StepVector(object):
             res.stop = stop
             return res
         else:
-            return self._swigobj.get_values_pystyle(index).next().second
+            return next(self._swigobj.get_values_pystyle(index)).second
         
     def __iter__(self):
         """When asked to provide an iterator, a StepVector will yield all its
@@ -360,20 +360,20 @@ class StepVector(object):
             return False
         selfsteps = self.get_steps()
         othrsteps = other.get_steps()
-        selfstart, selfstop, selfval = selfsteps.next()
-        othrstart, othrstop, othrval = othrsteps.next()
+        selfstart, selfstop, selfval = next(selfsteps)
+        othrstart, othrstop, othrval = next(othrsteps)
         while selfstop < self.start_index() + len(self) and \
                 othrstop < other.start_index() + len(other):
             assert selfstart < othrstop and othrstart < selfstop
             if not(selfval == othrval):
                 return False
             if selfstop < othrstop:
-                selfstart, selfstop, selfval = selfsteps.next()
+                selfstart, selfstop, selfval = next(selfsteps)
             elif othrstop < selfstop:
-                othrstart, othrstop, othrval = othrsteps.next()
+                othrstart, othrstop, othrval = next(othrsteps)
             else:
-                selfstart, selfstop, selfval = selfsteps.next()
-                othrstart, othrstop, othrval = othrsteps.next()
+                selfstart, selfstop, selfval = next(selfsteps)
+                othrstart, othrstop, othrval = next(othrsteps)
         return True
         
     def __neq__(self, other):
