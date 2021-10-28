@@ -366,6 +366,13 @@ def count_reads_in_features(
             with pysam.AlignmentFile(sam_filename, 'r') as sf:
                 pass
 
+    # Deal with custom id_attribute lists. This is never shorter than 1 because
+    # gene_id is the default. However, if the option was called at least once,
+    # that should _override_ the default, which means skipping the first
+    # element (i.e., gene_id).
+    if len(id_attribute) > 1:
+        del id_attribute[0]
+
     # Prepare features
     gff = HTSeq.GFF_Reader(gff_filename)
     feature_scan = HTSeq.make_feature_genomicarrayofsets(
@@ -508,13 +515,17 @@ def main():
 
     pa.add_argument(
             "-i", "--idattr", type=str, dest="idattr",
-            default="gene_id",
+            action='append',
+            default=["gene_id"],
             help="GTF attribute to be used as feature ID (default, " +
             "suitable for Ensembl GTF files: gene_id). All feature of the " +
             "right type (see -t option) within the same GTF attribute will " +
             "be added together. The typical way of using this option is to " +
             "count all exonic reads from each gene and add the exons " +
-            "but other uses are possible as well.")
+            "but other uses are possible as well. You can call this option " +
+            "multiple times: in that case, the combination of all attributes " +
+            "separated by colons (:) will be used as a unique identifier, " +
+            "e.g. for exons you might use -i gene_id -i exon_number.")
 
     pa.add_argument(
             "--additional-attr", type=str,

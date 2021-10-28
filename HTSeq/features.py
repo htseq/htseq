@@ -266,8 +266,12 @@ def make_feature_genomicarrayofsets(
     Args:
         feature_sequence (iterable of Feature): A sequence of features, e.g. as
             obtained from GFF_reader('myfile.gtf')
-        id_attribute (string): An attribute to use to identify the feature in
-            the output data structures (e.g. 'gene_id')
+        id_attribute (string or sequence of strings): An attribute to use to
+            identify the feature in the output data structures (e.g.
+            'gene_id'). If this is a list, the combination of all those
+            attributes, separated by colons (:), will be used as an identifier.
+            For instance, ['gene_id', 'exon_number'] uniquely identifies
+            specific exons.
         feature_type (string or None): If None, collect all features. If a
             string, restrict to only one type of features, e.g. 'exon'.
         feature_query (string or None): If None, all features of the selected
@@ -315,6 +319,27 @@ def make_feature_genomicarrayofsets(
     can use it in performance-critical scans of GFF files.
     """
 
+    def get_id_attr(f, id_attribute):
+        '''Get feature id with a single or multiple attributes'''
+        if isinstance(id_attribute, str):
+            try:
+                feature_id = f.attr[id_attribute]
+            except KeyError:
+                raise ValueError(
+                        "Feature %s does not contain a '%s' attribute" %
+                        (f.name, id_attribute))
+        else:
+            feature_id = []
+            for id_attr in id_attribute:
+                try:
+                    feature_id.append(f.attr[id_attr])
+                except KeyError:
+                    raise ValueError(
+                            "Feature %s does not contain a '%s' attribute" %
+                            (f.name, id_attr))
+            feature_id = ':'.join(feature_id)
+        return feature_id
+
     if additional_attributes is None:
         additional_attributes = []
 
@@ -327,12 +352,8 @@ def make_feature_genomicarrayofsets(
     try:
         for f in feature_sequence:
             if feature_type in (None, f.type):
-                try:
-                    feature_id = f.attr[id_attribute]
-                except KeyError:
-                    raise ValueError(
-                            "Feature %s does not contain a '%s' attribute" %
-                            (f.name, id_attribute))
+                feature_id = get_id_attr(f, id_attribute)
+
                 if stranded and f.iv.strand == ".":
                     raise ValueError(
                             "Feature %s at %s does not have strand information but you are "
@@ -354,7 +375,7 @@ def make_feature_genomicarrayofsets(
                         for attr in additional_attributes]
                 if add_chromosome_info:
                     attributes[feature_id] += [f.iv.chrom]
-                
+
             i += 1
             if i % 100000 == 0 and verbose:
                 if hasattr(feature_sequence, 'get_line_number_string'):

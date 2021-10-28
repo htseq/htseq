@@ -13,21 +13,21 @@ and similar experiments.
 
 ## Requirements
 
-To use ``HTSeq`` you will need:
+To use ``HTSeq`` you need:
 
 -  ``Python >= 3.6`` (**note**: ``Python 2.7`` support has been dropped)
 -  ``numpy``
 -  ``pysam``
 
-To run the ``htseq-qa`` script, you will also need:
+To run the ``htseq-qa`` script, you also need:
 
 -  ``matplotlib``
 
-To run ``htseq-count`` with custom output formats for the count table:
+To run ``htseq-count`` and ``htseq-count-barcodes`` with custom output formats for the counts table, you need:
 
-- ``mtx`` file: you need ``scipy``
-- ``h5ad`` file: you need ``anndata``
-- ``loom`` file: you need ``loompy``
+- ``mtx`` file: ``scipy``
+- ``h5ad`` file: ``anndata``
+- ``loom`` file: ``loompy``
 
 Both **Linux** and **OSX** are supported and binaries are provided on Pypi. We
 would like to support **Windows** but currently lack the expertise to do so. If
