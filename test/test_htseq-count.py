@@ -114,10 +114,14 @@ class HTSeqCountBase(unittest.TestCase):
             return
 
         if not os.path.isfile(expected_fn):
-            import shutil
             print('Missing output file, creating one in current folder')
             out_fn = os.path.basename(expected_fn)
-            shutil.copy(output_fn, out_fn)
+            if output_fn is None:
+                with open(out_fn, 'wt') as f:
+                    f.write(output['result'])
+            else:
+                import shutil
+                shutil.copy(output_fn, out_fn)
             pytest.fail(
                 'Expected filename not found, output filename copied in {out_fn}',
             )
@@ -274,6 +278,24 @@ class HTSeqCount(HTSeqCountBase):
                 f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56.gtf.gz',
                 ],
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withNH_counts_additional_attributes.tsv',
+            })
+
+    def test_multiple_and_additional_attributes(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-m', 'intersection-nonempty',
+                '-i', 'gene_id',
+                '-i', 'exon_number',
+                '--additional-attr', 'gene_name',
+                '--additional-attr', 'exon_number',
+                '--nonunique', 'none',
+                '--secondary-alignments', 'score',
+                '--supplementary-alignments', 'score',
+                f'{data_folder}/yeast_RNASeq_excerpt_withNH.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withNH_counts_exon_level_and_additional_attributes.tsv',
             })
 
     def test_additional_attributes_chromosome_info(self):

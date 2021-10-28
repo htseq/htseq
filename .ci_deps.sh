@@ -33,6 +33,9 @@ elif [ $OS_NAME == 'macos-latest' ]; then
   conda install -y pip
   pip --version
 
+  # Use SWIG from conda
+  conda install -c conda-forge swig
+
 else
   echo "OS not recognized: $OS_NAME"
   exit 1

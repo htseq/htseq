@@ -22,7 +22,8 @@ for PYBIN in ${PYBINS}; do
     echo "PYBIN = ${PYBIN}"
 
     echo "Install requirements..."
-    ${PYBIN}/pip install setuptools wheel Cython matplotlib
+    # NOTE: Pillow 0.8.4 stopped shipping manylinux_2010
+    ${PYBIN}/pip install setuptools wheel Cython 'Pillow<8.4.0' matplotlib
     ${PYBIN}/pip install -r /io/requirements.txt
 
     echo "Build wheels..."
