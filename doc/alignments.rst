@@ -373,7 +373,7 @@ objects in the list.
 
    .. method:: CigarOperation.check()
 
-      Check whether the operation is internally consistent.
+      Check whether the operation is internally consistent. Returns a boolean.
   
    Instances of this class contain the following attributes:
 
@@ -408,9 +408,4 @@ objects in the list.
                   CigarOperation.query_to
                   
       Two ints, specifying the affected bases on the query (the read). In case of a
-      deletion, ``query_from == query_to``.
-   
-   .. method:: CigarOperation.check( )
-   
-      Checks the ``CigarOperation`` object for consitency. Returns a boolean.
-
+      deletion, ``query_from == query_to``. 

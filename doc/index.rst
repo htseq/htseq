@@ -50,6 +50,7 @@ Contents
    install
    tour
    tss
+   exon_example
    counting
    refoverview
    sequences

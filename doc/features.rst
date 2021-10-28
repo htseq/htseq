@@ -62,7 +62,7 @@ As usual, there is a parser class, called **GFF_Reader**, that can generate an
 iterator of objects describing the features. These objects are of type :class`GenomicFeature`
 and each describes one line of a GFF file. See Section :ref:`tour` for an example.
 
-.. class:: GFF_Reader( filename_or_sequence, end_included=True )
+.. class:: GFF_Reader(filename_or_sequence, end_included=True)
 
    As a subclass of :class:`FileOrSequence`, GFF_Reader can be initialized either
    with a file name or with an open file or another sequence of lines.
@@ -92,7 +92,7 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
          it is added to the ``metadata`` dictionary.
          
   
-.. class:: GenomicFeature( name, type_, interval )
+.. class:: GenomicFeature(name, type_, interval)
 
    A GenomicFeature object always contains the following attributes:
    
@@ -149,8 +149,66 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
          attributes given above are missing. Call this for each of your ``GenomicFeature`` objects
          and write the lines into a file to get a GFF file.
       
-.. function:: parse_GFF_attribute_string( attrStr, extra_return_first_value=False )      
+.. function:: parse_GFF_attribute_string(attrStr, extra_return_first_value=False)      
 
    This is the function that :class:`GFF_Reader` uses to parse the attribute column. (See :attr:`GenomicFeature.attr`.)
    It returns a dict, or, if requested, a pair of the dict and the first value.
 
+.. function::
+   make_feature_genomicarrayofsets(feature_sequence, id_attribute, feature_type=None, feature_query=None, additional_attributes=None, stranded=False, verbose=False, add_chromosome_info=False)
+
+   Organize a sequence of Feature objects into a GenomicArrayOfSets.
+
+   :param feature_sequence: A sequence of features, e.g. as obtained from GFF_reader('myfile.gtf')
+   :type feature_sequence: iterable of Feature
+
+   :param id_attribute:
+     An attribute to use to identify the feature in the output data structures (e.g.
+     'gene_id'). If this is a list, the combination of all those attributes, separated
+     by colons (:), will be used as an identifier. For instance,
+     ['gene_id', 'exon_number'] uniquely identifies specific exons.
+   :type id_attribute: string or sequence of strings
+
+   :param feature_type:
+     If None, collect all features. If a string, restrict to only one type of features,
+     e.g. 'exon'.
+   :type feature_type: string or None
+
+   :param feature_query:
+     If None, all features of the selected types will be collected. If a string, it has
+     to be in the format: <feature_attribute> == <attr_value>, e.g. 'gene_id == "Fn1"'
+     (note the double quotes inside). Then only that feature will be collected. Using
+     this argument is more efficient than collecting all features and then pruning it
+     down to a single one.
+   :type feature_query: string or None
+
+   :param additional_attributes:
+     A list of additional attributes to be collected into a separate dict for the same
+     features, for instance ['gene_name']
+   :type additional_attributes: list or None
+
+   :param bool stranded: Whether to keep strandedness information
+   :param bool verbose:  Whether to output progress and error messages
+   :param bool add_chromosome_info:
+      Whether to add chromosome information for each feature. If this option is True,
+      the fuction appends at the end of the "additional_attributes" list a
+      "Chromosome" attribute.
+
+   :return: A dict with two keys, 'features' with the GenomicArrayOfSets populated
+     with the features, and 'attributes' which is itself a dict with
+     the id_attribute as keys and the additional attributes as values.
+
+   Example: Let's say you load the C. elegans GTF file from Ensembl and make a
+   feature dict:
+
+   >>> gff = HTSeq.GFF_Reader("Caenorhabditis_elegans.WS200.55.gtf.gz")
+   >>> worm_features = HTSeq.make_feature_genomicarrayofsets(gff)
+
+   (This command may take a few minutes to deal with the 430,000 features
+   in the GTF file. Note that you may need a lot of RAM if you have millions
+   of features.)
+
+   This function is related but distinct from ``HTSeq.make_feature_dict``. This
+   function is used in htseq-count and its barcoded twin to count gene
+   expression because the output GenomicArrayofSets is very efficient. You
+   can use it in performance-critical scans of GFF files.
