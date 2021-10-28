@@ -4,7 +4,15 @@
 import argparse
 
 def get_help_message():
-    # This will show the short opening message
+    """
+    This creates an ArgumentParser object embedded with the message for --help
+    argument when running htseq-count.
+
+    Returns
+    -------
+    pa : ArgumentParser
+        ArgumentParser object embedded with message.
+    """
 
     # TODO: Maybe move this to a file?
     description = "This script takes one or more alignment files in SAM/BAM " +
@@ -35,6 +43,9 @@ def add_options(pa):
 
     TODO: Refactor this so it's easier to maintain? If need be. Atm it is
     just very long.....
+
+    If you update this with new argument or change any of the arguments'
+    name, please update UserDefinedArguments class.
 
     Parameters
     ----------
