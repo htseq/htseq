@@ -3,7 +3,7 @@
 .. currentmodule:: HTSeq
 
 ******************
-Reference overview
+Reference API
 ******************
 
 This page offers a brief overview over all classes and functions offered by HTSeq.

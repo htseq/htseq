@@ -44,12 +44,14 @@ Contents
 ========
 
 .. toctree::
+   :glob:
    :maxdepth: 2
    
    Overview <overview>
    install
    tour
-   tss
+   tutorials
+   tutorials/*
    counting
    refoverview
    sequences

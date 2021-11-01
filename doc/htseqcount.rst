@@ -69,7 +69,7 @@ will be equal to the number of reads (or read pairs).
 The following figure illustrates the effect of these three modes and the
 ``--nonunique`` option:
 
-.. image:: count_modes.png
+.. image:: images/count_modes.png
 
 
 Usage

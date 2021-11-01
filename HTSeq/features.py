@@ -294,7 +294,7 @@ def make_feature_genomicarrayofsets(
             instance ['gene_name']
         stranded (bool): Whether to keep strandedness information
         verbose (bool): Whether to output progress and error messages
-        add_chromosome_info (bool): Whether to add chromosome infoormation for
+        add_chromosome_info (bool): Whether to add chromosome information for
             each feature. If this option is True, the fuction appends at the
             end of the "additional_attributes" list a "Chromosome" attribute.
 

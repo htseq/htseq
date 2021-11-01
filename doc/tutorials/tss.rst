@@ -74,7 +74,7 @@ as this data type enforces uniqueness::
    >>> tsspos = set()
    >>> for feature in gtffile:
    ...    if feature.type == "exon" and feature.attr["exon_number"] == "1":
-   ...       tsspos.add( feature.iv.start_d_as_pos )
+   ...       tsspos.add(feature.iv.start_d_as_pos)
 
 
 Let's take one of these starting positions. To get a nice one, we manually chose
@@ -119,11 +119,12 @@ With matplotlib, we can see that this vector is, in effect, not all zero:
 .. doctest::
 
    >>> from matplotlib import pyplot as plt #doctest: +SKIP
+   >>> x = numpy.arange(-halfwinwidth, halfwinwidth) #doctest: +SKIP
    >>> fig, ax = plt.subplots()             #doctest: +SKIP
-   >>> ax.plot(wincvg)                      #doctest: +SKIP
+   >>> ax.plot(x, wincvg)                      #doctest: +SKIP
    >>> plt.show()                           #doctest: +SKIP
 
-.. image:: tss_fig1.png
+.. image:: /images/tss_fig1.png
 
 To sum up the profile, we initialize a numpy vector of the size of our window with zeroes::
 
@@ -152,7 +153,7 @@ Using matplotlib, we can plot this:
    >>> ax.plot(x, profile)  #doctest: +SKIP
    >>> plt.show()  #doctest: +SKIP
 
-.. image:: tss_fig2.png
+.. image:: /images/tss_fig2.png
 
 
 We can see clearly that the reads concentrate around the TSS, with a prominent peak 
@@ -167,7 +168,7 @@ the coverage not from the reads but from the *fragments*, i.e., the reads extend
 to fragment size. For this, we just one
 line, to extend the read to 200 bp. Using this, we now put the whole script together:
 
-.. literalinclude:: tss1.py 
+.. literalinclude:: /code_examples/tss1.py 
 
 The script produces a ``profile`` variable whhich we can plot by adding these lines
 to it:
@@ -179,7 +180,7 @@ to it:
    >>> ax.plot(x, profile)  #doctest: +SKIP
    >>> plt.show()  #doctest: +SKIP
 
-.. image:: tss_fig3.png
+.. image:: /images/tss_fig3.png
 
 The plot looks much smoother with the extended fragments.
 
@@ -254,7 +255,7 @@ all aligned reads close to it. Here is this double loop::
    ...         else:
    ...             start_in_window = p.pos + halfwinwidth - almnt.iv.end
    ...             end_in_window   = p.pos + halfwinwidth - almnt.iv.start
-   ...         profileB[ start_in_window : end_in_window ] += 1
+   ...         profileB[start_in_window : end_in_window] += 1
 
 This loop now runs a good deal faster than our first attempt, and has a much
 smaller memory footprint.
@@ -269,7 +270,7 @@ We can plot the profiles obtained from our two methods on top of each other:
    >>> ax.plot(x, profileB, ls="--", color="red")   #doctest: +SKIP
    >>> plt.show()   #doctest: +SKIP
 
-.. image:: tss_fig4.png
+.. image:: /images/tss_fig4.png
 
 We notice that they are equal, except for the boundaries. This artifact arose
 because we extend reads to fragment length: A read which is just outside 
@@ -284,7 +285,7 @@ same result as the previous one.
 
 Here is the complete code:
 
-.. literalinclude:: tss2.py 
+.. literalinclude:: /code_examples/tss2.py 
 
 As before, to get a plot, add:
 
@@ -344,7 +345,7 @@ Again, we extent the read to fragment size::
 To see which windows the read covers, we subset the ``tssarray`` and ask for steps
 that the fragment in ``almnt`` covers::
 
-   >>> for step_iv, step_set in tssarray[ almnt.iv ].steps():
+   >>> for step_iv, step_set in tssarray[almnt.iv].steps():
    ...    print("Step", step_iv, ", contained by these windows:")
    ...    out = set()
    ...    for p in step_set:
@@ -378,7 +379,7 @@ at the appropriate places.
 
 Putting all this together leads to this script:
    
-.. literalinclude:: tss3.py
+.. literalinclude:: /code_examples/tss3.py
    
 Again, to get a plot (which will look the same as before), add:
 

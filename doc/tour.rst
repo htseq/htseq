@@ -122,15 +122,15 @@ counting the reads::
 The average qualities are hence::
 
    >>> qualsum / float(nreads)  #doctest: +SKIP
-   array([ 31.56838274,  30.08288332,  29.4375375 ,  29.00432017,
-           28.55290212,  28.26825073,  28.46681867,  27.59082363,
-           27.34097364,  27.57330293,  27.11784471,  27.19432777,
-           26.84023361,  26.76267051,  26.44885795,  26.79135165,
-           26.42901716,  26.49849994,  26.13604544,  25.95823833,
-           25.54922197,  26.20460818,  25.42333693,  25.72298892,
-           25.04164167,  24.75151006,  24.48561942,  24.27061082,
-           24.10720429,  23.68026721,  23.52034081,  23.49437978,
-           23.11076443,  22.5576223 ,  22.43549742,  22.62354494])
+   array([31.56838274,  30.08288332,  29.4375375 ,  29.00432017,
+          28.55290212,  28.26825073,  28.46681867,  27.59082363,
+          27.34097364,  27.57330293,  27.11784471,  27.19432777,
+          26.84023361,  26.76267051,  26.44885795,  26.79135165,
+          26.42901716,  26.49849994,  26.13604544,  25.95823833,
+          25.54922197,  26.20460818,  25.42333693,  25.72298892,
+          25.04164167,  24.75151006,  24.48561942,  24.27061082,
+          24.10720429,  23.68026721,  23.52034081,  23.49437978,
+          23.11076443,  22.5576223 ,  22.43549742,  22.62354494])
 
 If you have `matplotlib`_ installed, you can plot these numbers.
 
@@ -142,7 +142,7 @@ If you have `matplotlib`_ installed, you can plot these numbers.
    >>> pyplot.plot(qualsum / nreads)    #doctest:+SKIP
    >>> pyplot.show()                    #doctest:+SKIP 
 
-.. image:: qualplot.png
+.. image:: images/qualplot.png
 
 This is a very simple way of looking at the quality scores. For more sophisticated 
 quality-control techniques, see the Chapter :ref:`qa`.
@@ -151,7 +151,7 @@ quality-control techniques, see the Chapter :ref:`qa`.
 Instead of a FASTQ file, you might have a SAM file, with the reads already aligned.
 The SAM_Reader class can read such data.
    
-   >>> alignment_file = HTSeq.SAM_Reader( "yeast_RNASeq_excerpt.sam" )
+   >>> alignment_file = HTSeq.SAM_Reader("yeast_RNASeq_excerpt.sam")
    
 If we are only interested in the qualities, we can rewrite the commands from above
 to use the ``alignment_file``::
@@ -382,8 +382,8 @@ We can plot an excerpt of this with:
 However, a proper genome browser gives a better impression of the data. The following commands
 write two BedGraph (Wiggle) files, one for the plus and one for the minus strands::
 
-   >>> cvg.write_bedgraph_file( "plus.wig", "+" )
-   >>> cvg.write_bedgraph_file( "minus.wig", "-" )
+   >>> cvg.write_bedgraph_file("plus.wig", "+")
+   >>> cvg.write_bedgraph_file("minus.wig", "-")
    
 These two files can then be viewed in a genome browser (e.g. IGB_ or IGV_), alongside the 
 annotation from a GFF file (see below).
@@ -404,20 +404,20 @@ Python objects. However, there might be positions in the genome that are covered
 gene, and hence, we better use a data structure that can accommodate overlapping features.
 
 The class:`GenomicArrayOfSets` is meant for this purpose. For each step, it stores a ``set`` of objects. To
-illustrate this, we initialize a GenomicArrayOfSets and then store three features in it:
+illustrate this, we initialize a :class:`GenomicArrayOfSets` and then store three features in it:
 
 .. doctest::
 
    >>> gas = HTSeq.GenomicArrayOfSets("auto", stranded=False)
-   >>> gas[ HTSeq.GenomicInterval( "chr1", 100, 250 ) ] += "A"
-   >>> gas[ HTSeq.GenomicInterval( "chr1", 360, 640 ) ] += "A"
-   >>> gas[ HTSeq.GenomicInterval( "chr1", 510, 950 ) ] += "B"
+   >>> gas[HTSeq.GenomicInterval("chr1", 100, 250)] += "A"
+   >>> gas[HTSeq.GenomicInterval("chr1", 360, 640)] += "A"
+   >>> gas[HTSeq.GenomicInterval("chr1", 510, 950)] += "B"
 
 These three features represent three exons of two genes, arranged as shown in this figure:
 
 .. image:: GenomicArrayOfSets.svg
 
-Note that we used `+=`, not just `=`, above when adding the features. With a GenomicArrayOfSets, 
+Note that we used `+=`, not just `=`, above when adding the features. With a :class:`GenomicArrayOfSets`, 
 you need to always use the `+=` operator (rather than `=`), so that the values gets 
 *added* to the step's set.
 
@@ -427,7 +427,7 @@ Now consider a read that aligns to the following interval (represented in the fi
 
    >>> read_iv = HTSeq.GenomicInterval("chr1", 450, 800)
 
-We can query the GenomicArrayOfSets, as before:
+We can query the :class:`GenomicArrayOfSets`, as before:
 
 .. doctest::
 
@@ -456,7 +456,7 @@ using a generator comprehension and the ``reduce`` function:
 
 .. doctest::
 
-   >>> sorted(set.union(*[val for iv, val in gas[ read_iv ].steps()]))
+   >>> sorted(set.union(*[val for iv, val in gas[read_iv].steps()]))
    ['A', 'B']
 
 We will come back to the constructs in the next section, after a brief detour on how to read GTF files.
@@ -561,17 +561,17 @@ stored in the slot :attr:`name <GenomicFeature.name>`:
 To deal with this data, we will use the :class:`GenomicArrayOfSets` introuced in the
 previous section.
 
-   >>> exons = HTSeq.GenomicArrayOfSets( "auto", stranded=False )
+   >>> exons = HTSeq.GenomicArrayOfSets("auto", stranded=False)
 
 However, our RNA-Seq experiment was not strand-specific, i.e., we do not know whether
 the reads came from the plus or the minus strand. This is why we defined the GenomicArrayOfSet
 as non-stranded (``stranded=False`` in the instantiation of ``exons`` above), instructing
 it to ignore all strand information. Teherfore, we now have many overlapping
-genes, but the GenomicArrayOfSets will handle this. 
+genes, but the :class:`GenomicArrayOfSets` will handle this. 
  
    >>> for feature in gtf_file:
    ...    if feature.type == "exon":
-   ...       exons[ feature.iv ] += feature.name
+   ...       exons[feature.iv] += feature.name
 
 Nate that, we only store the gene name this time, as this will be more convenient later.
 

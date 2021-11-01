@@ -15,7 +15,7 @@ Plot
 
 Here is a typical plot:
 
-.. image:: qa_example.png
+.. image:: images/qa_example.png
    :width: 600px
    
 The plot is made from a SAM file, which contained aligned and unalignable reads.

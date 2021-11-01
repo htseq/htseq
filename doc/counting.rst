@@ -152,7 +152,7 @@ describing a read that has been aligned to position 1000 on the '+'' strand of c
 with CIGAR string ``20M300N30M2I8M``. Following the SAM specification (please read it first if 
 you are unfamiliar with CIGAR strings), this means an alignment as depicted here:
 
-.. image:: cigar.png
+.. image:: images/cigar.png
 
 [[TO DO: Nicer image, add "chr1:"]]
 
