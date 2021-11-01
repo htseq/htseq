@@ -44,13 +44,14 @@ Contents
 ========
 
 .. toctree::
+   :glob:
    :maxdepth: 2
    
    Overview <overview>
    install
    tour
-   tss
-   exon_example
+   tutorials
+   tutorials/*
    counting
    refoverview
    sequences
