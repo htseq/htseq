@@ -14,7 +14,6 @@ def create_input_argument():
         ArgumentParser object embedded with message.
     """
 
-    # TODO: Maybe move this to a file?
     description = "This script takes one or more alignment files in SAM/BAM " +
     "format and a feature file in GFF format and calculates for each feature " +
     "the number of reads mapping to it. See " +
