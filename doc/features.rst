@@ -202,7 +202,7 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
    feature dict:
 
    >>> gff = HTSeq.GFF_Reader("Caenorhabditis_elegans.WS200.55.gtf.gz")
-   >>> worm_features = HTSeq.make_feature_genomicarrayofsets(gff)
+   >>> worm_features = HTSeq.make_feature_genomicarrayofsets(gff, 'gene_id')
 
    (This command may take a few minutes to deal with the 430,000 features
    in the GTF file. Note that you may need a lot of RAM if you have millions

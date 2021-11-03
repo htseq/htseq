@@ -16,6 +16,7 @@ def GenomicInterval_xranged(gi, step):
 
 
 def ChromVector_steps(cv):
+    # "Steps" of an ndarray (or memmap?)-storaged ChromVector
     if isinstance(cv.array, numpy.ndarray):
         start = cv.iv.start
         prev_val = None
@@ -29,18 +30,20 @@ def ChromVector_steps(cv):
         yield (HTSeq.GenomicInterval(
             cv.iv.chrom, start, cv.iv.end, cv.iv.strand), prev_val,
             )
+
+    # Steps of a StepVector-storaged ChromVector
     elif isinstance(cv.array, HTSeq.StepVector.StepVector):
-        for start, stop, value in cv.array[cv.iv.start:cv.iv.end].get_steps():
+        for start, stop, value in cv.array[
+                cv.iv.start - cv.offset: cv.iv.end - cv.offset].get_steps():
             yield (HTSeq.GenomicInterval(
-                cv.iv.chrom, start, stop, cv.iv.strand), value,
+                cv.iv.chrom, start + cv.offset, stop + cv.offset, cv.iv.strand), value,
                 )
     else:
         raise SystemError("Unknown array type.")
 
 
 def GenomicArray_steps(ga):
-    for a in list(ga.chrom_vectors.values()):
-        for cv in list(a.values()):
-            for iv, val in cv.steps():
+    for chrom, chromstrand_dict in ga.chrom_vectors.items():
+        for strand, chrom_vector in chromstrand_dict.items():
+            for iv, val in chrom_vector.steps():
                 yield iv, val
-

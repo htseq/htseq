@@ -49,10 +49,14 @@ def count_reads_with_barcodes(
         for read in r:
             if read is not None:
                 read.optional_fields.append(('XF', assignment))
-                if samout_format in ('SAM', 'sam'):
+                if template is not None:
+                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                elif samout_format in ('SAM', 'sam'):
                     samoutfile.write(read.get_sam_line() + "\n")
                 else:
-                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                    raise ValueError(
+                        'BAM/SAM output: no template and not a test SAM file',
+                    )
 
     def identify_barcodes(r):
         '''Identify barcode from the read or pair (both must have the same)'''
@@ -90,6 +94,13 @@ def count_reads_with_barcodes(
             template = read_seq_file.get_template()
             samoutfile = pysam.AlignmentFile(
                     samout_filename, 'wb',
+                    template=template,
+                    )
+        elif (samout_format in ('sam', 'SAM')) and \
+                hasattr(read_seq_file, 'get_template'):
+            template = read_seq_file.get_template()
+            samoutfile = pysam.AlignmentFile(
+                    samout_filename, 'w',
                     template=template,
                     )
         else:

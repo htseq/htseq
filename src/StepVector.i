@@ -79,7 +79,7 @@
    try {
       $action
    } catch (pystyle_stopiteration &e) {
-      PyErr_SetString( PyExc_StopIteration, "" );
+      PyErr_SetString(PyExc_StopIteration, "");
       return NULL;
    }
 }
@@ -107,7 +107,7 @@ class step_vector_pystyle_iterator
    try {                                                                   \
       $action                                                              \
    } catch (std::out_of_range &e) {                                        \
-      SWIG_exception(SWIG_IndexError, e.what() );                          \
+      SWIG_exception(SWIG_IndexError, e.what());                           \
    } catch (type_error_non_arith &e) {                                     \
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );     \
    }
@@ -128,19 +128,23 @@ class step_vector_for_python {
    int num_values( ) const;
 };
 
-%template( _Pair_int_float ) std::pair< long int, double >;
+%template( _Pair_long_float ) std::pair< long int, double >;
 %template( _StepVector_Iterator_float ) step_vector_pystyle_iterator< double >; 
 %template( _StepVector_float ) step_vector_for_python< double >; 
 
-%template( _Pair_int_int ) std::pair< long int, int >;
+%template( _Pair_long_int ) std::pair< long int, int >;
 %template( _StepVector_Iterator_int ) step_vector_pystyle_iterator< int >; 
 %template( _StepVector_int ) step_vector_for_python< int >; 
 
-%template( _Pair_int_bool ) std::pair< long int, bool >;
+%template( _Pair_long_long ) std::pair< long int, long int >;
+%template( _StepVector_Iterator_long ) step_vector_pystyle_iterator< long int >; 
+%template( _StepVector_long ) step_vector_for_python< long int >; 
+
+%template( _Pair_long_bool ) std::pair< long int, bool >;
 %template( _StepVector_Iterator_bool ) step_vector_pystyle_iterator< bool >; 
 %template( _StepVector_bool ) step_vector_for_python< bool >; 
 
-%template( _Pair_int_obj ) std::pair< long int, AutoPyObjPtr >;
+%template( _Pair_long_obj ) std::pair< long int, AutoPyObjPtr >;
 %template( _StepVector_Iterator_obj ) step_vector_pystyle_iterator< AutoPyObjPtr >; 
 %template( _StepVector_obj ) step_vector_for_python< AutoPyObjPtr >; 
 
@@ -149,7 +153,6 @@ class step_vector_for_python {
 import sys
 
 class StepVector(object):
-
     """A step vector is a vector with integer indices that is able to store
     data efficiently if it is piece-wise constant, i.e., if the values change
     in "steps". So, if a number of adjacent vectort elements have the same
@@ -179,6 +182,7 @@ class StepVector(object):
         The typecode may be:
           'd' for float values (C type 'double'),
           'i' for int values,
+          'l' for long int values,
           'b' for Boolean values,
           'O' for arbitrary Python objects as value.
     
@@ -189,6 +193,8 @@ class StepVector(object):
             swigclass = _StepVector_float
         elif typecode == 'i':
             swigclass = _StepVector_int
+        elif typecode == 'l':
+            swigclass = _StepVector_long
         elif typecode == 'b':
             swigclass = _StepVector_bool
         elif typecode == 'O':
@@ -243,18 +249,19 @@ class StepVector(object):
             self._swigobj.set_value(index, index, value)
      
     def get_steps(self, values_only=False, merge_steps=True):
-        """To get a succinct representation of the StepVector's content, call
-        the 'get_steps' method. It returns an iterator that generates triples
-        of values. Each triple contains one step, giving first the start index
-        of the step, then the stop index (i.e., one more than the index of the 
-        last element), and as third element the value of the step.
-        
-        If you want to see only a part of the StepVector, use the 'start' and
-        'stop' parameters of 'get_steps' to specify a window.
-        
-        Sometimes, one might only be interested in the values, not the step
-        boundaries. Then, set 'values_only' to true, and the iterator generates
-        only the values insted of the triples.
+        """Iterate over the steps of the vector.
+
+        Args:
+            values_only (bool): Return only the values of the StepVector, without
+            the index boundaries.
+
+            merge_steps (bool): Perform on-the-fly merging of consecutive steps if
+            their value is the same. Setting this option ensures that consecutive
+            steps have distinct values.
+
+        Returns: an iterator of triplets, with each triplet containing the start
+            index, end index, and value of that step. If values_only is True, the
+            function returns an iterator of the values only.
         """
         startvals = self._swigobj.get_values_pystyle(self.start)
         prevstart = self.start
@@ -284,8 +291,10 @@ class StepVector(object):
         """Given a StepVector sv, writing sv[i] returns sv's element i (where i
         is an integer). 
         
-        If you use a slice, i.e., 'sv[i:j]', you get a view on the StepVector,
+        If you use a slice, i.e. 'sv[i:j]', you get a view on the StepVector,
         i.e., the same data, but changed boundaries.
+
+        Striding slices, i.e. 'sv[i:j:2]' are not supported.
         """
         if isinstance(index, slice):
             if index.step is not None and index.step != 1:
@@ -313,7 +322,7 @@ class StepVector(object):
         
     def __iter__(self):
         """When asked to provide an iterator, a StepVector will yield all its
-        value, repeating each value according to the length of the step.
+        values, repeating each value according to the length of the step.
         Hence, calling, e.g., 'list(sv)' will transform the StepVector 'sv'
         into an ordinary list.
         """

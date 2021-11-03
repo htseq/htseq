@@ -7,31 +7,38 @@ PYTHON=python3
 set -e
 
 CLEAN=0
-COUNT_ONLY=0
 CONDA=0
-PYTEST_ARGS=
+PYTEST_ARGS=test
 VENV_DIR=.venv
+VERBOSE=0
+SKIP_INSTALL=0
 
-while getopts ":coae:k:" OPTION; do
+while getopts ":coavst:k:" OPTION; do
     echo "$OPTION"
     case $OPTION in
-        o)
-	  COUNT_ONLY=1
-          ;;
         c)
           CLEAN=1
           ;;
 	a)
 	  CONDA=1
 	  ;;
-        e)
-	  VENV_DIR=$OPTARG
+        o)
+          PYTEST_ARGS=test/test_htseq-count.py
+          ;;
+        t)
+	  PYTEST_ARGS=$OPTARG
           ;;
 	k)
 	  PYTEST_ARGS="${PYTEST_ARGS} -k $OPTARG"
 	  ;;
+        s)
+          SKIP_INSTALL=1
+          ;;
+        v)
+          VERBOSE=1
+          ;;
         \?)
-          echo "Usage: $0 [-c]"
+          echo "Usage: $0 [-coavtk]"
           ;;
     esac
 done
@@ -55,23 +62,24 @@ else
 
   if [ ! -d $VENV_DIR ]; then
       $PYTHON -m venv $VENV_DIR
-      $VENV_DIR/bin/pip install -U pip wheel numpy
   fi
+  $VENV_DIR/bin/pip install -U pip wheel numpy pybigwig
 fi
 
-#$PYTHON setup.py build
-$PIP install --use-feature=in-tree-build .[htseq-qa,test]
+if [ x$SKIP_INSTALL = x0 ]; then
+  $PIP install --use-feature=in-tree-build .[htseq-qa,test]
+elif [ x$VERBOSE = x1 ]; then
+  echo "Skipping install"
+fi
 
 if [ x$CONDA = x1 ]; then
-  if [ x$COUNT_ONLY = x1 ]; then
-    $PYTEST test/test_htseq-count.py ${PYTEST_ARGS}
-  else
-    $PYTEST test ${PYTEST_ARGS}
+  if [ x$VERBOSE = x1 ]; then
+    echo "${PYTEST} ${PYTEST_ARGS}"
   fi
+  $PYTEST ${PYTEST_ARGS}
 else
-  if [ x$COUNT_ONLY = x1 ]; then
-    PATH=${VENV_DIR}/bin:${PATH} $PYTEST test/test_htseq-count.py ${PYTEST_ARGS}
-  else
-    PATH=${VENV_DIR}/bin:${PATH} $PYTEST test ${PYTEST_ARGS}
+  if [ x$VERBOSE = x1 ]; then
+    echo "PATH=${VENV_DIR}/bin:${PATH} ${PYTEST} ${PYTEST_ARGS}"
   fi
+  PATH=${VENV_DIR}/bin:${PATH} $PYTEST ${PYTEST_ARGS}
 fi

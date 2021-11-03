@@ -109,7 +109,7 @@ the variable ``qualsum``, a ``numpy`` array of integers::
    >>> import numpy
    >>> len(read)
    36
-   >>> qualsum = numpy.zeros(len(read), numpy.int)
+   >>> qualsum = numpy.zeros(len(read), int)
 
 Then we loop through the fastq file, adding up the quality scores and
 counting the reads::

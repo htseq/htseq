@@ -26,31 +26,28 @@ cdef str strand_plus = intern("+")
 cdef str strand_minus = intern("-")
 cdef str strand_nostrand = intern(".")
 
+
 cdef class GenomicInterval:
+    """A range of consecutive positions on a reference genome.
 
-    """A GenomicInterval specifies an interval (i.e., a range of 
-    consecutive positions) on a reference genome.
+        Properties:
 
-    A GenomicInterval object has the following slots, some of which 
-    are calculated from the other:
-
-       chrom: The name of a sequence (i.e., chromosome, contig, or 
-          the like). 
-       start: The start of the interval. Even on the reverse strand,
+        chrom: The name of a sequence (i.e., chromosome, contig, etc.). 
+        start: The start of the interval. Even on the reverse strand,
           this is always the smaller of the two values 'start' and 'end'.
           Note that all positions should be given as 0-based value!
-       end: The end of the interval. Following Python convention for 
+        end: The end of the interval. Following Python convention for 
           ranges, this in one more than the coordinate of the last base
           that is considered part of the sequence.
-       strand: The strand, as a single character, '+' or '-'. '.' indicates
+        strand: The strand, as a single character, '+' or '-'. '.' indicates
           that the strand is irrelavant. (Alternatively, pass a Strand object.)
-       length: The length of the interval, i.e., end - start
-       start_d: The "directional start" position. This is the position of the
-         first base of the interval, taking the strand into account. Hence, 
-         this is the same as 'start' except when strand == '-', in which 
-         case it is end-1.
-       end_d: The "directional end": Usually, the same as 'end', but for 
-         strand=='-1', it is start-1.
+        length: The length of the interval, i.e., end - start
+        start_d: The "directional start" position. This is the position of the
+          first base of the interval, taking the strand into account. Hence, 
+          this is the same as 'start' except when strand == '-', in which 
+          case it is end-1.
+        end_d: The "directional end": Usually, the same as 'end', but for 
+          strand=='-1', it is start-1.
     """
 
     def __init__(GenomicInterval self, str chrom, long start, long end,
@@ -259,13 +256,10 @@ def GenomicInterval_from_directional(str chrom, long int start_d, long int lengt
 
 
 cdef class GenomicPosition(GenomicInterval):
+    """Position of a nucleotide or base pair on a reference genome.
 
-    """A GenomicPosition specifies the position of a nucleotide or
-    base pair on a reference genome.
-
-    It has the following slots:
-       chrom: The name of a sequence (i.e., chromosome, contig, or 
-          the like). 
+    Properties:
+       chrom: The name of a sequence (i.e., chromosome, contig, etc.). 
        pos: The position on the sequence specified by seqname.
           The position should always be given as 0-based value!
        strand: The strand, as a single character, '+' or '-'. '.' indicates
@@ -273,17 +267,14 @@ cdef class GenomicPosition(GenomicInterval):
 
     The GenomicPosition class is derived from GenomicInterval. Hence,
     a GenomicPosition is always a GenomicInterval of length 1. Do not tinker
-    with the exposed GenomeInterval slots.
+    with the exposed GenomeInterval properties.
     """
 
     def __init__(self, str chrom, long int pos, str strand='.'):
         GenomicInterval.__init__(self, chrom, pos, pos + 1, strand)
 
     property pos:
-
-        """As GenomicPosition is a subclass of GenomicInterval, 'pos' is actually
-        just an alias for 'start_d'.
-        """
+        """Alias for 'start_d'."""
 
         def __get__(self):
             return self.start_d
@@ -316,34 +307,81 @@ cdef class GenomicPosition(GenomicInterval):
 
 
 cdef class ChromVector(object):
+    """Counting vector covering a chromosome.
+
+    This class supports three types of storage:
+      1. 'ndarray': Use a dense 1D numpy array
+      2. 'memmap': Use numpy memory maps on disk for large arrays
+      3. 'step': Use a StepVector
+    """
 
     cdef public object array
     cdef public GenomicInterval iv
     cdef public int offset
     cdef public bint is_vector_of_sets
     cdef public str _storage
+    cdef public str typecode
+    cdef public str memmap_dir
 
     @classmethod
     def create(cls, GenomicInterval iv, str typecode, str storage, str memmap_dir=""):
+        """Create ChromVector from GenomicInterval
+
+        Args:
+            iv (GenomicInterval): A GenomicInterval describing the chromosome
+              vector.
+            typecode ('d', 'i', 'l', 'b', or 'O'): What kind of data will be
+              stored inside this chromosome vector. 'd' for double, 'i' for int,
+              'l' for long int, 'b' for boolean, 'O' for arbitrary objects
+              (e.g. sets).
+            storage ('step', 'ndarray', or 'memmap'): What kind of storage to
+              use. 'ndarray' is appropriate for short chromosomes and stores
+              each position in the genome into memory. 'memmap' stores all
+              positions, but maps the memory onto disk for larger chromosomes.
+              'step' is a sparse representation similar to CSR matrices whereby
+              only the boundaries between genomic stretches with differing
+              data content are stored - see HTSeq.StepVector.
+            memmap_dir (str): If using 'memmap' storage, what folder to store
+              the memory maps. These can get quite big.
+
+        Returns:
+            An instance of ChromVector with the requested options.
+
+        """
         ncv = cls()
         ncv.iv = iv
+
         if storage == "ndarray":
             if typecode != 'O':
-                ncv.array = numpy.zeros(shape=(iv.length, ), dtype=typecode)
+                ncv.array = numpy.zeros(shape=(iv.length,), dtype=typecode)
             else:
-                ncv.array = numpy.empty(shape=(iv.length, ), dtype=typecode)
+                ncv.array = numpy.empty(shape=(iv.length,), dtype=typecode)
                 ncv.array[:] = None
+
         elif storage == "memmap":
-            ncv.array = numpy.memmap(shape=(iv.length, ), dtype=typecode,
-                                     filename=os.path.join(memmap_dir, iv.chrom + iv.strand + ".nmm"), mode='w+')
+            ncv.array = numpy.memmap(
+                shape=(iv.length,),
+                dtype=typecode,
+                filename=os.path.join(
+                    memmap_dir,
+                    iv.chrom + iv.strand + str(iv.start) + '_' \
+                        + str(iv.length) + ".nmm"),
+                mode='w+')
+
         elif storage == "step":
-            ncv.array = StepVector.StepVector.create(typecode=typecode)
+            ncv.array = StepVector.StepVector.create(
+                typecode=typecode,
+            )
+
         else:
-            raise ValueError, "Illegal storage mode."
+            raise ValueError("Illegal storage mode.")
+
         ncv._storage = storage
+        ncv.typecode = typecode
         # TODO: Test whether offset works properly
         ncv.offset = iv.start
         ncv.is_vector_of_sets = False
+        ncv.memmap_dir = memmap_dir
         return ncv
 
     @classmethod
@@ -358,86 +396,152 @@ cdef class ChromVector(object):
         v._storage = vec._storage
         return v
 
+    def extend_to_include(self, iv):
+        if iv.strand != self.iv.strand:
+            raise ValueError(
+                'The new interval must match the current strandedness',
+            )
+
+        # Step 1: extend the interval
+        length = self.iv.length
+        startdiff = max(self.iv.start - iv.start, 0)
+        self.iv.extend_to_include(iv)
+        self.offset = self.iv.start
+
+        # Step 2: extend the array if needed, and shift-copy the old values 
+        if self._storage == 'ndarray':
+            if self.typecode != 'O':
+                array = numpy.zeros(shape=(self.iv.length,), dtype=self.typecode)
+            else:
+                array = numpy.empty(shape=(self.iv.length,), dtype=self.typecode)
+                array[:] = None
+            array[startdiff: startdiff + length] = self.array[:]
+        elif self._storage == 'memmap':
+            array = numpy.memmap(
+                shape=(self.iv.length,), dtype=self.typecode,
+                filename=os.path.join(
+                    self.memmap_dir,
+                    self.iv.chrom + self.iv.strand + str(self.iv.start) + '_' \
+                        + str(self.iv.length) + ".nmm"),
+                mode='w+',
+            )
+            array[startdiff: startdiff + length] = self.array[:]
+        else:
+            # The StepVector is created in ChromVector.create without explicit
+            # boundaries, so it's already bound by 0, +inf. So we do not need
+            # to extend it here, but rather just set the slice to the right
+            # value
+            array = self.array
+        self.array = array
+
     def __getitem__(self, index):
+        """Index or slice the chromosome.
+
+        The index can be a few things:
+        - an integer: get the value of the vector at that chromosome coordinate
+        - a 1-step slice e.g "4:7": get a view of the chromosome region
+          between those coordinates. The array data are not copied.
+        - a GenomicInterval: similar to slices, with the additional choice of
+          strandedness. If this argument is stranded but the chromosome itself
+          is not stranded, a nonstranded view of the chromosome region is
+          returned.
+
+        """
         cdef slice index_slice
         cdef long int index_int
         cdef long int start, stop
         cdef GenomicInterval iv
+
         if isinstance(index, int):
             index_int = index
             if index_int < self.iv.start or index_int >= self.iv.end:
                 raise IndexError
             return self.array[index_int - self.offset]
+        
         elif isinstance(index, slice):
             index_slice = index
-            if index_slice.start is not None:
+            if index_slice.start is None:
+                start = self.iv.start
+            else:
                 start = index_slice.start
                 if start < self.iv.start:
                     raise IndexError, "start too small"
+
+            if index_slice.stop is None:
+                stop = self.iv.end
             else:
-                start = self.iv.start
-            if index_slice.stop is not None:
                 stop = index_slice.stop
                 if stop > self.iv.end:
                     raise IndexError, "stop too large"
-            else:
-                stop = self.iv.end
+
             iv = GenomicInterval(self.iv.chrom, start, stop, self.iv.strand)
+
             if not self.iv.contains(iv):
                 raise IndexError
             return ChromVector._create_view(self, iv)
+        
         elif isinstance(index, GenomicInterval):
             if not self.iv.contains(index):
                 raise IndexError
+
             if self.iv.strand is strand_nostrand and \
                     index.strand is not strand_nostrand:
                 iv = index.copy()   # Is this correct now?
                 iv.strand = strand_nostrand
+            else:
+                iv = index
+
             return ChromVector._create_view(self, iv)
+
         else:
-            raise TypeError, "Illegal index type"
+            raise TypeError("Illegal index type")
 
     def __setitem__(self, index, value):
         cdef slice index_slice
         cdef long int start, stop
+
         if isinstance(value, ChromVector):
             if self.array is value.array and value.iv.start == index.start and \
                     value.iv.end == index.stop and (index.step is None or index.step == 1):
                 return
             else:
-                raise NotImplementedError, "Required assignment signature not yet implemented."
+                raise NotImplementedError(
+                    "Required assignment signature not yet implemented.")
+
         if isinstance(index, int):
             self.array[index - self.iv.start] = value
+
         elif isinstance(index, slice):
             index_slice = index
             if index_slice.start is not None:
                 start = index_slice.start
                 if start < self.iv.start:
-                    raise IndexError, "start too small"
+                    raise IndexError("start too small")
             else:
                 start = self.iv.start
             if index_slice.stop is not None:
                 stop = index_slice.stop
                 if stop > self.iv.end:
-                    raise IndexError, "stop too large"
+                    raise IndexError("stop too large")
             else:
                 stop = self.iv.end
             if start > stop:
-                raise IndexError, "Start of interval is after its end."
+                raise IndexError("Start of interval is after its end.")
             if start == stop:
-                raise IndexError, "Cannot assign to zero-length interval."
+                raise IndexError("Cannot assign to zero-length interval.")
             self.array[start - self.offset: stop -
                        self.iv.start: index.step] = value
+
         elif isinstance(index, GenomicInterval):
             if index.chrom != self.iv.chrom:
-                raise KeyError, "Chromosome name mismatch."
+                raise KeyError("Chromosome name mismatch.")
             if self.iv.strand is not strand_nostrand and \
                     self.iv.strand is not self.index.strand:
-                raise KeyError, "Strand mismatch."
+                raise KeyError("Strand mismatch.")
             self.array[index.iv.start - self.iv.start,
                        index.iv.end - self.iv.start] = value
         else:
-            raise TypeError, "Illegal index type"
+            raise TypeError("Illegal index type")
 
     def __iadd__(self, value):
         if not self.is_vector_of_sets:
@@ -448,6 +552,7 @@ cdef class ChromVector(object):
                 y = x.copy()
                 y.add(value)
                 return y
+
             self.apply(addval)
         return self
 
@@ -483,7 +588,24 @@ def _ChromVector_unpickle(array, iv, offset, is_vector_of_sets, _storage):
     cv._storage = _storage
     return cv
 
+
 cdef class GenomicArray(object):
+    """Coverage vector including multiple chromosomes.
+
+    This object is basically a collection of ChromVector, with the same options
+    for storage:
+      1. 'ndarray': Use a dense 1D numpy array
+      2. 'memmap': Use numpy memory maps on disk for large arrays
+      3. 'step': Use a StepVector
+
+    The class also supports autodiscovery of chromosomes if the 'step' storage
+    method is used. In that case, chromosomes of at least sufficient size will
+    be created whenever the data pushed into the GenomicArray refers to them.
+    For instance, if you are computing plain read coverage along chromosomes,
+    each read will inform the GenomicArray as of its chromosome and position:
+    the GenomicArray will then create an appropriate ChromVector object of at
+    least that size.
+    """
 
     cdef public dict chrom_vectors
     cdef readonly bint stranded
@@ -491,25 +613,64 @@ cdef class GenomicArray(object):
     cdef public bint auto_add_chroms
     cdef readonly str storage
     cdef readonly str memmap_dir
+    cdef public str header
 
     def __init__(self, object chroms, bint stranded=True, str typecode='d',
-                 str storage='step', str memmap_dir=""):
+                 str storage='step', str memmap_dir="", str header=""):
+        '''GenomicArray(chroms, stranded=True, typecode="d", storage="step", memmap_dir="")
+
+        Initialize GenomicArray
+
+        Args:
+            chroms (str, list, or dict): Chromosomes in the GenomicArray. If
+              'auto', guess as the array gets filled. If a list, make infinitely
+              long chromosomes with those names, their length will be guessed
+              as they get filled. If a dict, keys are chromosome names and 
+              values are their lengths in base pairs. The first two options are
+              only available for the 'step' storage (see below).
+            stranded (bool): whether the array stores strandedness information.
+            typecode ('d', 'i', 'l', 'b', 'O'): what kind of data the array
+              will contain. 'd' for double, 'i' for int, 'l' for long int, 'b'
+              for boolean, 'O' for arbitrary objects (e.g. sets).
+            storage ('step', 'ndarray', or 'memmap'): What kind of storage to
+              use. 'ndarray' is appropriate for short chromosomes and stores
+              each position in the genome into memory. 'memmap' stores all
+              positions, but maps the memory onto disk for larger chromosomes.
+              'step' is a sparse representation similar to CSR matrices whereby
+              only the boundaries between genomic stretches with differing
+              data content are stored - see HTSeq.StepVector.
+            memmap_dir (str): If using 'memmap' storage, what folder to store
+              the memory maps. These can get quite big.
+            header (str): A header with metadata (e.g. when parsing a BedGraph
+              file, having the header helps writing it out with all browser
+              options retained).
+
+        Returns:
+            An instance of GenomicArray with the requested options.
+        '''
+
+
+        self.auto_add_chroms = chroms == "auto"
         self.chrom_vectors = {}
         self.stranded = stranded
         self.typecode = typecode
-        self.auto_add_chroms = chroms == "auto"
+        self.header = header
+
         if self.auto_add_chroms:
             chroms = []
             if storage != 'step':
-                raise TypeError, "Automatic adding of chromosomes can " + \
-                    " only be used with storage type 'StepVector'."
+                raise TypeError("Automatic adding of chromosomes can " + \
+                    " only be used with storage type 'StepVector'.")
+
         elif isinstance(chroms, list):
             if storage != 'step':
-                raise TypeError, "Indefinite-length chromosomes can " + \
-                    " only be used with storage type 'StepVector'."
+                raise TypeError("Indefinite-length chromosomes can " + \
+                    " only be used with storage type 'StepVector'.")
             chroms = dict([(c, sys.maxsize) for c in chroms])
+
         elif not isinstance(chroms, dict):
-            raise TypeError, "'chroms' must be a list or a dict or 'auto'."
+            raise TypeError("'chroms' must be a list or a dict or 'auto'.")
+
         self.storage = storage
         self.memmap_dir = memmap_dir
 
@@ -519,7 +680,8 @@ cdef class GenomicArray(object):
     def __getitem__(self, index):
         if isinstance(index, GenomicInterval):
             if self.stranded and index.strand not in (strand_plus, strand_minus):
-                raise KeyError, "Non-stranded index used for stranded GenomicArray."
+                raise KeyError(
+                    "Non-stranded index used for stranded GenomicArray.")
             if self.auto_add_chroms and index.chrom not in self.chrom_vectors:
                 self.add_chrom(index.chrom)
             if isinstance(index, GenomicPosition):
@@ -537,20 +699,41 @@ cdef class GenomicArray(object):
 
     def __setitem__(self, index, value):
         cdef GenomicInterval index2
+
         if isinstance(value, ChromVector):
             if not isinstance(index, GenomicInterval):
-                raise NotImplementedError, "Required assignment signature not yet implemented."
+                raise NotImplementedError(
+                    "Required assignment signature not yet implemented.")
             index2 = index.copy()
             if not self.stranded:
                 index2.strand = strand_nostrand
             if self.chrom_vectors[index2.chrom][index2.strand].array is value.array and index2 == value.iv:
                 return
-            raise NotImplementedError, "Required assignment signature not yet implemented."
+            raise NotImplementedError(
+                    "Required assignment signature not yet implemented.")
         if isinstance(index, GenomicInterval):
             if self.stranded and index.strand not in (strand_plus, strand_minus):
-                raise KeyError, "Non-stranded index used for stranded GenomicArray."
-            if self.auto_add_chroms and index.chrom not in self.chrom_vectors:
-                self.add_chrom(index.chrom)
+                raise KeyError(
+                    "Non-stranded index used for stranded GenomicArray.")
+            if self.auto_add_chroms:
+                # Add a new chromosome
+                if index.chrom not in self.chrom_vectors:
+                    self.add_chrom(
+                            index.chrom,
+                            length=index.end - index.start,
+                            start_index=index.start,
+                    )
+                # Extend a known chromosome
+                else:
+                    if self.stranded:
+                        self.chrom_vectors[index.chrom][index.strand].extend_to_include(
+                            index,
+                        )
+                    else:
+                        self.chrom_vectors[index.chrom][strand_nostrand].extend_to_include(
+                            index,
+                        )
+
             if self.stranded:
                 self.chrom_vectors[index.chrom][index.strand][
                     index.start: index.end] = value
@@ -558,7 +741,7 @@ cdef class GenomicArray(object):
                 self.chrom_vectors[index.chrom][strand_nostrand][
                     index.start: index.end] = value
         else:
-            raise TypeError, "Illegal index type."
+            raise TypeError("Illegal index type.")
 
     def add_chrom(self, chrom, length=sys.maxsize, start_index=0):
         cdef GenomicInterval iv
@@ -569,12 +752,12 @@ cdef class GenomicArray(object):
         if self.stranded:
             self.chrom_vectors[chrom] = {}
             iv.strand = "+"
-            self.chrom_vectors[ chrom ][ strand_plus ] = \
+            self.chrom_vectors[chrom][strand_plus] = \
                 ChromVector.create(iv, self.typecode,
                                    self.storage, self.memmap_dir)
             iv = iv.copy()
             iv.strand = "-"
-            self.chrom_vectors[ chrom ][ strand_minus ] = \
+            self.chrom_vectors[chrom][strand_minus] = \
                 ChromVector.create(iv, self.typecode,
                                    self.storage, self.memmap_dir)
         else:
@@ -586,7 +769,34 @@ cdef class GenomicArray(object):
     def __reduce__(self):
         return (_GenomicArray_unpickle, (self.stranded, self.typecode, self.chrom_vectors))
 
-    def write_bedgraph_file(self, file_or_filename, strand=".", track_options=""):
+    def write_bedgraph_file(
+            self,
+            file_or_filename,
+            strand=".",
+            track_options="",
+            separator='\t',
+            ):
+        '''Write GenomicArray to BedGraph file
+
+        BedGraph files are used to visualize genomic "tracks", notably in
+        UCSC's genomic viewer. This function stores the GenomicArray into such
+        a file for further use.
+
+        Args:
+            file_or_filename (str, path, or open file handle): Where to store
+              the BedGraph data.
+            strand ("+", "-", or "."): Which strand to store the array onto.
+            track_options (str): A string pre-formatted to describe the track
+              options as they appear on the first line of the BedGraph file,
+              after "track type=bedGraph".
+            separator (str): the pattern that separates the columns.
+
+        The BedGraph file format is described here:
+        
+            http://genome.ucsc.edu/goldenPath/help/bedgraph.html
+        '''
+        sep = separator
+
         if (not self.stranded) and strand != ".":
             raise ValueError, "Strand specified in unstranded GenomicArray."
         if self.stranded and strand not in (strand_plus, strand_minus):
@@ -595,20 +805,234 @@ cdef class GenomicArray(object):
             f = file_or_filename
         else:
             f = open(file_or_filename, "w")
-        if track_options == "":
-            f.write("track type=bedGraph\n")
+
+        try:
+            if self.header:
+                f.write(self.header)
+                if not self.header.endswith('\n'):
+                    f.write('\n')
+            if track_options == "":
+                f.write("track type=bedGraph\n")
+            else:
+                f.write("track type=bedGraph %s\n" % track_options)
+            for chrom in self.chrom_vectors:
+                for iv, value in self.chrom_vectors[chrom][strand].steps():
+                    if iv.start == -sys.maxsize - 1 or iv.end == sys.maxsize:
+                        continue
+                    f.write(
+                        sep.join(
+                            (iv.chrom, str(iv.start), str(iv.end), str(value)),
+                            )+'\n',
+                        )
+        finally:
+            # Close the file only if we were the ones to open it
+            if not hasattr(file_or_filename, "write"):
+                f.close()
+
+    @classmethod
+    def from_bedgraph_file(cls, file_or_filename, strand=".", typecode="d"):
+        '''Create GenomicArray from BedGraph file
+
+        See GenomicArray.write_bedgraph_file for details on the file format.
+
+        Args:
+            file_or_filename (str, path, or open file handle): Where to load
+              the BedGraph data from.
+            strand ("+", "-", or "."): strandedness of the returned array.
+            typecode ("d", "i", or "l"): Type of data in the file.
+              "d" means floating point (double), "i" is integer, "l" is long
+              integer.
+
+        Returns:
+            A GenomicArray instance with the data.
+        '''
+        if hasattr(file_or_filename, "read"):
+            f = file_or_filename
         else:
-            f.write("track type=bedGraph %s\n" % track_options)
-        for chrom in self.chrom_vectors:
-            for iv, value in self.chrom_vectors[chrom][strand].steps():
-                if iv.start == -sys.maxsize - 1 or iv.end == sys.maxsize:
-                    continue
-                f.write("%s\t%d\t%d\t%f\n" %
-                        (iv.chrom, iv.start, iv.end, value))
-        if not hasattr(file_or_filename, "write"):
-            f.close()
+            f = open(file_or_filename, "r")
+
+        try:
+            # Find beginning of actual contents
+            header = []
+            for line in f:
+                if line.startswith('track type=bedGraph'):
+                    break
+                header.append(line)
+            else:
+                raise IOError(
+                    "header line with 'track type=bedGraph' not found."
+                )
+
+            # Create the instance with autochromosomes
+            array = cls(
+                "auto",
+                stranded=strand != ".",
+                typecode=typecode,
+                storage='step',
+                header=''.join(header),
+            )
+
+            # Load contents
+            for line in f:
+                chrom, start, end, value = line.rstrip('\n\r').split()
+                start, end = int(start), int(end)
+                if typecode in ('i', 'l'):
+                    value = int(value)
+                elif typecode == 'd':
+                    value = float(value)
+                else:
+                    raise ValueError(f"Typecode not supported: {typecode}")
+
+                iv = GenomicInterval(chrom, start, end, strand=strand)
+                array[iv] = value
+
+        finally:
+            # Close the file only if we were the ones to open it
+            if not hasattr(file_or_filename, "read"):
+                f.close()
+
+        return array
+
+    def write_bigwig_file(
+            self,
+            filename,
+            strand='.',
+            ):
+        '''Write GenomicArray to BigWig file
+
+        BigWig files are used to visualize genomic "tracks", notably in
+        UCSC's genomic viewer. They are, in a sense, the binary compressed
+        equivalent of BedGraph files. This function stores the GenomicArray
+        into such a file for further use.
+
+        Args:
+            filename (str or path): Where to store the data.
+
+        The BigWig file format is described here:
+        
+            http://genome.ucsc.edu/goldenPath/help/bigWig.html
+
+        NOTE: This function requires the package pyBigWig at:
+
+            https://github.com/deeptools/pyBigWig
+
+        Install it via pip, conda, or see instructions at that page.
+        '''
+        try:
+            import pyBigWig
+        except ImportError:
+            raise ImportError(
+                'pyBigWig is required to write a GenomicArray to a bigWig file',
+            )
+
+        if (not self.stranded) and strand != ".":
+            raise ValueError, "Strand specified in unstranded GenomicArray."
+        if self.stranded and strand not in (strand_plus, strand_minus):
+            raise ValueError, "Strand must be specified for stranded GenomicArray."
+
+        with pyBigWig.open(filename, "w") as bw:
+            # Write header with chromosome info
+            header = []
+            for chrom in self.chrom_vectors:
+                cv = self.chrom_vectors[chrom][strand]
+                end = cv.iv.end
+                header.append((chrom, end))
+            bw.addHeader(header)
+
+            # Write data (use a buffer for efficiency)
+            entries = {'chrom': [], 'start': [], 'ends': [], 'values': []}
+            bufsize = 1000
+
+            def write_with_buffer(bw, entries, bufsize, newentry=None):
+                if newentry is not None:
+                    for key in entries:
+                        entries[key].append(newentry[key])
+                if len(entries) >= bufsize:
+                    bw.addEntries(
+                        entries['chrom'], entries['start'],
+                        ends=entries['ends'], values=entries['values'],
+                    )
+                    for key in entries:
+                        entries[key].clear()
+
+            for chrom in self.chrom_vectors:
+                cv = self.chrom_vectors[chrom][strand]
+                for iv, value in cv.steps():
+                    if iv.start == -sys.maxsize - 1 or iv.end == sys.maxsize:
+                        continue
+
+                    entry = {
+                        'chrom': chrom,
+                        'start': iv.start,
+                        'ends': iv.end,
+                        'values': value,
+                    }
+                    write_with_buffer(bw, entries, bufsize, newentry=entry)
+            # Flush buffer
+            write_with_buffer(bw, entries, bufsize=1)
+
+    @classmethod
+    def from_bigwig_file(cls, filename, strand=".", typecode="d"):
+        '''Create GenomicArray from BigWig file
+
+        See GenomicArray.write_bigwig for details on the file format.
+
+        Args:
+            filename (str or path): Where to load the data from.
+            strand ("+", "-", or "."): strandedness of the returned array.
+            typecode ("d", "i", or "l"): Type of data in the file.
+              "d" means floating point (double), "i" is integer, "l" is long
+              integer.
+
+        Returns:
+            A GenomicArray instance with the data.
+        '''
+        try:
+            import pyBigWig
+        except ImportError:
+            raise ImportError(
+                'pyBigWig is required to write a GenomicArray to a bigWig file',
+            )
+
+        with pyBigWig.open(filename) as bw:
+            chrom_dict = dict(bw.chroms())
+
+            # Create the instance with specified chromosomes
+            array = cls(
+                chrom_dict,
+                stranded=strand != ".",
+                typecode=typecode,
+                storage='step',
+            )
+
+            for chrom in chrom_dict:
+                intervals = bw.intervals(chrom)
+                for i, (start, end, value) in enumerate(intervals):
+                    # Set the chromosome offset with the first value, since
+                    # they are ordered. The StepVector will be offset compared
+                    # to that.
+                    if i == 0:
+                        array.chrom_vectors[chrom][strand].offset = start
+                        array.chrom_vectors[chrom][strand].iv.start = start
+
+                    # Bypass GenomicArray.__setitem__ for efficiency
+                    # This can be done because, unlike for BedGraph files,
+                    # we know the length of chromosomes a priori from the
+                    # header.
+                    array.chrom_vectors[chrom][strand][start: end] = value
+
+        return array
 
     def steps(self):
+        '''Get the steps, independent of storage method
+
+        Each "step" is a GenomicInterval with fixed value of the array. For
+        instance, if we have 3 counts on chromosome '1' between 0 and 10
+        (exclded) and 6 counts between 10 and 20 (end of chromosome), we would
+        get two steps: (0, 10, 3) and (10, 20, 6). If the GenomicArray is
+        stranded, genomic intervals of the appropriate strandedness are
+        returned.
+        '''
         return _HTSeq_internal.GenomicArray_steps(self)
 
 
@@ -626,7 +1050,9 @@ def _GenomicArray_unpickle(stranded, typecode, chrom_vectors):
 def _make_translation_table_for_complementation():
     return bytes.maketrans(b'ACGTacgt', b'TGCAtgca')
 
+
 cdef bytes _translation_table_for_complementation = _make_translation_table_for_complementation()
+
 
 cpdef bytes reverse_complement(bytes seq):
     """Returns the reverse complement of DNA sequence 'seq'. Does not yet
@@ -634,11 +1060,12 @@ cpdef bytes reverse_complement(bytes seq):
 
     return seq[::-1].translate(_translation_table_for_complementation)
 
+
 base_to_column = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'N': 4}
 
+
 cdef class Sequence(object):
-    """A Sequence, typically of DNA, with a name.
-    """
+    """A Sequence, typically of DNA, with a name."""
 
     def __init__(self, bytes seq, str name="unnamed"):
         self.seq = seq
@@ -1003,106 +1430,9 @@ cdef class SequenceWithQualities(Sequence):
 
 
 ###########################
-# Alignment
+# CIGAR codes (SAM format)
 ###########################
-
-cdef class Alignment(object):
-
-    """Alignment base type:
-
-    An alignment object can be defined in different ways but will always
-    provide these attributes:
-      read:      a SequenceWithQualities object with the read
-      aligned:   whether the read is aligned
-      iv:        a GenomicInterval object with the alignment position 
-    """
-
-    def __init__(self, read, iv):
-        self._read = read
-        self.iv = iv
-
-    @property
-    def read(self):
-        return self._read
-
-    def __repr__(self):
-        cdef str s
-        if self.paired_end:
-            s = "Paired-end read"
-        else:
-            s = "Read"
-        if self.aligned:
-            return "<%s object: %s '%s' aligned to %s>" % (
-                self.__class__.__name__, s, self.read.name, str(self.iv))
-        else:
-            return "<%s object: %s '%s', not aligned>" % (
-                self.__class__.__name__, s, self.read.name)
-
-    @property
-    def paired_end(self):
-        return False
-
-    @property
-    def aligned(self):
-        """Returns True unless self.iv is None. The latter indicates that
-        this record decribes a read for which no alignment was found.
-        """
-        return self.iv is not None
-
-cdef class AlignmentWithSequenceReversal(Alignment):
-
-    """Many aligners report the read's sequence in reverse-complemented form
-    when it was mapped to the reverse strand. For such alignments, a 
-    daughter class of this one should be used.
-
-    Then, the read is stored as aligned in the 'read_as_aligned' field,
-    and get reverse-complemented back to the sequenced form when the 'read'
-    attribute is sequenced.
-    """
-
-    def __init__(self, SequenceWithQualities read_as_aligned, GenomicInterval iv):
-        self.read_as_aligned = read_as_aligned
-        self._read_as_sequenced = None
-        self.iv = iv
-
-    property read:
-        def __get__(self):
-            if self._read_as_sequenced is None:
-                if (not self.aligned) or self.iv.strand != "-":
-                    self._read_as_sequenced = self.read_as_aligned
-                else:
-                    self._read_as_sequenced = self.read_as_aligned.get_reverse_complement()
-                    self._read_as_sequenced.name = self.read_as_aligned.name
-            return self._read_as_sequenced
-        # def __set__( self, read ):
-        #   self.read_as_aligned = read
-        #   self._read_as_sequenced = None
-
-
-cdef class BowtieAlignment(AlignmentWithSequenceReversal):
-
-    """When reading in a Bowtie file, objects of the class BowtieAlignment
-    are returned. In addition to the 'read' and 'iv' fields (see Alignment
-    class), the fields 'reserved' and 'substitutions' are provided. These 
-    contain the content of the respective columns of the Bowtie output 
-
-    [A parser for the substitutions field will be added soon.]
-    """
-
-    cdef public str reserved
-    cdef public str substitutions
-
-    def __init__(self, bowtie_line):
-        cdef str readId, strand, chrom, position, read, qual
-        cdef int positionint
-        (readId, strand, chrom, position, read, qual,
-         self.reserved, self.substitutions) = bowtie_line.split('\t')
-        positionint = int(position)
-        AlignmentWithSequenceReversal.__init__(self,
-                                               SequenceWithQualities(
-                                                   read, readId, qual),
-                                               GenomicInterval(chrom, positionint, positionint + len(read), strand))
-
+_re_cigar_codes = re.compile('([MIDNSHP=X])')
 
 cigar_operation_names = {
     'M': 'matched',
@@ -1114,6 +1444,12 @@ cigar_operation_names = {
     'P': 'padded',
     '=': 'sequence-matched',
     'X': 'sequence-mismatched'}
+
+
+cigar_operation_codes = ['M', 'I', 'D', 'N', 'S', 'H', 'P', '=', 'X']
+cigar_operation_code_dict = dict(
+    [(x, i) for i, x in enumerate(cigar_operation_codes)])
+
 
 cdef class CigarOperation(object):
 
@@ -1157,7 +1493,6 @@ cdef class CigarOperation(object):
             return False
         return True
 
-_re_cigar_codes = re.compile('([MIDNSHP=X])')
 
 cpdef list parse_cigar(str cigar_string, int ref_left=0, str chrom="", str strand="."):
     cdef list split_cigar, cl
@@ -1175,6 +1510,7 @@ cpdef list parse_cigar(str cigar_string, int ref_left=0, str chrom="", str stran
         code = split_cigar[2 * i + 1]
         cl.append((code, size))
     return build_cigar_list(cl, ref_left, chrom, strand)
+
 
 cpdef list build_cigar_list(list cigar_pairs, int ref_left=0, str chrom="", str strand="."):
     cdef list split_cigar, res
@@ -1215,6 +1551,106 @@ cpdef list build_cigar_list(list cigar_pairs, int ref_left=0, str chrom="", str 
             raise ValueError, "Unknown CIGAR code '%s' encountered." % code
     return res
 
+
+###########################
+# Alignment
+###########################
+cdef class Alignment(object):
+    """An aligned read (typically from a BAM file).
+
+    An alignment object can be defined in different ways but will always
+    provide these attributes:
+      read:      a SequenceWithQualities object with the read
+      aligned:   whether the read is aligned
+      iv:        a GenomicInterval object with the alignment position 
+    """
+
+    def __init__(self, read, iv):
+        self._read = read
+        self.iv = iv
+
+    @property
+    def read(self):
+        return self._read
+
+    def __repr__(self):
+        cdef str s
+        if self.paired_end:
+            s = "Paired-end read"
+        else:
+            s = "Read"
+        if self.aligned:
+            return "<%s object: %s '%s' aligned to %s>" % (
+                self.__class__.__name__, s, self.read.name, str(self.iv))
+        else:
+            return "<%s object: %s '%s', not aligned>" % (
+                self.__class__.__name__, s, self.read.name)
+
+    @property
+    def paired_end(self):
+        return False
+
+    @property
+    def aligned(self):
+        """Returns True unless self.iv is None. The latter indicates that
+        this record decribes a read for which no alignment was found.
+        """
+        return self.iv is not None
+
+
+cdef class AlignmentWithSequenceReversal(Alignment):
+    """Many aligners report the read's sequence in reverse-complemented form
+    when it was mapped to the reverse strand. For such alignments, a 
+    daughter class of this one should be used.
+
+    Then, the read is stored as aligned in the 'read_as_aligned' field,
+    and get reverse-complemented back to the sequenced form when the 'read'
+    attribute is sequenced.
+    """
+
+    def __init__(self, SequenceWithQualities read_as_aligned, GenomicInterval iv):
+        self.read_as_aligned = read_as_aligned
+        self._read_as_sequenced = None
+        self.iv = iv
+
+    property read:
+        def __get__(self):
+            if self._read_as_sequenced is None:
+                if (not self.aligned) or self.iv.strand != "-":
+                    self._read_as_sequenced = self.read_as_aligned
+                else:
+                    self._read_as_sequenced = self.read_as_aligned.get_reverse_complement()
+                    self._read_as_sequenced.name = self.read_as_aligned.name
+            return self._read_as_sequenced
+        # def __set__( self, read ):
+        #   self.read_as_aligned = read
+        #   self._read_as_sequenced = None
+
+
+cdef class BowtieAlignment(AlignmentWithSequenceReversal):
+    """When reading in a Bowtie file, objects of the class BowtieAlignment
+    are returned. In addition to the 'read' and 'iv' fields (see Alignment
+    class), the fields 'reserved' and 'substitutions' are provided. These 
+    contain the content of the respective columns of the Bowtie output 
+
+    [A parser for the substitutions field will be added soon.]
+    """
+
+    cdef public str reserved
+    cdef public str substitutions
+
+    def __init__(self, bowtie_line):
+        cdef str readId, strand, chrom, position, read, qual
+        cdef int positionint
+        (readId, strand, chrom, position, read, qual,
+         self.reserved, self.substitutions) = bowtie_line.split('\t')
+        positionint = int(position)
+        AlignmentWithSequenceReversal.__init__(self,
+                                               SequenceWithQualities(
+                                                   read, readId, qual),
+                                               GenomicInterval(chrom, positionint, positionint + len(read), strand))
+
+
 cdef _parse_SAM_optional_field_value(str field):
     if len(field) < 5 or field[2] != ':' or field[4] != ':':
         raise ValueError, "Malformatted SAM optional field '%'" % field
@@ -1237,13 +1673,7 @@ cdef _parse_SAM_optional_field_value(str field):
         raise ValueError, "SAM optional field with illegal type letter '%s'" % field[2]
 
 
-cigar_operation_codes = ['M', 'I', 'D', 'N', 'S', 'H', 'P', '=', 'X']
-cigar_operation_code_dict = dict(
-    [(x, i) for i, x in enumerate(cigar_operation_codes)])
-
-
 cdef class SAM_Alignment(AlignmentWithSequenceReversal):
-
     """When reading in a SAM file, objects of the class SAM_Alignment
     are returned. In addition to the 'read', 'iv' and 'aligned' fields (see 
     Alignment class), the following fields are provided:
@@ -1595,7 +2025,6 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
 ###########################
 # Helpers
 ###########################
-
 cpdef list quotesafe_split(bytes s, bytes split=b';', bytes quote=b'"'):
     cdef list l = []
     cdef int i = 0

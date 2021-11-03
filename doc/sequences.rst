@@ -18,11 +18,11 @@ A **Sequence** object holds a DNA sequence. Besides the actual sequence, an obje
 may also hold a name.
 
 Instantiation
-   .. class:: Sequence( seq, name="unnamed" )
+   .. class:: Sequence(seq, name="unnamed")
 
    Pass the DNA sequence and, optionally, a name or ID to the constructor::
    
-      >>> myseq = HTSeq.Sequence( b"ACCGTTAC", "my_sequence" )
+      >>> myseq = HTSeq.Sequence(b"ACCGTTAC", "my_sequence")
    
    (If the name is omitted, the default ``"unnamed"`` is used.)
    
@@ -55,7 +55,7 @@ Representation and string conversion
       
    Note that the length of a sequence is the number of bases::
    
-      >>> len( myseq )
+      >>> len(myseq)
       8
 
 Subsetting
@@ -71,7 +71,7 @@ Subsetting
    
 Reverse complement   
 
-   .. method:: Sequence.get_reverse_complement( )
+   .. method:: Sequence.get_reverse_complement()
 
 ::   
 
@@ -85,14 +85,14 @@ Reverse complement
 
 Writing to FASTA file
    
-   .. method: Sequence.write_to_fasta_file( fasta_file )
+   .. method: Sequence.write_to_fasta_file(fasta_file)
    
    To write **Sequence** objects into a FASTA file, open a text file for writing,
    then call **write_to_fasta_file** for each sequence, providing the open
    file handle as only argument, and close the file::
    
-      >>> my_fasta_file = open( "test.fa", "w" )
-      >>> myseq.write_to_fasta_file( my_fasta_file )
+      >>> my_fasta_file = open("test.fa", "w")
+      >>> myseq.write_to_fasta_file(my_fasta_file)
       >>> my_fasta_file.close()
    
    To read from a FASTA file, see class :class:`FastaReader`.
@@ -103,7 +103,7 @@ Extended UIPAC letters
    
 Counting bases
 
-   .. method: Sequence.add_bases_to_count_array( count_array )
+   .. method: Sequence.add_bases_to_count_array(count_array)
    
    For read quality assessment, it is often helpful to count the proportions
    of called bases, stratified by position in the read. To obtain such counts,
@@ -112,10 +112,10 @@ Counting bases
    .. doctest::
    
       >>> import numpy
-      >>> reads = HTSeq.FastqReader( "yeast_RNASeq_excerpt_sequence.txt" )  
-      >>> counts = numpy.zeros( ( 36, 5 ), numpy.int )
+      >>> reads = HTSeq.FastqReader("yeast_RNASeq_excerpt_sequence.txt")  
+      >>> counts = numpy.zeros((36, 5), int)
       >>> for read in reads:
-      ...     read.add_bases_to_count_array( counts )
+      ...     read.add_bases_to_count_array(counts)
       >>> counts        #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS
       array([[16194,  2048,  4017,  2683,    57],
              [10716,  3321,  4933,  6029,     0],
@@ -132,14 +132,14 @@ Counting bases
    the 5 columns correspond to the base letters 'A', 'C', 'G', 'T', and 'N', as given by
    the constant **base_to_columns**
    
-   .. data:: base_to_column = { 'A': 0, 'C': 1, 'G': 2, 'T': 3, 'N': 4 }
+   .. data:: base_to_column = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'N': 4}
    
    Hence, we can get the proportion of 'C's in each position as follows:
    
    .. doctest::
    
-      >>> counts = numpy.array( counts, numpy.float ) #doctest:+ELLIPSIS,+NORMALIZE_WHITESPACE
-      >>> #counts[ : , HTSeq.base_to_column['C'] ] / counts.sum(1)
+      >>> counts = numpy.array(counts, float) #doctest:+ELLIPSIS,+NORMALIZE_WHITESPACE
+      >>> #counts[:, HTSeq.base_to_column['C']] / counts.sum(1)
       array([ 0.08192328,  0.13284531,  0.20096804,  0.16872675,  0.21200848,
               ...
               0.18560742,  0.19236769,  0.19088764,  0.17872715,  0.1924877 ,
@@ -151,8 +151,8 @@ Counting bases
 
 Trimming reads
 
-   .. method:: Sequence.trim_left_end( pattern, mismatch_prop = 0. )
-               Sequence.trim_right_end( pattern, mismatch_prop = 0. )
+   .. method:: Sequence.trim_left_end(pattern, mismatch_prop = 0.)
+               Sequence.trim_right_end(pattern, mismatch_prop = 0.)
                
    In high-throughput sequencing, reads are sometimes contaminated with adapters
    or sequencing primers. These function take a pattern and attempt to match either
@@ -162,9 +162,9 @@ Trimming reads
    
    Here is an example::
    
-      >>> seq2 = HTSeq.Sequence( b"ACGTAAAGCGGTACGGGGGG" )
-      >>> left_seq = HTSeq.Sequence( b"CCCACG" )
-      >>> print(seq2.trim_left_end( left_seq ))
+      >>> seq2 = HTSeq.Sequence(b"ACGTAAAGCGGTACGGGGGG")
+      >>> left_seq = HTSeq.Sequence(b"CCCACG")
+      >>> print(seq2.trim_left_end(left_seq))
       TAAAGCGGTACGGGGGG
       
    The right end of the pattern ("ACG") matched the left end of the sequence, and
@@ -173,12 +173,12 @@ Trimming reads
    The optional argument ``mismatch_prop`` is the number of allowed mismatches as
    proportion of the length of the match::
 
-      >>> right_seq = HTSeq.Sequence( b"GGGTGGG" )
-      >>> print(seq2.trim_right_end( right_seq ))
+      >>> right_seq = HTSeq.Sequence(b"GGGTGGG")
+      >>> print(seq2.trim_right_end(right_seq))
       ACGTAAAGCGGTACGGG
-      >>> print(seq2.trim_right_end( right_seq, 1/6. ))
+      >>> print(seq2.trim_right_end(right_seq, 1/6.))
       ACGTAAAGCGGTAC
-      >>> print(seq2.trim_right_end( right_seq, 1/7. ))
+      >>> print(seq2.trim_right_end(right_seq, 1/7.))
       ACGTAAAGCGGTACGGG
       
    Here, if we allow at least one mismatch per six bases, the whole pattern gets cut off.
@@ -199,12 +199,12 @@ how sure the software was that the right base was called. The class ``SequenceWi
 
 Instantiation
 
-   .. class:: SequenceWithQualities( seq, name qualstr, qualscale="phred" ) 
+   .. class:: SequenceWithQualities(seq, name qualstr, qualscale="phred") 
 
    A ``SequenceWithQualities`` can be instantiated as a ``Sequence``, but now with
    a third argument, the quality string::
 
-      >>> myread = HTSeq.SequenceWithQualities( b"ACGACTGACC", "my_read", b"IICGAB##(!" )
+      >>> myread = HTSeq.SequenceWithQualities(b"ACGACTGACC", "my_read", b"IICGAB##(!")
    
    The quality string is interpreted as Sanger-encoded string of Phred values, as
    defined in the `FASTQ format specification`_, i.e., each letter in the quality
@@ -250,7 +250,7 @@ Attributes
       The quality string according to Sanger Phred encoding. In case the quality was
       originally given in ``solexa`` or ``solexa-old`` format, it is converted::
       
-         >>> read2 = HTSeq.SequenceWithQualities( b"ACGACTGACC", "my_read", b"hhgddaZVFF", "solexa" )
+         >>> read2 = HTSeq.SequenceWithQualities(b"ACGACTGACC", "my_read", b"hhgddaZVFF", "solexa")
          >>> read2.qual
          array([40, 40, 39, 36, 36, 33, 26, 22,  6,  6], dtype=uint8)
          >>> read2.qualstr
@@ -258,14 +258,14 @@ Attributes
      
 Writing to FASTQ file
    
-   .. method:: SequenceWithQuality.write_to_fastq_file( fasta_file )
+   .. method:: SequenceWithQuality.write_to_fastq_file(fasta_file)
    
    To write ``SequenceWithQualities`` objects into a FASTQ file, open a text file for writing,
    then call ``write_to_fastq_file`` for each sequence, providing the open
    file handle as only argument, and close the file::
    
-      >>> my_fastq_file = open( "test.fq", "w" )
-      >>> myread.write_to_fastq_file( my_fastq_file )
+      >>> my_fastq_file = open("test.fq", "w")
+      >>> myread.write_to_fastq_file(my_fastq_file)
       >>> my_fastq_file.close()
    
    Note that the reads will always be written with quality strings in Sanger encoding.
@@ -274,7 +274,7 @@ Writing to FASTQ file
 
 Counting quality values
 
-   .. method: Sequence.add_qual_to_count_array( count_array )
+   .. method: Sequence.add_qual_to_count_array(count_array)
    
    Similar to :meth:`Sequence.add_bases_to_count_array`, this method counts the
    occuring quality values stratified by position. This then allows to calculate
@@ -285,10 +285,10 @@ Counting quality values
    .. doctest::
    
       >>> import numpy       #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS
-      >>> reads = HTSeq.FastqReader( "yeast_RNASeq_excerpt_sequence.txt", "solexa" )
-      >>> counts = numpy.zeros( ( 36, 41 ), numpy.int )
+      >>> reads = HTSeq.FastqReader("yeast_RNASeq_excerpt_sequence.txt", "solexa")
+      >>> counts = numpy.zeros((36, 41), int)
       >>> for read in reads:
-      ...    read.add_qual_to_count_array( counts )
+      ...    read.add_qual_to_count_array(counts)
       >>> #counts
       array([[   0,    0,   64, ...,    0,    0,    0],
              [   0,    0,   93, ...,    0,    0,    0],
@@ -303,8 +303,8 @@ Counting quality values
    
 Trimming reads
 
-   .. method:: SequenceWithQualities.trim_left_end_with_quals( pattern, max_mm_qual = 5 )
-               SequenceWithQualities.trim_right_end_with_quals( pattern, max_mm_qual = 5 )
+   .. method:: SequenceWithQualities.trim_left_end_with_quals(pattern, max_mm_qual = 5)
+               SequenceWithQualities.trim_right_end_with_quals(pattern, max_mm_qual = 5)
                
    These methods work as :meth:`Sequence.trim_left_end` and :meth:`Sequence.trim_right_end`
    (which are, of course, avilable for ``SequenceWithQualities`` objects, too). The difference
@@ -320,7 +320,7 @@ Trimming reads
 The FastaReader class allows to read and parse a FASTA file. It can generates an
 iterator of ``Sequence`` objects or a faster, simpler iterator of string tuples.
 
-.. class:: FastaReader( filename_or_sequence, raw_iterator=False )
+.. class:: FastaReader(filename_or_sequence, raw_iterator=False)
 
    As daughter class of ``FileOrSequence``, ``FastaReader`` can be instantiated
    with either a filename, or with a list of sequences. See :class:`FileOrSequence` for details.
@@ -329,8 +329,8 @@ Example 1
    The typical use for FastaReader is to go through a FASTA file and do something with
    each sequence, e.g.::
    
-      >>> for s in HTSeq.FastaReader( "fastaEx.fa" ):
-      ...     print("Sequence '%s' has length %d." % ( s.name, len(s) ))
+      >>> for s in HTSeq.FastaReader("fastaEx.fa"):
+      ...     print("Sequence '%s' has length %d." % (s.name, len(s)))
       Sequence 'sequence1' has length 72.
       Sequence 'sequence2' has length 70.
       
@@ -338,7 +338,7 @@ Example 2
    Often, one might to read a whole Fasta file into memory to access it as a dict.
    This is a good idiom for this purpose::
    
-      >>> sequences = dict( (s.name, s) for s in HTSeq.FastaReader("fastaEx.fa") )
+      >>> sequences = dict((s.name, s) for s in HTSeq.FastaReader("fastaEx.fa"))
       >>> sequences["sequence1"].seq
       b'AGTACGTAGTCGCTGCTGCTACGGGCGCTAGCTAGTACGTCACGACGTAGATGCTAGCTGACTAAACGATGC'
 
@@ -346,7 +346,7 @@ Example 3
    One can use ``raw_iterator=True`` to maximize parsing speed at the expense of
    not getting a nice ``Sequence`` instance but rather only a tuple::
    
-      >>> sequences = dict( (s[1], s[0]) for s in HTSeq.FastaReader("fastaEx.fa", raw_iterator=True) )
+      >>> sequences = dict((s[1], s[0]) for s in HTSeq.FastaReader("fastaEx.fa", raw_iterator=True))
       >>> sequences["sequence1"]
       'AGTACGTAGTCGCTGCTGCTACGGGCGCTAGCTAGTACGTCACGACGTAGATGCTAGCTGACTAAACGATGC'
 
@@ -358,7 +358,7 @@ The **FastqReader** class works similar to :class:`FastaReader`. It reads a Fast
 and generates an iterator over :class:`SequenceWithQualities` objects or a faster,
 simpler iterator of tuples.
 
-.. class:: FastqReader( filename_or_sequence, qual_scale="phred", raw_iterator=False )
+.. class:: FastqReader(filename_or_sequence, qual_scale="phred", raw_iterator=False)
 
    As daughter class of ``FileOrSequence``, ``FastaReader`` can be instantiated
    with either a filename, or with a sequence. See :class:`FileOrSequence` for details.
