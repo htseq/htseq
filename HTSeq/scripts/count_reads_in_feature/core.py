@@ -119,6 +119,70 @@ def count_reads_single_file(
     it to have a field that say which sam_file to process.
     But then the input and output files array will be duplicated several times,
     very wasteful...
+
+    Note, if you change any of my parameters, please also change the following
+    in count_reads_in_feature/parameters.py:
+    1. CountParameters class, update the attributes.
+    2. get_args_for_count function, update what is being appended into args
+    variable returned by the function.
+
+    isam : int
+        input files' indexing for the purpose of parallel processing.
+        This basically tell you which input file is being processed by this
+        instance of function.
+    sam_filename : str
+        Path to the SAM/BAM file containing the mapped reads.
+    features : array
+        TODO check the type of this parameter.
+        Supplied by HTSeq.make_feature_genomicarrayofsets
+    feature_attr : array
+        TODO check the type of this parameter.
+        Supplied by HTSeq.make_feature_genomicarrayofsets
+    order : str
+        Can only be either 'pos' or 'name'. Sorting order of <alignment_file>.
+    max_buffer_size : int
+        The number of reads allowed to stay in memory until mates are found.
+        Used when <alignment_file> is paired end sorted by position.
+    stranded : str
+        Whether the data to be aligned is from a strand-specific assay.
+        Option is yes, no, reverse.
+        reverse means yes with reversed strand interpretation.
+    overlap_mode : str
+        Mode to handle reads overlapping more than one feature.
+        Choices: union, intersection-strict, intersection-nonempty.
+    multimapped_mode : str
+        Whether and how to score reads that are not uniquely aligned or
+        ambiguously assigned to features.
+        Choices: none, all, fraction, random.
+    secondary_alignment_mode : str
+        Whether to score secondary alignments (0x100 flag).
+        Choices: score or ignore.
+    supplementary_alignment_mode : str
+        Whether to score supplementary alignments (0x800 flag).
+        Choices: score or ignore.
+    feature_type : str
+        Feature type (3rd column in GTF file) to be used, all features of other
+        type are ignored (default, suitable for Ensembl, GTF files: exon).
+    id_attribute : str
+        GTF attribute to be used as feature ID.
+        Normally gene_id, suitable for Ensembl GTF files.
+    additional_attributes : array
+        Additional feature attributes.
+        Commonly, gene_name is suitable for Ensembl GTF files.
+    quiet : boolean
+        Whether to suppress progress report.
+    minaqual : int
+        Value denoting the MAPQ alignment quality of reads to skip.
+    samout_format : str
+        Format of the output files denoted by samouts.
+        Choices: SAM, BAM, sam, bam.
+    samout_filename : str
+        The name of SAM/BAM file to write out all SAM alignment records into.
+
+    Returns
+    -------
+    Dictionary
+        TODO update me when done refactoring
     """
 
     def write_to_samout(r, assignment, samoutfile, template=None):
@@ -129,10 +193,14 @@ def count_reads_single_file(
         for read in r:
             if read is not None:
                 read.optional_fields.append(('XF', assignment))
-                if samout_format in ('SAM', 'sam'):
+                if template is not None:
+                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                elif samout_format in ('SAM', 'sam'):
                     samoutfile.write(read.get_sam_line() + "\n")
                 else:
-                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                    raise ValueError(
+                        'BAM/SAM output: no template and not a test SAM file',
+                    )
 
     try:
         if sam_filename == "-":
@@ -140,7 +208,7 @@ def count_reads_single_file(
         else:
             read_seq_file = HTSeq.BAM_Reader(sam_filename)
 
-        # Get template for output BAM
+        # Get template for output BAM/SAM if possible
         if samout_filename is None:
             template = None
             samoutfile = None
@@ -148,6 +216,13 @@ def count_reads_single_file(
             template = read_seq_file.get_template()
             samoutfile = pysam.AlignmentFile(
                     samout_filename, 'wb',
+                    template=template,
+                    )
+
+        elif (samout_format in ('sam', 'SAM')) and hasattr(read_seq_file, 'get_template'):
+            template = read_seq_file.get_template()
+            samoutfile = pysam.AlignmentFile(
+                    samout_filename, 'w',
                     template=template,
                     )
         else:
