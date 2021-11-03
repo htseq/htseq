@@ -5,8 +5,13 @@ import itertools
 import numpy as np
 import pysam
 import random
+import HTSeq
 
 from HTSeq.scripts.count_reads_in_feature.parameters import CountParameters
+from HTSeq.scripts.utils import (
+    UnknownChrom,
+    invert_strand
+)
 
 def do_count_reads_in_features(in_param):
     """

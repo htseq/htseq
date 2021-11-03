@@ -8,12 +8,7 @@ import HTSeq
 import HTSeq.scripts.count_reads_in_feature.param_builder as param_builder
 from HTSeq.scripts.count_reads_in_feature.parameters import CountParameters
 from HTSeq.scripts.count_reads_in_feature.core import do_count_reads_in_features
-from HTSeq.scripts.utils import (
-    UnknownChrom,
-    my_showwarning,
-    invert_strand,
-    _write_output,
-)
+from HTSeq.scripts.utils import my_showwarning
 
 def main():
     """
@@ -37,7 +32,7 @@ def main():
     # So when you run htseq-count command, all the arguments/flags available to the users are defined in the method below.
     # Hence, if you need to add/modify/remove a flag/argument, modify this.
     # NOTE! If you change any argument, make sure you modify CountParameters object as well. See below.
-    param_builder.add_options()
+    param_builder.add_options(pa)
 
     # Get the arguments/flags/parameters value given by user.
     args = pa.parse_args()
@@ -52,7 +47,7 @@ def main():
     try:
         # I'm the one who does the actual count function.
         # I'm within count_reads_in_feature/core.py script.
-        do_count_reads_in_features()
+        do_count_reads_in_features(parameters)
     except:
         sys.stderr.write("  %s\n" % str(sys.exc_info()[1]))
         sys.stderr.write("  [Exception type: %s, raised in %s:%d]\n" %
