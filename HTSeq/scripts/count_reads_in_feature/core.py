@@ -126,6 +126,10 @@ def count_reads_single_file(
     2. get_args_for_count function, update what is being appended into args
     variable returned by the function.
 
+    Refactoring todo:
+    1. Split this into reading the BAM files for reads
+    2. Process the aligment.
+
     isam : int
         input files' indexing for the purpose of parallel processing.
         This basically tell you which input file is being processed by this
