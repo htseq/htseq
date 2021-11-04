@@ -75,14 +75,17 @@ def get_outputfile_and_template(
     return template, samoutfile
 
 
-def get_bam_sam_file_parser(
+def prepare_bam_sam_file_parser(
     sam_filename,
     supplementary_alignment_mode,
     secondary_alignment_mode,
     order
     ):
     """
-    Get the BAM/SAM file parser and check if the BAM/SAM input file is empty.
+    Prepare the BAM/SAM file parser.
+    This will create the parser and prepare an iterator for it.
+    Depending on whether we have paired-end reads or not, different iterator
+    will be returned.
 
     Parameters
     ----------
@@ -104,7 +107,6 @@ def get_bam_sam_file_parser(
     read_seq : itertools.chain
         Containing the very first read followed by the iterator for the bam_sam_file_reader.
         If the input file is empty, this will be an empty array.
-
     pe_mode : boolean
         Is this a paired-end data?
     """
@@ -115,12 +117,41 @@ def get_bam_sam_file_parser(
         else:
             bam_sam_file_reader = HTSeq.BAM_Reader(sam_filename)
 
-        read_seq, pe_mode = check_empty_bam_sam_input_file(
-            bam_sam_file_reader,
-            supplementary_alignment_mode,
-            secondary_alignment_mode,
-            order
-            )
+        # See the __iter__ of the SAM_Reader object in HTSeq __init__ file.
+        read_seq_iter = iter(bam_sam_file_reader)
+
+        # Catch empty BAM files
+        try:
+            first_read = next(read_seq_iter)
+            # Is this a paired-end data?
+            pe_mode = first_read.paired_end
+        # FIXME: catchall can hide subtle bugs
+        except:
+            # I thought it is nice to have some kind of warning..
+            sys.stderr.write("Input BAM/SAM file is empty!")
+            first_read = None
+            pe_mode = False
+
+        if first_read is not None:
+            read_seq = itertools.chain([first_read], read_seq_iter)
+        else:
+            read_seq = []
+
+        # What to do if paired-end data?
+        if pe_mode:
+            primary_only = supplementary_alignment_mode == 'ignore' and secondary_alignment_mode == 'ignore'
+
+            if order == "name":
+                read_seq = HTSeq.pair_SAM_alignments(
+                        read_seq,
+                        primary_only=primary_only)
+            elif order == "pos":
+                read_seq = HTSeq.pair_SAM_alignments_with_buffer(
+                        read_seq,
+                        max_buffer_size=max_buffer_size,
+                        primary_only=primary_only)
+            else:
+                raise ValueError("Illegal order specified.")
 
     except:
         sys.stderr.write(
@@ -128,74 +159,6 @@ def get_bam_sam_file_parser(
         raise
 
     return bam_sam_file_reader, read_seq, pe_mode
-
-
-def check_empty_bam_sam_input_file(bam_sam_file_reader,
-                                   supplementary_alignment_mode,
-                                   secondary_alignment_mode,
-                                   order):
-    """
-    Check if the input BAM/SAM file is empty.
-    If not it will return an iterator and the very first read.
-
-    Parameters
-    ----------
-    bam_sam_file_reader : HTSeq.BAM_Reader
-        Parser for SAM/BAM/CRAM files. See __init__.py for HTSeq.
-    secondary_alignment_mode : str
-        Whether to score secondary alignments (0x100 flag).
-        Choices: score or ignore.
-    supplementary_alignment_mode : str
-        Whether to score supplementary alignments (0x800 flag).
-        Choices: score or ignore.
-    order : str
-        Can only be either 'pos' or 'name'. Sorting order of <alignment_file>.
-
-    Returns
-    -------
-    read_seq : itertools.chain
-        Containing the very first read followed by the iterator for the bam_sam_file_reader.
-        If the input file is empty, this will be an empty array.
-    pe_mode : boolean
-        Is this a paired-end data?
-
-    """
-    # See the __iter__ of the SAM_Reader object in HTSeq __init__ file.
-    read_seq_iter = iter(bam_sam_file_reader)
-    # Catch empty BAM files
-    try:
-        first_read = next(read_seq_iter)
-        # Is this a paired-end data?
-        pe_mode = first_read.paired_end
-    # FIXME: catchall can hide subtle bugs
-    except:
-        # I thought it is nice to have some kind of warning..
-        sys.stderr.write("Input BAM/SAM file is empty!")
-        first_read = None
-        pe_mode = False
-
-    if first_read is not None:
-        read_seq = itertools.chain([first_read], read_seq_iter)
-    else:
-        read_seq = []
-
-    if pe_mode:
-        primary_only = supplementary_alignment_mode == 'ignore' and secondary_alignment_mode == 'ignore'
-
-        if order == "name":
-            read_seq = HTSeq.pair_SAM_alignments(
-                    read_seq,
-                    primary_only=primary_only)
-        elif order == "pos":
-            read_seq = HTSeq.pair_SAM_alignments_with_buffer(
-                    read_seq,
-                    max_buffer_size=max_buffer_size,
-                    primary_only=primary_only)
-        else:
-            raise ValueError("Illegal order specified.")
-
-    return read_seq, pe_mode
-
 
 
 def count_reads_single_file(
@@ -313,7 +276,7 @@ def count_reads_single_file(
                         'BAM/SAM output: no template and not a test SAM file',
                     )
 
-    read_seq_file, read_seq, pe_mode = get_bam_sam_file_parser(
+    read_seq_file, read_seq, pe_mode = prepare_bam_sam_file_parser(
         sam_filename,
         supplementary_alignment_mode,
         secondary_alignment_mode,
