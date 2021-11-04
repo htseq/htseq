@@ -180,11 +180,13 @@ class ReadsStatistics(object):
     def add_num_reads_processed(self):
         self.num_reads_processed += 1
 
-    def add_empty_read(self):
+    def add_empty_read(self, read_sequence):
         self.empty += 1
+        self.write_to_samout(read_sequence, "__no_feature")
 
-    def add_ambiguous_read(self):
+    def add_ambiguous_read(self, read_sequence, assignment):
         self.ambiguous += 1
+        self.write_to_samout(read_sequence, assignment)
 
     def add_low_quality_read(self, read_sequence):
         self.lowqual += 1
@@ -218,16 +220,37 @@ class ReadsStatistics(object):
                     )
         return updated_read_sequence
 
-    def print_progress():
+    def close_samout(self):
+        if self.samoutfile is not None:
+            self.samoutfile.close()
+
+    def print_progress(self, force_print=False):
         """
         Simple function to update the progress of reads processing.
 
         """
-        if self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0:
+
+        if force_print:
+            do_print = True
+        else:
+            do_print = self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0
+
+        if do_print:
             sys.stderr.write(
                 "%d alignment record%s processed.\n" %
-                (num_reads_processed, "s" if not self.pe_mode else " pairs"))
+                (self.num_reads_processed, "s" if not self.pe_mode else " pairs"))
             sys.stderr.flush()
+
+    def generate_output(self, isam, counts):
+        return {
+            'isam': isam,
+            'counts': counts,
+            'empty': self.empty,
+            'ambiguous': self.ambiguous,
+            'lowqual': self.lowqual,
+            'notaligned': self.notaligned,
+            'nonunique': self.nonunique,
+        }
 
 
 # TODO: Rename me later. Sounds inappropriate now.
@@ -467,20 +490,17 @@ def count_reads_single_file(
                     sys.exit("Illegal overlap mode.")
 
                 if fs is None or len(fs) == 0:
-                    write_to_samout(
-                            r, "__no_feature", samoutfile,
-                            template)
-                    empty += 1
+                    reads_stats.add_empty_read(r)
                 elif len(fs) > 1:
-                    write_to_samout(
-                            r, "__ambiguous[" + '+'.join(sorted(fs)) + "]",
-                            samoutfile,
-                            template)
-                    ambiguous += 1
+                    reads_stats.add_ambiguous_read(
+                        read_sequence = r,
+                        assignment = "__ambiguous[" + '+'.join(sorted(fs)) + "]"
+                    )
                 else:
-                    write_to_samout(
-                            r, list(fs)[0], samoutfile,
-                            template)
+                    reads_stats.write_to_samout(
+                        read_sequence = r,
+                        assignment = list(fs)[0]
+                        )
 
                 if fs is not None and len(fs) > 0:
                     if multimapped_mode == 'none':
@@ -499,10 +519,7 @@ def count_reads_single_file(
                         sys.exit("Illegal multimap mode.")
 
             except UnknownChrom:
-                write_to_samout(
-                        r, "__no_feature", samoutfile,
-                        template)
-                empty += 1
+                reads_stats.add_empty_read(r)
 
     except:
         sys.stderr.write(
@@ -511,20 +528,10 @@ def count_reads_single_file(
         raise
 
     if not verbose:
-        sys.stderr.write(
-            "%d %s processed.\n" %
-            (i, "alignments " if not pe_mode else "alignment pairs"))
-        sys.stderr.flush()
+        reads_stats.print_progress(force_print=True)
 
-    if samoutfile is not None:
-        samoutfile.close()
+    reads_stats.close_samout()
 
-    return {
-        'isam': isam,
-        'counts': counts,
-        'empty': empty,
-        'ambiguous': ambiguous,
-        'lowqual': lowqual,
-        'notaligned': notaligned,
-        'nonunique': nonunique,
-    }
+    res = reads_stats.generate_output(isam=isam,
+                                counts=counts)
+    return(res)
