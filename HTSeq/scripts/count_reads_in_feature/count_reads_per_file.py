@@ -160,23 +160,87 @@ def prepare_bam_sam_file_parser(
 
     return bam_sam_file_reader, read_seq, pe_mode
 
-def update_progress(num_reads_processed, pe_mode):
+class ReadsStatistics(object):
     """
-    Simple function to update the progress of reads processing.
-
-    Parameters
-    ----------
-    num_reads_processed : int
-        Number of alignment records/pairs processed.
-    pe_mode : boolean
-        Whether the data is paired-end.
+    For storing a bunch of statistics about the read sequences.
     """
-    if num_reads_processed > 0 and num_reads_processed % 100000 == 0:
-        sys.stderr.write(
-            "%d alignment record%s processed.\n" %
-            (num_reads_processed, "s" if not pe_mode else " pairs"))
-        sys.stderr.flush()
 
+    def __init__(self, samoutfile, pe_mode, template=None):
+        self.samoutfile = samoutfile
+        self.template = template
+        self.pe_mode = pe_mode
+
+        self.empty = 0
+        self.ambiguous = 0
+        self.notaligned = 0
+        self.lowqual = 0
+        self.nonunique = 0
+        self.num_reads_processed = 0
+
+    def add_num_reads_processed(self):
+        self.num_reads_processed += 1
+
+    def add_empty_read(self):
+        self.empty += 1
+
+    def add_ambiguous_read(self):
+        self.ambiguous += 1
+
+    def add_low_quality_read(self, read_sequence):
+        self.lowqual += 1
+        self.write_to_samout(read_sequence, "__too_low_aQual")
+
+    def add_not_unique_read(self, read_sequence):
+        self.nonunique += 1
+        self.write_to_samout(read_sequence, "__alignment_not_unique")
+
+    def add_not_aligned_read(self, read_sequence):
+        self.notaligned += 1
+        self.write_to_samout(read_sequence, "__not_aligned")
+
+
+    def write_to_samout(self, read_sequence, assignment):
+        if self.samoutfile is None:
+            return
+        if not self.pe_mode:
+            # What the heck is this?
+            updated_read_sequence = (read_sequence,)
+        for read in updated_read_sequence:
+            if read is not None:
+                read.optional_fields.append(('XF', assignment))
+                if template is not None:
+                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                elif samout_format in ('SAM', 'sam'):
+                    samoutfile.write(read.get_sam_line() + "\n")
+                else:
+                    raise ValueError(
+                        'BAM/SAM output: no template and not a test SAM file',
+                    )
+        return updated_read_sequence
+
+    def print_progress():
+        """
+        Simple function to update the progress of reads processing.
+
+        """
+        if self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0:
+            sys.stderr.write(
+                "%d alignment record%s processed.\n" %
+                (num_reads_processed, "s" if not self.pe_mode else " pairs"))
+            sys.stderr.flush()
+
+
+# TODO: Rename me later. Sounds inappropriate now.
+def process_strand(do_invert, read_sequence):
+    com = ('M', '=', 'X')
+    if do_invert:
+        iv_seq = (invert_strand(co.ref_iv)
+                  for co in read_sequence.cigar if (co.type in com and
+                                        co.size > 0))
+    else:
+        iv_seq = (co.ref_iv for co in read_sequence.cigar if co.type in com
+                  and co.size > 0)
+    return iv_seq
 
 def count_reads_single_file(
         isam,
@@ -275,24 +339,6 @@ def count_reads_single_file(
         TODO update me when done refactoring
     """
 
-    def write_to_samout(r, assignment, samoutfile, template=None):
-        if samoutfile is None:
-            return
-        if not pe_mode:
-            # pe_mode is set somewhere in the outer function.
-            r = (r,)
-        for read in r:
-            if read is not None:
-                read.optional_fields.append(('XF', assignment))
-                if template is not None:
-                    samoutfile.write(read.to_pysam_AlignedSegment(template))
-                elif samout_format in ('SAM', 'sam'):
-                    samoutfile.write(read.get_sam_line() + "\n")
-                else:
-                    raise ValueError(
-                        'BAM/SAM output: no template and not a test SAM file',
-                    )
-
     read_seq_file, read_seq, pe_mode = prepare_bam_sam_file_parser(
         sam_filename,
         supplementary_alignment_mode,
@@ -311,91 +357,68 @@ def count_reads_single_file(
 
     # CIGAR match characters (including alignment match, sequence match, and
     # sequence mismatch
-    com = ('M', '=', 'X')
+    # TODO: Move me to the object
+    # com = ('M', '=', 'X')
     counts = {key: 0 for key in feature_attr}
 
-    try:
-        empty = 0
-        ambiguous = 0
-        notaligned = 0
-        lowqual = 0
-        nonunique = 0
-        # Just for progress update
-        num_reads_processed = 0
+    # To store some stats about the reads
+    reads_stats = ReadsStatistics(samoutfile, pe_mode, template)
 
+    try:
         for r in read_seq:
             if not verbose:
-                update_progress(num_reads_processed=i, pe_mode=pe_mode)
+                reads_stats.print_progress()
             # TODO: Move me to the bottom! Shouldn't be updating the count
             # unless the process has finished
-            num_reads_processed += 1
+            reads_stats.add_num_reads_processed()
 
             if not pe_mode:
                 if not r.aligned:
-                    notaligned += 1
-                    write_to_samout(
-                            r, "__not_aligned", samoutfile,
-                            template)
+                    reads_stats.add_not_aligned_read(r)
                     continue
+
                 if ((secondary_alignment_mode == 'ignore') and
                    r.not_primary_alignment):
                     continue
                 if ((supplementary_alignment_mode == 'ignore') and
                    r.supplementary):
                     continue
+
                 try:
                     if r.optional_field("NH") > 1:
-                        nonunique += 1
-                        write_to_samout(
-                                r,
-                                "__alignment_not_unique",
-                                samoutfile,
-                                template)
+                        reads_stats.add_not_unique_read(r)
                         if multimapped_mode == 'none':
                             continue
                 except KeyError:
                     pass
                 if r.aQual < minaqual:
-                    lowqual += 1
-                    write_to_samout(
-                            r, "__too_low_aQual", samoutfile,
-                            template)
+                    reads_stats.add_low_quality_read(r)
                     continue
-                if stranded != "reverse":
-                    iv_seq = (co.ref_iv for co in r.cigar if co.type in com
-                              and co.size > 0)
-                else:
-                    iv_seq = (invert_strand(co.ref_iv)
-                              for co in r.cigar if (co.type in com and
-                                                    co.size > 0))
+
+                iv_seq = process_strand(do_invert = stranded == 'reverse',
+                                        read_sequence = r)
+
             else:
                 if r[0] is not None and r[0].aligned:
-                    if stranded != "reverse":
-                        iv_seq = (co.ref_iv for co in r[0].cigar
-                                  if co.type in com and co.size > 0)
-                    else:
-                        iv_seq = (invert_strand(co.ref_iv) for co in r[0].cigar
-                                  if co.type in com and co.size > 0)
+
+                    iv_seq = process_strand(do_invert = stranded == 'reverse',
+                                            read_sequence = r[0])
                 else:
                     iv_seq = tuple()
+
+                # Not sure what's the deal with 0 and 1 here really..
                 if r[1] is not None and r[1].aligned:
-                    if stranded != "reverse":
-                        iv_seq = itertools.chain(
-                                iv_seq,
-                                (invert_strand(co.ref_iv) for co in r[1].cigar
-                                if co.type in com and co.size > 0))
-                    else:
-                        iv_seq = itertools.chain(
-                                iv_seq,
-                                (co.ref_iv for co in r[1].cigar
-                                 if co.type in com and co.size > 0))
+                    # TODO: maybe inappropriate variable name
+                    iv_seq_next_read = process_strand(
+                        do_invert = stranded != 'reverse',
+                        read_sequence = r[1])
+                    iv_seq = itertools.chain(iv_seq, iv_seq_next_read)
                 else:
+                    # So this is when the previous sequence has not been aligned.
                     if (r[0] is None) or not (r[0].aligned):
-                        write_to_samout(
-                                r, "__not_aligned", samoutfile,
-                                template)
-                        notaligned += 1
+                        reads_stats.add_not_aligned_read(r)
                         continue
+
                 if secondary_alignment_mode == 'ignore':
                     if (r[0] is not None) and r[0].not_primary_alignment:
                         continue
@@ -409,20 +432,14 @@ def count_reads_single_file(
                 try:
                     if ((r[0] is not None and r[0].optional_field("NH") > 1) or
                        (r[1] is not None and r[1].optional_field("NH") > 1)):
-                        nonunique += 1
-                        write_to_samout(
-                                r, "__alignment_not_unique", samoutfile,
-                                template)
+                        reads_stats.add_not_unique_read(r)
                         if multimapped_mode == 'none':
                             continue
                 except KeyError:
                     pass
                 if ((r[0] and r[0].aQual < minaqual) or
                    (r[1] and r[1].aQual < minaqual)):
-                    lowqual += 1
-                    write_to_samout(
-                            r, "__too_low_aQual", samoutfile,
-                            template)
+                    reads_stats.add_low_quality_read(r)
                     continue
 
             try:
