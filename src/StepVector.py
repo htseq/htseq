@@ -61,18 +61,18 @@ class _SwigNonDynamicMeta(type):
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
-class _Pair_int_float(object):
+class _Pair_long_float(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    first = property(_StepVector._Pair_int_float_first_get, _StepVector._Pair_int_float_first_set)
-    second = property(_StepVector._Pair_int_float_second_get, _StepVector._Pair_int_float_second_set)
+    first = property(_StepVector._Pair_long_float_first_get, _StepVector._Pair_long_float_first_set)
+    second = property(_StepVector._Pair_long_float_second_get, _StepVector._Pair_long_float_second_set)
 
     def __init__(self, first_: "long", second_: "double"):
-        _StepVector._Pair_int_float_swiginit(self, _StepVector.new__Pair_int_float(first_, second_))
-    __swig_destroy__ = _StepVector.delete__Pair_int_float
+        _StepVector._Pair_long_float_swiginit(self, _StepVector.new__Pair_long_float(first_, second_))
+    __swig_destroy__ = _StepVector.delete__Pair_long_float
 
-# Register _Pair_int_float in _StepVector:
-_StepVector._Pair_int_float_swigregister(_Pair_int_float)
+# Register _Pair_long_float in _StepVector:
+_StepVector._Pair_long_float_swigregister(_Pair_long_float)
 
 class _StepVector_Iterator_float(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -120,18 +120,18 @@ cvar = _StepVector.cvar
 _StepVector_float.min_index = _StepVector.cvar._StepVector_float_min_index
 _StepVector_float.max_index = _StepVector.cvar._StepVector_float_max_index
 
-class _Pair_int_int(object):
+class _Pair_long_int(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    first = property(_StepVector._Pair_int_int_first_get, _StepVector._Pair_int_int_first_set)
-    second = property(_StepVector._Pair_int_int_second_get, _StepVector._Pair_int_int_second_set)
+    first = property(_StepVector._Pair_long_int_first_get, _StepVector._Pair_long_int_first_set)
+    second = property(_StepVector._Pair_long_int_second_get, _StepVector._Pair_long_int_second_set)
 
     def __init__(self, first_: "long", second_: "int"):
-        _StepVector._Pair_int_int_swiginit(self, _StepVector.new__Pair_int_int(first_, second_))
-    __swig_destroy__ = _StepVector.delete__Pair_int_int
+        _StepVector._Pair_long_int_swiginit(self, _StepVector.new__Pair_long_int(first_, second_))
+    __swig_destroy__ = _StepVector.delete__Pair_long_int
 
-# Register _Pair_int_int in _StepVector:
-_StepVector._Pair_int_int_swigregister(_Pair_int_int)
+# Register _Pair_long_int in _StepVector:
+_StepVector._Pair_long_int_swigregister(_Pair_long_int)
 
 class _StepVector_Iterator_int(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -178,18 +178,76 @@ _StepVector._StepVector_int_swigregister(_StepVector_int)
 _StepVector_int.min_index = _StepVector.cvar._StepVector_int_min_index
 _StepVector_int.max_index = _StepVector.cvar._StepVector_int_max_index
 
-class _Pair_int_bool(object):
+class _Pair_long_long(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    first = property(_StepVector._Pair_int_bool_first_get, _StepVector._Pair_int_bool_first_set)
-    second = property(_StepVector._Pair_int_bool_second_get, _StepVector._Pair_int_bool_second_set)
+    first = property(_StepVector._Pair_long_long_first_get, _StepVector._Pair_long_long_first_set)
+    second = property(_StepVector._Pair_long_long_second_get, _StepVector._Pair_long_long_second_set)
+
+    def __init__(self, first_: "long", second_: "long"):
+        _StepVector._Pair_long_long_swiginit(self, _StepVector.new__Pair_long_long(first_, second_))
+    __swig_destroy__ = _StepVector.delete__Pair_long_long
+
+# Register _Pair_long_long in _StepVector:
+_StepVector._Pair_long_long_swigregister(_Pair_long_long)
+
+class _StepVector_Iterator_long(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, first: "step_vector< long >::const_iterator", last_: "step_vector< long >::const_iterator"):
+        _StepVector._StepVector_Iterator_long_swiginit(self, _StepVector.new__StepVector_Iterator_long(first, last_))
+
+    def __next__(self) -> "std::pair< long,long >":
+        return _StepVector._StepVector_Iterator_long___next__(self)
+
+    def __iter__(self) -> "step_vector_pystyle_iterator< long > *":
+        return _StepVector._StepVector_Iterator_long___iter__(self)
+    __swig_destroy__ = _StepVector.delete__StepVector_Iterator_long
+
+# Register _StepVector_Iterator_long in _StepVector:
+_StepVector._StepVector_Iterator_long_swigregister(_StepVector_Iterator_long)
+
+class _StepVector_long(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        _StepVector._StepVector_long_swiginit(self, _StepVector.new__StepVector_long())
+
+    def set_value(self, _from: "long", to: "long", value: "long") -> "void":
+        return _StepVector._StepVector_long_set_value(self, _from, to, value)
+
+    def add_value(self, _from: "long", to: "long", value: "long") -> "void":
+        return _StepVector._StepVector_long_add_value(self, _from, to, value)
+
+    def get_all_values_pystyle(self) -> "step_vector_pystyle_iterator< long >":
+        return _StepVector._StepVector_long_get_all_values_pystyle(self)
+
+    def get_values_pystyle(self, _from: "long") -> "step_vector_pystyle_iterator< long >":
+        return _StepVector._StepVector_long_get_values_pystyle(self, _from)
+
+    def num_values(self) -> "int":
+        return _StepVector._StepVector_long_num_values(self)
+    __swig_destroy__ = _StepVector.delete__StepVector_long
+
+# Register _StepVector_long in _StepVector:
+_StepVector._StepVector_long_swigregister(_StepVector_long)
+_StepVector_long.min_index = _StepVector.cvar._StepVector_long_min_index
+_StepVector_long.max_index = _StepVector.cvar._StepVector_long_max_index
+
+class _Pair_long_bool(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    first = property(_StepVector._Pair_long_bool_first_get, _StepVector._Pair_long_bool_first_set)
+    second = property(_StepVector._Pair_long_bool_second_get, _StepVector._Pair_long_bool_second_set)
 
     def __init__(self, first_: "long", second_: "bool"):
-        _StepVector._Pair_int_bool_swiginit(self, _StepVector.new__Pair_int_bool(first_, second_))
-    __swig_destroy__ = _StepVector.delete__Pair_int_bool
+        _StepVector._Pair_long_bool_swiginit(self, _StepVector.new__Pair_long_bool(first_, second_))
+    __swig_destroy__ = _StepVector.delete__Pair_long_bool
 
-# Register _Pair_int_bool in _StepVector:
-_StepVector._Pair_int_bool_swigregister(_Pair_int_bool)
+# Register _Pair_long_bool in _StepVector:
+_StepVector._Pair_long_bool_swigregister(_Pair_long_bool)
 
 class _StepVector_Iterator_bool(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -236,18 +294,18 @@ _StepVector._StepVector_bool_swigregister(_StepVector_bool)
 _StepVector_bool.min_index = _StepVector.cvar._StepVector_bool_min_index
 _StepVector_bool.max_index = _StepVector.cvar._StepVector_bool_max_index
 
-class _Pair_int_obj(object):
+class _Pair_long_obj(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    first = property(_StepVector._Pair_int_obj_first_get, _StepVector._Pair_int_obj_first_set)
-    second = property(_StepVector._Pair_int_obj_second_get, _StepVector._Pair_int_obj_second_set)
+    first = property(_StepVector._Pair_long_obj_first_get, _StepVector._Pair_long_obj_first_set)
+    second = property(_StepVector._Pair_long_obj_second_get, _StepVector._Pair_long_obj_second_set)
 
     def __init__(self, first_: "long", second_: "AutoPyObjPtr"):
-        _StepVector._Pair_int_obj_swiginit(self, _StepVector.new__Pair_int_obj(first_, second_))
-    __swig_destroy__ = _StepVector.delete__Pair_int_obj
+        _StepVector._Pair_long_obj_swiginit(self, _StepVector.new__Pair_long_obj(first_, second_))
+    __swig_destroy__ = _StepVector.delete__Pair_long_obj
 
-# Register _Pair_int_obj in _StepVector:
-_StepVector._Pair_int_obj_swigregister(_Pair_int_obj)
+# Register _Pair_long_obj in _StepVector:
+_StepVector._Pair_long_obj_swigregister(_Pair_long_obj)
 
 class _StepVector_Iterator_obj(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -299,7 +357,6 @@ _StepVector_obj.max_index = _StepVector.cvar._StepVector_obj_max_index
 import sys
 
 class StepVector(object):
-
     """A step vector is a vector with integer indices that is able to store
     data efficiently if it is piece-wise constant, i.e., if the values change
     in "steps". So, if a number of adjacent vectort elements have the same
@@ -329,6 +386,7 @@ class StepVector(object):
         The typecode may be:
           'd' for float values (C type 'double'),
           'i' for int values,
+          'l' for long int values,
           'b' for Boolean values,
           'O' for arbitrary Python objects as value.
 
@@ -339,6 +397,8 @@ class StepVector(object):
             swigclass = _StepVector_float
         elif typecode == 'i':
             swigclass = _StepVector_int
+        elif typecode == 'l':
+            swigclass = _StepVector_long
         elif typecode == 'b':
             swigclass = _StepVector_bool
         elif typecode == 'O':
@@ -393,18 +453,19 @@ class StepVector(object):
             self._swigobj.set_value(index, index, value)
 
     def get_steps(self, values_only=False, merge_steps=True):
-        """To get a succinct representation of the StepVector's content, call
-        the 'get_steps' method. It returns an iterator that generates triples
-        of values. Each triple contains one step, giving first the start index
-        of the step, then the stop index (i.e., one more than the index of the 
-        last element), and as third element the value of the step.
+        """Iterate over the steps of the vector.
 
-        If you want to see only a part of the StepVector, use the 'start' and
-        'stop' parameters of 'get_steps' to specify a window.
+        Args:
+            values_only (bool): Return only the values of the StepVector, without
+            the index boundaries.
 
-        Sometimes, one might only be interested in the values, not the step
-        boundaries. Then, set 'values_only' to true, and the iterator generates
-        only the values insted of the triples.
+            merge_steps (bool): Perform on-the-fly merging of consecutive steps if
+            their value is the same. Setting this option ensures that consecutive
+            steps have distinct values.
+
+        Returns: an iterator of triplets, with each triplet containing the start
+            index, end index, and value of that step. If values_only is True, the
+            function returns an iterator of the values only.
         """
         startvals = self._swigobj.get_values_pystyle(self.start)
         prevstart = self.start
@@ -434,8 +495,10 @@ class StepVector(object):
         """Given a StepVector sv, writing sv[i] returns sv's element i (where i
         is an integer). 
 
-        If you use a slice, i.e., 'sv[i:j]', you get a view on the StepVector,
+        If you use a slice, i.e. 'sv[i:j]', you get a view on the StepVector,
         i.e., the same data, but changed boundaries.
+
+        Striding slices, i.e. 'sv[i:j:2]' are not supported.
         """
         if isinstance(index, slice):
             if index.step is not None and index.step != 1:
@@ -463,7 +526,7 @@ class StepVector(object):
 
     def __iter__(self):
         """When asked to provide an iterator, a StepVector will yield all its
-        value, repeating each value according to the length of the step.
+        values, repeating each value according to the length of the step.
         Hence, calling, e.g., 'list(sv)' will transform the StepVector 'sv'
         into an ordinary list.
         """

@@ -27,7 +27,7 @@ FASTA                         DNA sequences             :class:`FastaReader`    
 FASTQ                         sequenced reads           :class:`FastqReader`         :class:`SequenceWithQualities`                   :meth:`SequenceWithQuality.write_to_fastq_file`
 GFF (incl. GFF3 and GTF)      genomic annotation        :class:`GFF_Reader`          :class:`GenomicFeature`                          :meth:`GenomicFeature.get_gff_line`
 BED                           score data or annotation  :class:`BED_Reader`          :class:`GenomicFeature`                          
-Wiggle (incl. BedGraph)       score data on a genome    :class:`WiggleReader`        pair: ``(``:class:`GenomicInterval`, ``float)``  :meth:`GenomicArray.write_bedgraph_file`
+Wiggle (incl. BedGraph)       score data on a genome    :class:`WiggleReader`        pair: (:class:`GenomicInterval`, float)          :meth:`GenomicArray.write_bedgraph_file`
 SAM                           aligned reads             :class:`SAM_Reader`          :class:`SAM_Alignment`                           :meth:`SAM_Alignment.get_sam_line`
 BAM                           aligned reads             :class:`BAM_Reader`          :class:`SAM_Alignment`                           :class:`BAM_Writer`
 VCF                           variant calls             :class:`VCF_Reader`          :class:`VariantCall`

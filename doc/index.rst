@@ -40,31 +40,6 @@ The original package is described in:
 
 .. _`doi:10.1093/bioinformatics/btu638`: https://doi.org/10.1093/bioinformatics/btu638
 
-Contents
-========
-
-.. toctree::
-   :glob:
-   :maxdepth: 2
-   
-   Overview <overview>
-   install
-   tour
-   tutorials
-   tutorials/*
-   counting
-   refoverview
-   sequences
-   genomic
-   alignments
-   features
-   otherparsers
-   misc
-   htseqcount      
-   htseqcount_with_barcodes
-   qa
-   history
-   contrib
 
 Indices and tables
 ==================
@@ -103,5 +78,33 @@ here: http://www.gnu.org/licenses/gpl-3.0-standalone.html
 .. _`UNSW Sydney`: https://www.unsw.edu.au/
 .. _`EMBL Heidelberg`: https://www.embl.de/
 .. _`Genome Biology Unit`: https://www.embl.de/research/units/genome_biology/index.html
+
+
+Sitemap
+=======
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :titlesonly:
+   
+   Home <self>
+   Overview <overview>
+   install
+   tour
+   tutorials
+   counting
+   refoverview
+   sequences
+   genomic
+   alignments
+   features
+   otherparsers
+   misc
+   htseqcount      
+   htseqcount_with_barcodes
+   qa
+   history
+   contrib
 
 

@@ -907,6 +907,7 @@ cdef class GenomicArray(object):
 
         Args:
             filename (str or path): Where to store the data.
+            strand (".", "+", or "-"): Which strand to write to file.
 
         The BigWig file format is described here:
         
@@ -994,7 +995,10 @@ cdef class GenomicArray(object):
                 'pyBigWig is required to write a GenomicArray to a bigWig file',
             )
 
-        with pyBigWig.open(filename) as bw:
+        # Avoid circular import
+        from HTSeq import BigWig_Reader
+
+        with BigWig_Reader(filename) as bw:
             chrom_dict = dict(bw.chroms())
 
             # Create the instance with specified chromosomes
@@ -1006,7 +1010,7 @@ cdef class GenomicArray(object):
             )
 
             for chrom in chrom_dict:
-                intervals = bw.intervals(chrom)
+                intervals = bw.intervals(chrom, raw=True)
                 for i, (start, end, value) in enumerate(intervals):
                     # Set the chromosome offset with the first value, since
                     # they are ordered. The StepVector will be offset compared

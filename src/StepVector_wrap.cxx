@@ -2698,20 +2698,24 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_std__pairT_long_bool_t swig_types[3]
 #define SWIGTYPE_p_std__pairT_long_double_t swig_types[4]
 #define SWIGTYPE_p_std__pairT_long_int_t swig_types[5]
-#define SWIGTYPE_p_step_vectorT_AutoPyObjPtr_t__const_iterator swig_types[6]
-#define SWIGTYPE_p_step_vectorT_bool_t__const_iterator swig_types[7]
-#define SWIGTYPE_p_step_vectorT_double_t__const_iterator swig_types[8]
-#define SWIGTYPE_p_step_vectorT_int_t__const_iterator swig_types[9]
-#define SWIGTYPE_p_step_vector_for_pythonT_AutoPyObjPtr_t swig_types[10]
-#define SWIGTYPE_p_step_vector_for_pythonT_bool_t swig_types[11]
-#define SWIGTYPE_p_step_vector_for_pythonT_double_t swig_types[12]
-#define SWIGTYPE_p_step_vector_for_pythonT_int_t swig_types[13]
-#define SWIGTYPE_p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t swig_types[14]
-#define SWIGTYPE_p_step_vector_pystyle_iteratorT_bool_t swig_types[15]
-#define SWIGTYPE_p_step_vector_pystyle_iteratorT_double_t swig_types[16]
-#define SWIGTYPE_p_step_vector_pystyle_iteratorT_int_t swig_types[17]
-static swig_type_info *swig_types[19];
-static swig_module_info swig_module = {swig_types, 18, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__pairT_long_long_t swig_types[6]
+#define SWIGTYPE_p_step_vectorT_AutoPyObjPtr_t__const_iterator swig_types[7]
+#define SWIGTYPE_p_step_vectorT_bool_t__const_iterator swig_types[8]
+#define SWIGTYPE_p_step_vectorT_double_t__const_iterator swig_types[9]
+#define SWIGTYPE_p_step_vectorT_int_t__const_iterator swig_types[10]
+#define SWIGTYPE_p_step_vectorT_long_t__const_iterator swig_types[11]
+#define SWIGTYPE_p_step_vector_for_pythonT_AutoPyObjPtr_t swig_types[12]
+#define SWIGTYPE_p_step_vector_for_pythonT_bool_t swig_types[13]
+#define SWIGTYPE_p_step_vector_for_pythonT_double_t swig_types[14]
+#define SWIGTYPE_p_step_vector_for_pythonT_int_t swig_types[15]
+#define SWIGTYPE_p_step_vector_for_pythonT_long_t swig_types[16]
+#define SWIGTYPE_p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t swig_types[17]
+#define SWIGTYPE_p_step_vector_pystyle_iteratorT_bool_t swig_types[18]
+#define SWIGTYPE_p_step_vector_pystyle_iteratorT_double_t swig_types[19]
+#define SWIGTYPE_p_step_vector_pystyle_iteratorT_int_t swig_types[20]
+#define SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t swig_types[21]
+static swig_type_info *swig_types[23];
+static swig_module_info swig_module = {swig_types, 22, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3132,7 +3136,7 @@ SWIGINTERNINLINE PyObject*
 #ifdef __cplusplus
 extern "C" {
 #endif
-SWIGINTERN PyObject *_wrap__Pair_int_float_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_float_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,double > *arg1 = (std::pair< long,double > *) 0 ;
   long arg2 ;
@@ -3142,15 +3146,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_float_first_set(PyObject *SWIGUNUSEDPARM(se
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_float_first_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_float_first_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_double_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_float_first_set" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_float_first_set" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,double > * >(argp1);
   ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_float_first_set" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_float_first_set" "', argument " "2"" of type '" "long""'");
   } 
   arg2 = static_cast< long >(val2);
   if (arg1) (arg1)->first = arg2;
@@ -3161,7 +3165,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_float_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_float_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,double > *arg1 = (std::pair< long,double > *) 0 ;
   void *argp1 = 0 ;
@@ -3173,7 +3177,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_float_first_get(PyObject *SWIGUNUSEDPARM(se
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_double_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_float_first_get" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_float_first_get" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,double > * >(argp1);
   result = (long) ((arg1)->first);
@@ -3184,7 +3188,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_float_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_float_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,double > *arg1 = (std::pair< long,double > *) 0 ;
   double arg2 ;
@@ -3194,15 +3198,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_float_second_set(PyObject *SWIGUNUSEDPARM(s
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_float_second_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_float_second_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_double_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_float_second_set" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_float_second_set" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,double > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_float_second_set" "', argument " "2"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_float_second_set" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->second = arg2;
@@ -3213,7 +3217,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_float_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_float_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,double > *arg1 = (std::pair< long,double > *) 0 ;
   void *argp1 = 0 ;
@@ -3225,7 +3229,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_float_second_get(PyObject *SWIGUNUSEDPARM(s
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_double_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_float_second_get" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_float_second_get" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,double > * >(argp1);
   result = (double) ((arg1)->second);
@@ -3236,7 +3240,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new__Pair_int_float(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new__Pair_long_float(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   long arg1 ;
   double arg2 ;
@@ -3247,15 +3251,15 @@ SWIGINTERN PyObject *_wrap_new__Pair_int_float(PyObject *SWIGUNUSEDPARM(self), P
   PyObject *swig_obj[2] ;
   std::pair< long,double > *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "new__Pair_int_float", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new__Pair_long_float", 2, 2, swig_obj)) SWIG_fail;
   ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_int_float" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_long_float" "', argument " "1"" of type '" "long""'");
   } 
   arg1 = static_cast< long >(val1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_int_float" "', argument " "2"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_long_float" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
   result = (std::pair< long,double > *)new std::pair< long,double >(arg1,arg2);
@@ -3266,7 +3270,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete__Pair_int_float(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete__Pair_long_float(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,double > *arg1 = (std::pair< long,double > *) 0 ;
   void *argp1 = 0 ;
@@ -3277,7 +3281,7 @@ SWIGINTERN PyObject *_wrap_delete__Pair_int_float(PyObject *SWIGUNUSEDPARM(self)
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_double_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_int_float" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_long_float" "', argument " "1"" of type '" "std::pair< long,double > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,double > * >(argp1);
   delete arg1;
@@ -3288,14 +3292,14 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_Pair_int_float_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_float_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_long_double_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_Pair_int_float_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_float_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -3364,7 +3368,7 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_float___next__(PyObject *SWIGUNU
     try {
       result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
-      PyErr_SetString( PyExc_StopIteration, "" );
+      PyErr_SetString(PyExc_StopIteration, "");
       return NULL;
     }
   }
@@ -3513,7 +3517,7 @@ SWIGINTERN PyObject *_wrap__StepVector_float_set_value(PyObject *SWIGUNUSEDPARM(
     try {
       (arg1)->set_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -3566,7 +3570,7 @@ SWIGINTERN PyObject *_wrap__StepVector_float_add_value(PyObject *SWIGUNUSEDPARM(
     try {
       (arg1)->add_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -3687,7 +3691,7 @@ SWIGINTERN PyObject *_StepVector_float_swiginit(PyObject *SWIGUNUSEDPARM(self), 
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap__Pair_int_int_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_int_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,int > *arg1 = (std::pair< long,int > *) 0 ;
   long arg2 ;
@@ -3697,15 +3701,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_int_first_set(PyObject *SWIGUNUSEDPARM(self
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_int_first_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_int_first_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_int_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_int_first_set" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_int_first_set" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,int > * >(argp1);
   ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_int_first_set" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_int_first_set" "', argument " "2"" of type '" "long""'");
   } 
   arg2 = static_cast< long >(val2);
   if (arg1) (arg1)->first = arg2;
@@ -3716,7 +3720,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_int_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_int_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,int > *arg1 = (std::pair< long,int > *) 0 ;
   void *argp1 = 0 ;
@@ -3728,7 +3732,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_int_first_get(PyObject *SWIGUNUSEDPARM(self
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_int_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_int_first_get" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_int_first_get" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,int > * >(argp1);
   result = (long) ((arg1)->first);
@@ -3739,7 +3743,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_int_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_int_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,int > *arg1 = (std::pair< long,int > *) 0 ;
   int arg2 ;
@@ -3749,15 +3753,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_int_second_set(PyObject *SWIGUNUSEDPARM(sel
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_int_second_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_int_second_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_int_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_int_second_set" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_int_second_set" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,int > * >(argp1);
   ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_int_second_set" "', argument " "2"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_int_second_set" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = static_cast< int >(val2);
   if (arg1) (arg1)->second = arg2;
@@ -3768,7 +3772,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_int_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_int_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,int > *arg1 = (std::pair< long,int > *) 0 ;
   void *argp1 = 0 ;
@@ -3780,7 +3784,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_int_second_get(PyObject *SWIGUNUSEDPARM(sel
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_int_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_int_second_get" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_int_second_get" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,int > * >(argp1);
   result = (int) ((arg1)->second);
@@ -3791,7 +3795,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new__Pair_int_int(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new__Pair_long_int(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   long arg1 ;
   int arg2 ;
@@ -3802,15 +3806,15 @@ SWIGINTERN PyObject *_wrap_new__Pair_int_int(PyObject *SWIGUNUSEDPARM(self), PyO
   PyObject *swig_obj[2] ;
   std::pair< long,int > *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "new__Pair_int_int", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new__Pair_long_int", 2, 2, swig_obj)) SWIG_fail;
   ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_int_int" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_long_int" "', argument " "1"" of type '" "long""'");
   } 
   arg1 = static_cast< long >(val1);
   ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_int_int" "', argument " "2"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_long_int" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = static_cast< int >(val2);
   result = (std::pair< long,int > *)new std::pair< long,int >(arg1,arg2);
@@ -3821,7 +3825,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete__Pair_int_int(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete__Pair_long_int(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,int > *arg1 = (std::pair< long,int > *) 0 ;
   void *argp1 = 0 ;
@@ -3832,7 +3836,7 @@ SWIGINTERN PyObject *_wrap_delete__Pair_int_int(PyObject *SWIGUNUSEDPARM(self), 
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_int_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_int_int" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_long_int" "', argument " "1"" of type '" "std::pair< long,int > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,int > * >(argp1);
   delete arg1;
@@ -3843,14 +3847,14 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_Pair_int_int_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_int_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_long_int_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_Pair_int_int_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_int_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -3919,7 +3923,7 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_int___next__(PyObject *SWIGUNUSE
     try {
       result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
-      PyErr_SetString( PyExc_StopIteration, "" );
+      PyErr_SetString(PyExc_StopIteration, "");
       return NULL;
     }
   }
@@ -4068,7 +4072,7 @@ SWIGINTERN PyObject *_wrap__StepVector_int_set_value(PyObject *SWIGUNUSEDPARM(se
     try {
       (arg1)->set_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -4121,7 +4125,7 @@ SWIGINTERN PyObject *_wrap__StepVector_int_add_value(PyObject *SWIGUNUSEDPARM(se
     try {
       (arg1)->add_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -4242,9 +4246,9 @@ SWIGINTERN PyObject *_StepVector_int_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap__Pair_int_bool_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_long_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
+  std::pair< long,long > *arg1 = (std::pair< long,long > *) 0 ;
   long arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -4252,15 +4256,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_bool_first_set(PyObject *SWIGUNUSEDPARM(sel
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_bool_first_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, 0 |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_long_first_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_long_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_bool_first_set" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_long_first_set" "', argument " "1"" of type '" "std::pair< long,long > *""'"); 
   }
-  arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
+  arg1 = reinterpret_cast< std::pair< long,long > * >(argp1);
   ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_bool_first_set" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_long_first_set" "', argument " "2"" of type '" "long""'");
   } 
   arg2 = static_cast< long >(val2);
   if (arg1) (arg1)->first = arg2;
@@ -4271,7 +4275,562 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_bool_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_long_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< long,long > *arg1 = (std::pair< long,long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  long result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_long_first_get" "', argument " "1"" of type '" "std::pair< long,long > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< long,long > * >(argp1);
+  result = (long) ((arg1)->first);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__Pair_long_long_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< long,long > *arg1 = (std::pair< long,long > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_long_second_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_long_second_set" "', argument " "1"" of type '" "std::pair< long,long > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< long,long > * >(argp1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_long_second_set" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  if (arg1) (arg1)->second = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__Pair_long_long_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< long,long > *arg1 = (std::pair< long,long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  long result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_long_second_get" "', argument " "1"" of type '" "std::pair< long,long > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< long,long > * >(argp1);
+  result = (long) ((arg1)->second);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new__Pair_long_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long arg2 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  std::pair< long,long > *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new__Pair_long_long", 2, 2, swig_obj)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_long_long" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_long_long" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  result = (std::pair< long,long > *)new std::pair< long,long >(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_long_long_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete__Pair_long_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< long,long > *arg1 = (std::pair< long,long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_long_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_long_long" "', argument " "1"" of type '" "std::pair< long,long > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< long,long > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_Pair_long_long_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_long_long_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_Pair_long_long_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new__StepVector_Iterator_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector< long >::const_iterator arg1 ;
+  step_vector< long >::const_iterator arg2 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  step_vector_pystyle_iterator< long > *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new__StepVector_Iterator_long", 2, 2, swig_obj)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_step_vectorT_long_t__const_iterator,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new__StepVector_Iterator_long" "', argument " "1"" of type '" "step_vector< long >::const_iterator""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new__StepVector_Iterator_long" "', argument " "1"" of type '" "step_vector< long >::const_iterator""'");
+    } else {
+      step_vector< long >::const_iterator * temp = reinterpret_cast< step_vector< long >::const_iterator * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  {
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_step_vectorT_long_t__const_iterator,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new__StepVector_Iterator_long" "', argument " "2"" of type '" "step_vector< long >::const_iterator""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new__StepVector_Iterator_long" "', argument " "2"" of type '" "step_vector< long >::const_iterator""'");
+    } else {
+      step_vector< long >::const_iterator * temp = reinterpret_cast< step_vector< long >::const_iterator * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  result = (step_vector_pystyle_iterator< long > *)new step_vector_pystyle_iterator< long >(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_long___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_pystyle_iterator< long > *arg1 = (step_vector_pystyle_iterator< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  SwigValueWrapper< std::pair< long,long > > result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_long___next__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_pystyle_iterator< long > * >(argp1);
+  {
+    try {
+      result = (arg1)->__next__();
+    } catch (pystyle_stopiteration &e) {
+      PyErr_SetString(PyExc_StopIteration, "");
+      return NULL;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new std::pair< long,long >(static_cast< const std::pair< long,long >& >(result))), SWIGTYPE_p_std__pairT_long_long_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_Iterator_long___iter__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_pystyle_iterator< long > *arg1 = (step_vector_pystyle_iterator< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  step_vector_pystyle_iterator< long > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_Iterator_long___iter__" "', argument " "1"" of type '" "step_vector_pystyle_iterator< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_pystyle_iterator< long > * >(argp1);
+  result = (step_vector_pystyle_iterator< long > *)(arg1)->__iter__();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete__StepVector_Iterator_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_pystyle_iterator< long > *arg1 = (step_vector_pystyle_iterator< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__StepVector_Iterator_long" "', argument " "1"" of type '" "step_vector_pystyle_iterator< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_pystyle_iterator< long > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_StepVector_Iterator_long_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_StepVector_Iterator_long_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN int Swig_var__StepVector_long_min_index_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable _StepVector_long_min_index is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var__StepVector_long_min_index_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_long(static_cast< long >(step_vector_for_python< long >::min_index));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var__StepVector_long_max_index_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable _StepVector_long_max_index is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var__StepVector_long_max_index_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_long(static_cast< long >(step_vector_for_python< long >::max_index));
+  return pyobj;
+}
+
+
+SWIGINTERN PyObject *_wrap_new__StepVector_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new__StepVector_long", 0, 0, 0)) SWIG_fail;
+  result = (step_vector_for_python< long > *)new step_vector_for_python< long >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_step_vector_for_pythonT_long_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_long_set_value(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "_StepVector_long_set_value", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_long_set_value" "', argument " "1"" of type '" "step_vector_for_python< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_StepVector_long_set_value" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "_StepVector_long_set_value" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "_StepVector_long_set_value" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  {
+    try {
+      (arg1)->set_value(arg2,arg3,arg4);                                                                  
+    } catch (std::out_of_range &e) {
+      SWIG_exception(SWIG_IndexError, e.what());                               
+    } catch (type_error_non_arith &e) {
+      SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_long_add_value(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "_StepVector_long_add_value", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_long_add_value" "', argument " "1"" of type '" "step_vector_for_python< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_StepVector_long_add_value" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "_StepVector_long_add_value" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "_StepVector_long_add_value" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  {
+    try {
+      (arg1)->add_value(arg2,arg3,arg4);                                                                  
+    } catch (std::out_of_range &e) {
+      SWIG_exception(SWIG_IndexError, e.what());                               
+    } catch (type_error_non_arith &e) {
+      SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_long_get_all_values_pystyle(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  SwigValueWrapper< step_vector_pystyle_iterator< long > > result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_long_get_all_values_pystyle" "', argument " "1"" of type '" "step_vector_for_python< long > const *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  result = ((step_vector_for_python< long > const *)arg1)->get_all_values_pystyle();
+  resultobj = SWIG_NewPointerObj((new step_vector_pystyle_iterator< long >(static_cast< const step_vector_pystyle_iterator< long >& >(result))), SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_long_get_values_pystyle(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  SwigValueWrapper< step_vector_pystyle_iterator< long > > result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "_StepVector_long_get_values_pystyle", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_long_get_values_pystyle" "', argument " "1"" of type '" "step_vector_for_python< long > const *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_StepVector_long_get_values_pystyle" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  result = ((step_vector_for_python< long > const *)arg1)->get_values_pystyle(arg2);
+  resultobj = SWIG_NewPointerObj((new step_vector_pystyle_iterator< long >(static_cast< const step_vector_pystyle_iterator< long >& >(result))), SWIGTYPE_p_step_vector_pystyle_iteratorT_long_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__StepVector_long_num_values(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  int result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_StepVector_long_num_values" "', argument " "1"" of type '" "step_vector_for_python< long > const *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  result = (int)((step_vector_for_python< long > const *)arg1)->num_values();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete__StepVector_long(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  step_vector_for_python< long > *arg1 = (step_vector_for_python< long > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_step_vector_for_pythonT_long_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__StepVector_long" "', argument " "1"" of type '" "step_vector_for_python< long > *""'"); 
+  }
+  arg1 = reinterpret_cast< step_vector_for_python< long > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_StepVector_long_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_step_vector_for_pythonT_long_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_StepVector_long_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap__Pair_long_bool_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_bool_first_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_bool_first_set" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
+  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_bool_first_set" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  if (arg1) (arg1)->first = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__Pair_long_bool_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
   void *argp1 = 0 ;
@@ -4283,7 +4842,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_bool_first_get(PyObject *SWIGUNUSEDPARM(sel
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_bool_first_get" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_bool_first_get" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
   result = (long) ((arg1)->first);
@@ -4294,7 +4853,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_bool_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_bool_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
   bool arg2 ;
@@ -4304,15 +4863,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_bool_second_set(PyObject *SWIGUNUSEDPARM(se
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_bool_second_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_bool_second_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_bool_second_set" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_bool_second_set" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_bool_second_set" "', argument " "2"" of type '" "bool""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_bool_second_set" "', argument " "2"" of type '" "bool""'");
   } 
   arg2 = static_cast< bool >(val2);
   if (arg1) (arg1)->second = arg2;
@@ -4323,7 +4882,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_bool_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_bool_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
   void *argp1 = 0 ;
@@ -4335,7 +4894,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_bool_second_get(PyObject *SWIGUNUSEDPARM(se
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_bool_second_get" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_bool_second_get" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
   result = (bool) ((arg1)->second);
@@ -4346,7 +4905,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new__Pair_int_bool(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new__Pair_long_bool(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   long arg1 ;
   bool arg2 ;
@@ -4357,15 +4916,15 @@ SWIGINTERN PyObject *_wrap_new__Pair_int_bool(PyObject *SWIGUNUSEDPARM(self), Py
   PyObject *swig_obj[2] ;
   std::pair< long,bool > *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "new__Pair_int_bool", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new__Pair_long_bool", 2, 2, swig_obj)) SWIG_fail;
   ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_int_bool" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_long_bool" "', argument " "1"" of type '" "long""'");
   } 
   arg1 = static_cast< long >(val1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_int_bool" "', argument " "2"" of type '" "bool""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new__Pair_long_bool" "', argument " "2"" of type '" "bool""'");
   } 
   arg2 = static_cast< bool >(val2);
   result = (std::pair< long,bool > *)new std::pair< long,bool >(arg1,arg2);
@@ -4376,7 +4935,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete__Pair_int_bool(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete__Pair_long_bool(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,bool > *arg1 = (std::pair< long,bool > *) 0 ;
   void *argp1 = 0 ;
@@ -4387,7 +4946,7 @@ SWIGINTERN PyObject *_wrap_delete__Pair_int_bool(PyObject *SWIGUNUSEDPARM(self),
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_bool_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_int_bool" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_long_bool" "', argument " "1"" of type '" "std::pair< long,bool > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,bool > * >(argp1);
   delete arg1;
@@ -4398,14 +4957,14 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_Pair_int_bool_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_bool_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_long_bool_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_Pair_int_bool_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_bool_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -4474,7 +5033,7 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_bool___next__(PyObject *SWIGUNUS
     try {
       result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
-      PyErr_SetString( PyExc_StopIteration, "" );
+      PyErr_SetString(PyExc_StopIteration, "");
       return NULL;
     }
   }
@@ -4623,7 +5182,7 @@ SWIGINTERN PyObject *_wrap__StepVector_bool_set_value(PyObject *SWIGUNUSEDPARM(s
     try {
       (arg1)->set_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -4676,7 +5235,7 @@ SWIGINTERN PyObject *_wrap__StepVector_bool_add_value(PyObject *SWIGUNUSEDPARM(s
     try {
       (arg1)->add_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -4797,7 +5356,7 @@ SWIGINTERN PyObject *_StepVector_bool_swiginit(PyObject *SWIGUNUSEDPARM(self), P
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap__Pair_int_obj_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_obj_first_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,AutoPyObjPtr > *arg1 = (std::pair< long,AutoPyObjPtr > *) 0 ;
   long arg2 ;
@@ -4807,15 +5366,15 @@ SWIGINTERN PyObject *_wrap__Pair_int_obj_first_set(PyObject *SWIGUNUSEDPARM(self
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_obj_first_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_obj_first_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_obj_first_set" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_obj_first_set" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,AutoPyObjPtr > * >(argp1);
   ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_int_obj_first_set" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "_Pair_long_obj_first_set" "', argument " "2"" of type '" "long""'");
   } 
   arg2 = static_cast< long >(val2);
   if (arg1) (arg1)->first = arg2;
@@ -4826,7 +5385,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_obj_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_obj_first_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,AutoPyObjPtr > *arg1 = (std::pair< long,AutoPyObjPtr > *) 0 ;
   void *argp1 = 0 ;
@@ -4838,7 +5397,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_obj_first_get(PyObject *SWIGUNUSEDPARM(self
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_obj_first_get" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_obj_first_get" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,AutoPyObjPtr > * >(argp1);
   result = (long) ((arg1)->first);
@@ -4849,7 +5408,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_obj_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_obj_second_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,AutoPyObjPtr > *arg1 = (std::pair< long,AutoPyObjPtr > *) 0 ;
   AutoPyObjPtr arg2 ;
@@ -4857,10 +5416,10 @@ SWIGINTERN PyObject *_wrap__Pair_int_obj_second_set(PyObject *SWIGUNUSEDPARM(sel
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "_Pair_int_obj_second_set", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "_Pair_long_obj_second_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_obj_second_set" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_obj_second_set" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,AutoPyObjPtr > * >(argp1);
   {
@@ -4874,7 +5433,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap__Pair_int_obj_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap__Pair_long_obj_second_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,AutoPyObjPtr > *arg1 = (std::pair< long,AutoPyObjPtr > *) 0 ;
   void *argp1 = 0 ;
@@ -4886,7 +5445,7 @@ SWIGINTERN PyObject *_wrap__Pair_int_obj_second_get(PyObject *SWIGUNUSEDPARM(sel
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_int_obj_second_get" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "_Pair_long_obj_second_get" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,AutoPyObjPtr > * >(argp1);
   result =  ((arg1)->second);
@@ -4900,7 +5459,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new__Pair_int_obj(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new__Pair_long_obj(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   long arg1 ;
   AutoPyObjPtr arg2 ;
@@ -4909,10 +5468,10 @@ SWIGINTERN PyObject *_wrap_new__Pair_int_obj(PyObject *SWIGUNUSEDPARM(self), PyO
   PyObject *swig_obj[2] ;
   std::pair< long,AutoPyObjPtr > *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "new__Pair_int_obj", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new__Pair_long_obj", 2, 2, swig_obj)) SWIG_fail;
   ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_int_obj" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new__Pair_long_obj" "', argument " "1"" of type '" "long""'");
   } 
   arg1 = static_cast< long >(val1);
   {
@@ -4926,7 +5485,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete__Pair_int_obj(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete__Pair_long_obj(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::pair< long,AutoPyObjPtr > *arg1 = (std::pair< long,AutoPyObjPtr > *) 0 ;
   void *argp1 = 0 ;
@@ -4937,7 +5496,7 @@ SWIGINTERN PyObject *_wrap_delete__Pair_int_obj(PyObject *SWIGUNUSEDPARM(self), 
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_int_obj" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete__Pair_long_obj" "', argument " "1"" of type '" "std::pair< long,AutoPyObjPtr > *""'"); 
   }
   arg1 = reinterpret_cast< std::pair< long,AutoPyObjPtr > * >(argp1);
   delete arg1;
@@ -4948,14 +5507,14 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_Pair_int_obj_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_obj_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_long_AutoPyObjPtr_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_Pair_int_obj_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_Pair_long_obj_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -5024,7 +5583,7 @@ SWIGINTERN PyObject *_wrap__StepVector_Iterator_obj___next__(PyObject *SWIGUNUSE
     try {
       result = (arg1)->__next__();
     } catch (pystyle_stopiteration &e) {
-      PyErr_SetString( PyExc_StopIteration, "" );
+      PyErr_SetString(PyExc_StopIteration, "");
       return NULL;
     }
   }
@@ -5169,7 +5728,7 @@ SWIGINTERN PyObject *_wrap__StepVector_obj_set_value(PyObject *SWIGUNUSEDPARM(se
     try {
       (arg1)->set_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -5218,7 +5777,7 @@ SWIGINTERN PyObject *_wrap__StepVector_obj_add_value(PyObject *SWIGUNUSEDPARM(se
     try {
       (arg1)->add_value(arg2,arg3,arg4);                                                                  
     } catch (std::out_of_range &e) {
-      SWIG_exception(SWIG_IndexError, e.what() );                              
+      SWIG_exception(SWIG_IndexError, e.what());                               
     } catch (type_error_non_arith &e) {
       SWIG_exception(SWIG_TypeError, "Illegal arithmetic operation" );         
     } 
@@ -5341,14 +5900,14 @@ SWIGINTERN PyObject *_StepVector_obj_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
 
 static PyMethodDef SwigMethods[] = {
 	 { "SWIG_PyInstanceMethod_New", SWIG_PyInstanceMethod_New, METH_O, NULL},
-	 { "_Pair_int_float_first_set", _wrap__Pair_int_float_first_set, METH_VARARGS, NULL},
-	 { "_Pair_int_float_first_get", _wrap__Pair_int_float_first_get, METH_O, NULL},
-	 { "_Pair_int_float_second_set", _wrap__Pair_int_float_second_set, METH_VARARGS, NULL},
-	 { "_Pair_int_float_second_get", _wrap__Pair_int_float_second_get, METH_O, NULL},
-	 { "new__Pair_int_float", _wrap_new__Pair_int_float, METH_VARARGS, NULL},
-	 { "delete__Pair_int_float", _wrap_delete__Pair_int_float, METH_O, NULL},
-	 { "_Pair_int_float_swigregister", _Pair_int_float_swigregister, METH_O, NULL},
-	 { "_Pair_int_float_swiginit", _Pair_int_float_swiginit, METH_VARARGS, NULL},
+	 { "_Pair_long_float_first_set", _wrap__Pair_long_float_first_set, METH_VARARGS, NULL},
+	 { "_Pair_long_float_first_get", _wrap__Pair_long_float_first_get, METH_O, NULL},
+	 { "_Pair_long_float_second_set", _wrap__Pair_long_float_second_set, METH_VARARGS, NULL},
+	 { "_Pair_long_float_second_get", _wrap__Pair_long_float_second_get, METH_O, NULL},
+	 { "new__Pair_long_float", _wrap_new__Pair_long_float, METH_VARARGS, NULL},
+	 { "delete__Pair_long_float", _wrap_delete__Pair_long_float, METH_O, NULL},
+	 { "_Pair_long_float_swigregister", _Pair_long_float_swigregister, METH_O, NULL},
+	 { "_Pair_long_float_swiginit", _Pair_long_float_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_float", _wrap_new__StepVector_Iterator_float, METH_VARARGS, NULL},
 	 { "_StepVector_Iterator_float___next__", _wrap__StepVector_Iterator_float___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_float___iter__", _wrap__StepVector_Iterator_float___iter__, METH_O, NULL},
@@ -5364,14 +5923,14 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete__StepVector_float", _wrap_delete__StepVector_float, METH_O, NULL},
 	 { "_StepVector_float_swigregister", _StepVector_float_swigregister, METH_O, NULL},
 	 { "_StepVector_float_swiginit", _StepVector_float_swiginit, METH_VARARGS, NULL},
-	 { "_Pair_int_int_first_set", _wrap__Pair_int_int_first_set, METH_VARARGS, NULL},
-	 { "_Pair_int_int_first_get", _wrap__Pair_int_int_first_get, METH_O, NULL},
-	 { "_Pair_int_int_second_set", _wrap__Pair_int_int_second_set, METH_VARARGS, NULL},
-	 { "_Pair_int_int_second_get", _wrap__Pair_int_int_second_get, METH_O, NULL},
-	 { "new__Pair_int_int", _wrap_new__Pair_int_int, METH_VARARGS, NULL},
-	 { "delete__Pair_int_int", _wrap_delete__Pair_int_int, METH_O, NULL},
-	 { "_Pair_int_int_swigregister", _Pair_int_int_swigregister, METH_O, NULL},
-	 { "_Pair_int_int_swiginit", _Pair_int_int_swiginit, METH_VARARGS, NULL},
+	 { "_Pair_long_int_first_set", _wrap__Pair_long_int_first_set, METH_VARARGS, NULL},
+	 { "_Pair_long_int_first_get", _wrap__Pair_long_int_first_get, METH_O, NULL},
+	 { "_Pair_long_int_second_set", _wrap__Pair_long_int_second_set, METH_VARARGS, NULL},
+	 { "_Pair_long_int_second_get", _wrap__Pair_long_int_second_get, METH_O, NULL},
+	 { "new__Pair_long_int", _wrap_new__Pair_long_int, METH_VARARGS, NULL},
+	 { "delete__Pair_long_int", _wrap_delete__Pair_long_int, METH_O, NULL},
+	 { "_Pair_long_int_swigregister", _Pair_long_int_swigregister, METH_O, NULL},
+	 { "_Pair_long_int_swiginit", _Pair_long_int_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_int", _wrap_new__StepVector_Iterator_int, METH_VARARGS, NULL},
 	 { "_StepVector_Iterator_int___next__", _wrap__StepVector_Iterator_int___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_int___iter__", _wrap__StepVector_Iterator_int___iter__, METH_O, NULL},
@@ -5387,14 +5946,37 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete__StepVector_int", _wrap_delete__StepVector_int, METH_O, NULL},
 	 { "_StepVector_int_swigregister", _StepVector_int_swigregister, METH_O, NULL},
 	 { "_StepVector_int_swiginit", _StepVector_int_swiginit, METH_VARARGS, NULL},
-	 { "_Pair_int_bool_first_set", _wrap__Pair_int_bool_first_set, METH_VARARGS, NULL},
-	 { "_Pair_int_bool_first_get", _wrap__Pair_int_bool_first_get, METH_O, NULL},
-	 { "_Pair_int_bool_second_set", _wrap__Pair_int_bool_second_set, METH_VARARGS, NULL},
-	 { "_Pair_int_bool_second_get", _wrap__Pair_int_bool_second_get, METH_O, NULL},
-	 { "new__Pair_int_bool", _wrap_new__Pair_int_bool, METH_VARARGS, NULL},
-	 { "delete__Pair_int_bool", _wrap_delete__Pair_int_bool, METH_O, NULL},
-	 { "_Pair_int_bool_swigregister", _Pair_int_bool_swigregister, METH_O, NULL},
-	 { "_Pair_int_bool_swiginit", _Pair_int_bool_swiginit, METH_VARARGS, NULL},
+	 { "_Pair_long_long_first_set", _wrap__Pair_long_long_first_set, METH_VARARGS, NULL},
+	 { "_Pair_long_long_first_get", _wrap__Pair_long_long_first_get, METH_O, NULL},
+	 { "_Pair_long_long_second_set", _wrap__Pair_long_long_second_set, METH_VARARGS, NULL},
+	 { "_Pair_long_long_second_get", _wrap__Pair_long_long_second_get, METH_O, NULL},
+	 { "new__Pair_long_long", _wrap_new__Pair_long_long, METH_VARARGS, NULL},
+	 { "delete__Pair_long_long", _wrap_delete__Pair_long_long, METH_O, NULL},
+	 { "_Pair_long_long_swigregister", _Pair_long_long_swigregister, METH_O, NULL},
+	 { "_Pair_long_long_swiginit", _Pair_long_long_swiginit, METH_VARARGS, NULL},
+	 { "new__StepVector_Iterator_long", _wrap_new__StepVector_Iterator_long, METH_VARARGS, NULL},
+	 { "_StepVector_Iterator_long___next__", _wrap__StepVector_Iterator_long___next__, METH_O, NULL},
+	 { "_StepVector_Iterator_long___iter__", _wrap__StepVector_Iterator_long___iter__, METH_O, NULL},
+	 { "delete__StepVector_Iterator_long", _wrap_delete__StepVector_Iterator_long, METH_O, NULL},
+	 { "_StepVector_Iterator_long_swigregister", _StepVector_Iterator_long_swigregister, METH_O, NULL},
+	 { "_StepVector_Iterator_long_swiginit", _StepVector_Iterator_long_swiginit, METH_VARARGS, NULL},
+	 { "new__StepVector_long", _wrap_new__StepVector_long, METH_NOARGS, NULL},
+	 { "_StepVector_long_set_value", _wrap__StepVector_long_set_value, METH_VARARGS, NULL},
+	 { "_StepVector_long_add_value", _wrap__StepVector_long_add_value, METH_VARARGS, NULL},
+	 { "_StepVector_long_get_all_values_pystyle", _wrap__StepVector_long_get_all_values_pystyle, METH_O, NULL},
+	 { "_StepVector_long_get_values_pystyle", _wrap__StepVector_long_get_values_pystyle, METH_VARARGS, NULL},
+	 { "_StepVector_long_num_values", _wrap__StepVector_long_num_values, METH_O, NULL},
+	 { "delete__StepVector_long", _wrap_delete__StepVector_long, METH_O, NULL},
+	 { "_StepVector_long_swigregister", _StepVector_long_swigregister, METH_O, NULL},
+	 { "_StepVector_long_swiginit", _StepVector_long_swiginit, METH_VARARGS, NULL},
+	 { "_Pair_long_bool_first_set", _wrap__Pair_long_bool_first_set, METH_VARARGS, NULL},
+	 { "_Pair_long_bool_first_get", _wrap__Pair_long_bool_first_get, METH_O, NULL},
+	 { "_Pair_long_bool_second_set", _wrap__Pair_long_bool_second_set, METH_VARARGS, NULL},
+	 { "_Pair_long_bool_second_get", _wrap__Pair_long_bool_second_get, METH_O, NULL},
+	 { "new__Pair_long_bool", _wrap_new__Pair_long_bool, METH_VARARGS, NULL},
+	 { "delete__Pair_long_bool", _wrap_delete__Pair_long_bool, METH_O, NULL},
+	 { "_Pair_long_bool_swigregister", _Pair_long_bool_swigregister, METH_O, NULL},
+	 { "_Pair_long_bool_swiginit", _Pair_long_bool_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_bool", _wrap_new__StepVector_Iterator_bool, METH_VARARGS, NULL},
 	 { "_StepVector_Iterator_bool___next__", _wrap__StepVector_Iterator_bool___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_bool___iter__", _wrap__StepVector_Iterator_bool___iter__, METH_O, NULL},
@@ -5410,14 +5992,14 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete__StepVector_bool", _wrap_delete__StepVector_bool, METH_O, NULL},
 	 { "_StepVector_bool_swigregister", _StepVector_bool_swigregister, METH_O, NULL},
 	 { "_StepVector_bool_swiginit", _StepVector_bool_swiginit, METH_VARARGS, NULL},
-	 { "_Pair_int_obj_first_set", _wrap__Pair_int_obj_first_set, METH_VARARGS, NULL},
-	 { "_Pair_int_obj_first_get", _wrap__Pair_int_obj_first_get, METH_O, NULL},
-	 { "_Pair_int_obj_second_set", _wrap__Pair_int_obj_second_set, METH_VARARGS, NULL},
-	 { "_Pair_int_obj_second_get", _wrap__Pair_int_obj_second_get, METH_O, NULL},
-	 { "new__Pair_int_obj", _wrap_new__Pair_int_obj, METH_VARARGS, NULL},
-	 { "delete__Pair_int_obj", _wrap_delete__Pair_int_obj, METH_O, NULL},
-	 { "_Pair_int_obj_swigregister", _Pair_int_obj_swigregister, METH_O, NULL},
-	 { "_Pair_int_obj_swiginit", _Pair_int_obj_swiginit, METH_VARARGS, NULL},
+	 { "_Pair_long_obj_first_set", _wrap__Pair_long_obj_first_set, METH_VARARGS, NULL},
+	 { "_Pair_long_obj_first_get", _wrap__Pair_long_obj_first_get, METH_O, NULL},
+	 { "_Pair_long_obj_second_set", _wrap__Pair_long_obj_second_set, METH_VARARGS, NULL},
+	 { "_Pair_long_obj_second_get", _wrap__Pair_long_obj_second_get, METH_O, NULL},
+	 { "new__Pair_long_obj", _wrap_new__Pair_long_obj, METH_VARARGS, NULL},
+	 { "delete__Pair_long_obj", _wrap_delete__Pair_long_obj, METH_O, NULL},
+	 { "_Pair_long_obj_swigregister", _Pair_long_obj_swigregister, METH_O, NULL},
+	 { "_Pair_long_obj_swiginit", _Pair_long_obj_swiginit, METH_VARARGS, NULL},
 	 { "new__StepVector_Iterator_obj", _wrap_new__StepVector_Iterator_obj, METH_VARARGS, NULL},
 	 { "_StepVector_Iterator_obj___next__", _wrap__StepVector_Iterator_obj___next__, METH_O, NULL},
 	 { "_StepVector_Iterator_obj___iter__", _wrap__StepVector_Iterator_obj___iter__, METH_O, NULL},
@@ -5449,18 +6031,22 @@ static swig_type_info _swigt__p_std__pairT_long_AutoPyObjPtr_t = {"_p_std__pairT
 static swig_type_info _swigt__p_std__pairT_long_bool_t = {"_p_std__pairT_long_bool_t", "std::pair< long,bool > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__pairT_long_double_t = {"_p_std__pairT_long_double_t", "std::pair< long,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__pairT_long_int_t = {"_p_std__pairT_long_int_t", "std::pair< long,int > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__pairT_long_long_t = {"_p_std__pairT_long_long_t", "std::pair< long,long > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vectorT_AutoPyObjPtr_t__const_iterator = {"_p_step_vectorT_AutoPyObjPtr_t__const_iterator", "step_vector< AutoPyObjPtr >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vectorT_bool_t__const_iterator = {"_p_step_vectorT_bool_t__const_iterator", "step_vector< bool >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vectorT_double_t__const_iterator = {"_p_step_vectorT_double_t__const_iterator", "step_vector< double >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vectorT_int_t__const_iterator = {"_p_step_vectorT_int_t__const_iterator", "step_vector< int >::const_iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_step_vectorT_long_t__const_iterator = {"_p_step_vectorT_long_t__const_iterator", "step_vector< long >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_for_pythonT_AutoPyObjPtr_t = {"_p_step_vector_for_pythonT_AutoPyObjPtr_t", "step_vector_for_python< AutoPyObjPtr > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_for_pythonT_bool_t = {"_p_step_vector_for_pythonT_bool_t", "step_vector_for_python< bool > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_for_pythonT_double_t = {"_p_step_vector_for_pythonT_double_t", "step_vector_for_python< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_for_pythonT_int_t = {"_p_step_vector_for_pythonT_int_t", "step_vector_for_python< int > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_step_vector_for_pythonT_long_t = {"_p_step_vector_for_pythonT_long_t", "step_vector_for_python< long > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t = {"_p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t", "step_vector_pystyle_iterator< AutoPyObjPtr > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_pystyle_iteratorT_bool_t = {"_p_step_vector_pystyle_iteratorT_bool_t", "step_vector_pystyle_iterator< bool > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_pystyle_iteratorT_double_t = {"_p_step_vector_pystyle_iteratorT_double_t", "step_vector_pystyle_iterator< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_step_vector_pystyle_iteratorT_int_t = {"_p_step_vector_pystyle_iteratorT_int_t", "step_vector_pystyle_iterator< int > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_step_vector_pystyle_iteratorT_long_t = {"_p_step_vector_pystyle_iteratorT_long_t", "step_vector_pystyle_iterator< long > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_AutoPyObjPtr,
@@ -5469,18 +6055,22 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__pairT_long_bool_t,
   &_swigt__p_std__pairT_long_double_t,
   &_swigt__p_std__pairT_long_int_t,
+  &_swigt__p_std__pairT_long_long_t,
   &_swigt__p_step_vectorT_AutoPyObjPtr_t__const_iterator,
   &_swigt__p_step_vectorT_bool_t__const_iterator,
   &_swigt__p_step_vectorT_double_t__const_iterator,
   &_swigt__p_step_vectorT_int_t__const_iterator,
+  &_swigt__p_step_vectorT_long_t__const_iterator,
   &_swigt__p_step_vector_for_pythonT_AutoPyObjPtr_t,
   &_swigt__p_step_vector_for_pythonT_bool_t,
   &_swigt__p_step_vector_for_pythonT_double_t,
   &_swigt__p_step_vector_for_pythonT_int_t,
+  &_swigt__p_step_vector_for_pythonT_long_t,
   &_swigt__p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t,
   &_swigt__p_step_vector_pystyle_iteratorT_bool_t,
   &_swigt__p_step_vector_pystyle_iteratorT_double_t,
   &_swigt__p_step_vector_pystyle_iteratorT_int_t,
+  &_swigt__p_step_vector_pystyle_iteratorT_long_t,
 };
 
 static swig_cast_info _swigc__p_AutoPyObjPtr[] = {  {&_swigt__p_AutoPyObjPtr, 0, 0, 0},{0, 0, 0, 0}};
@@ -5489,18 +6079,22 @@ static swig_cast_info _swigc__p_std__pairT_long_AutoPyObjPtr_t[] = {  {&_swigt__
 static swig_cast_info _swigc__p_std__pairT_long_bool_t[] = {  {&_swigt__p_std__pairT_long_bool_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__pairT_long_double_t[] = {  {&_swigt__p_std__pairT_long_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__pairT_long_int_t[] = {  {&_swigt__p_std__pairT_long_int_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__pairT_long_long_t[] = {  {&_swigt__p_std__pairT_long_long_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vectorT_AutoPyObjPtr_t__const_iterator[] = {  {&_swigt__p_step_vectorT_AutoPyObjPtr_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vectorT_bool_t__const_iterator[] = {  {&_swigt__p_step_vectorT_bool_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vectorT_double_t__const_iterator[] = {  {&_swigt__p_step_vectorT_double_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vectorT_int_t__const_iterator[] = {  {&_swigt__p_step_vectorT_int_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_step_vectorT_long_t__const_iterator[] = {  {&_swigt__p_step_vectorT_long_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_for_pythonT_AutoPyObjPtr_t[] = {  {&_swigt__p_step_vector_for_pythonT_AutoPyObjPtr_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_for_pythonT_bool_t[] = {  {&_swigt__p_step_vector_for_pythonT_bool_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_for_pythonT_double_t[] = {  {&_swigt__p_step_vector_for_pythonT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_for_pythonT_int_t[] = {  {&_swigt__p_step_vector_for_pythonT_int_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_step_vector_for_pythonT_long_t[] = {  {&_swigt__p_step_vector_for_pythonT_long_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t[] = {  {&_swigt__p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_pystyle_iteratorT_bool_t[] = {  {&_swigt__p_step_vector_pystyle_iteratorT_bool_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_pystyle_iteratorT_double_t[] = {  {&_swigt__p_step_vector_pystyle_iteratorT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_step_vector_pystyle_iteratorT_int_t[] = {  {&_swigt__p_step_vector_pystyle_iteratorT_int_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_step_vector_pystyle_iteratorT_long_t[] = {  {&_swigt__p_step_vector_pystyle_iteratorT_long_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_AutoPyObjPtr,
@@ -5509,18 +6103,22 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__pairT_long_bool_t,
   _swigc__p_std__pairT_long_double_t,
   _swigc__p_std__pairT_long_int_t,
+  _swigc__p_std__pairT_long_long_t,
   _swigc__p_step_vectorT_AutoPyObjPtr_t__const_iterator,
   _swigc__p_step_vectorT_bool_t__const_iterator,
   _swigc__p_step_vectorT_double_t__const_iterator,
   _swigc__p_step_vectorT_int_t__const_iterator,
+  _swigc__p_step_vectorT_long_t__const_iterator,
   _swigc__p_step_vector_for_pythonT_AutoPyObjPtr_t,
   _swigc__p_step_vector_for_pythonT_bool_t,
   _swigc__p_step_vector_for_pythonT_double_t,
   _swigc__p_step_vector_for_pythonT_int_t,
+  _swigc__p_step_vector_for_pythonT_long_t,
   _swigc__p_step_vector_pystyle_iteratorT_AutoPyObjPtr_t,
   _swigc__p_step_vector_pystyle_iteratorT_bool_t,
   _swigc__p_step_vector_pystyle_iteratorT_double_t,
   _swigc__p_step_vector_pystyle_iteratorT_int_t,
+  _swigc__p_step_vector_pystyle_iteratorT_long_t,
 };
 
 
@@ -6271,6 +6869,8 @@ SWIG_init(void) {
   SWIG_addvarlink(globals, "_StepVector_float_max_index", Swig_var__StepVector_float_max_index_get, Swig_var__StepVector_float_max_index_set);
   SWIG_addvarlink(globals, "_StepVector_int_min_index", Swig_var__StepVector_int_min_index_get, Swig_var__StepVector_int_min_index_set);
   SWIG_addvarlink(globals, "_StepVector_int_max_index", Swig_var__StepVector_int_max_index_get, Swig_var__StepVector_int_max_index_set);
+  SWIG_addvarlink(globals, "_StepVector_long_min_index", Swig_var__StepVector_long_min_index_get, Swig_var__StepVector_long_min_index_set);
+  SWIG_addvarlink(globals, "_StepVector_long_max_index", Swig_var__StepVector_long_max_index_get, Swig_var__StepVector_long_max_index_set);
   SWIG_addvarlink(globals, "_StepVector_bool_min_index", Swig_var__StepVector_bool_min_index_get, Swig_var__StepVector_bool_min_index_set);
   SWIG_addvarlink(globals, "_StepVector_bool_max_index", Swig_var__StepVector_bool_max_index_get, Swig_var__StepVector_bool_max_index_set);
   SWIG_addvarlink(globals, "_StepVector_obj_min_index", Swig_var__StepVector_obj_min_index_get, Swig_var__StepVector_obj_min_index_set);

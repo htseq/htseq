@@ -23,7 +23,7 @@ For example, if you have data in a tab-separated file as follows:
 
 .. doctest::
 
-   >>> for line in open( "feature_list.txt" ):  #doctest:+NORMALIZE_WHITESPACE
+   >>> for line in open("feature_list.txt"):  #doctest:+NORMALIZE_WHITESPACE
    ...     print(line)
    chr2  100	300	+	"gene A"
    chr2	200	400	-	"gene B"
@@ -32,18 +32,18 @@ For example, if you have data in a tab-separated file as follows:
 Then, you could load this information as follows::
 
    >>> import csv
-   >>> genes = HTSeq.GenomicArray( [ "chr1", "chr2", "chr3" ], typecode='O' )
+   >>> genes = HTSeq.GenomicArray(["chr1", "chr2", "chr3"], typecode='O')
    >>> for (chrom, start, end, strand, name) in \
-   ...        csv.reader( open("feature_list.txt"), delimiter="\t" ):
-   ...     iv = HTSeq.GenomicInterval( chrom, int(start), int(end), strand )
-   ...     genes[ iv ] = name
+   ...        csv.reader(open("feature_list.txt"), delimiter="\t"):
+   ...     iv = HTSeq.GenomicInterval(chrom, int(start), int(end), strand)
+   ...     genes[iv] = name
 
 Now, to see whether there is a feature at a given :class:`GenomicPosition`, you just query the
 genomic array::
 
-   >>> print(genes[ HTSeq.GenomicPosition( "chr3", 100, "+" ) ])
+   >>> print(genes[HTSeq.GenomicPosition("chr3", 100, "+")])
    None
-   >>> print(genes[ HTSeq.GenomicPosition( "chr3", 200, "+" ) ])
+   >>> print(genes[HTSeq.GenomicPosition("chr3", 200, "+")])
    gene C
 
 See :class:`GenomicArray` and :class:`GenomicArrayOfSets` for more sophisticated use.
@@ -143,7 +143,7 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
 
    In order to write a GFF file from a sequence of features, this method is provided:
    
-      .. method:: GenomicFeature.get_gff_line( with_equal_sign=False )
+      .. method:: GenomicFeature.get_gff_line(with_equal_sign=False)
    
          Returns a line to describe the feature in the GFF format. This works even if the optional 
          attributes given above are missing. Call this for each of your ``GenomicFeature`` objects
@@ -201,8 +201,8 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
    Example: Let's say you load the C. elegans GTF file from Ensembl and make a
    feature dict:
 
-   >>> gff = HTSeq.GFF_Reader("Caenorhabditis_elegans.WS200.55.gtf.gz")
-   >>> worm_features = HTSeq.make_feature_genomicarrayofsets(gff, 'gene_id')
+   >>> gff = HTSeq.GFF_Reader("Caenorhabditis_elegans.WS200.55.gtf.gz")  #doctest: +SKIP
+   >>> worm_features = HTSeq.make_feature_genomicarrayofsets(gff, 'gene_id')  #doctest: +SKIP
 
    (This command may take a few minutes to deal with the 430,000 features
    in the GTF file. Note that you may need a lot of RAM if you have millions

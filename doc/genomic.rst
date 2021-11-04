@@ -1,7 +1,7 @@
 .. _genomic:
 
 ************************************
-Genomic intervals and genomic arrays
+Positions, intervals and arrays
 ************************************
 
 .. currentmodule:: HTSeq
@@ -11,6 +11,26 @@ Genomic intervals and genomic arrays
 
    >>> import HTSeq
 
+``GenomicPosition``
+===================
+
+A ``GenomicPosition`` represents the position of a single base or base pair, i.e., it is
+an interval of length 1, and hence, the class is a subclass of :class:GenomicInterval.
+
+.. class::  GenomicPosition(chrom, pos, strand='.')
+
+   The initialisation is as for a :class:GenomicInterval object, but no ``length`` argument is passed.
+   
+Attributes
+
+   .. attribute:: pos
+   
+      **pos** is an alias for :attr:`GenomicInterval.start_d`.
+      
+   All other attributes of :class:`GenomicInterval` are still exposed. Refrain from 
+   using them, unless you want to use the object as an interval, not as a position.
+   Some of them are now read-only to prevent the length to be changed.
+
 
 ``GenomicInterval``
 ===================
@@ -19,7 +39,7 @@ A genomic interval is a consecutive stretch on a genomic sequence such as a chro
 It is represented by a ``GenomicInterval`` object.
 
 Instantiation
-   .. class:: GenomicInterval( chrom, start, end, strand )
+   .. class:: GenomicInterval(chrom, start, end, strand)
 
       ``chrom`` (string)
          The name of a sequence (i.e., chromosome, contig, or the like). 
@@ -43,7 +63,7 @@ Representation and string conversion
    The class's ``__str__`` method gives a spcae-saving description of the
    interval, the ``__repr__`` method is a bit more verbose::
    
-      >>> iv = HTSeq.GenomicInterval( "chr3", 123203, 127245, "+" )
+      >>> iv = HTSeq.GenomicInterval("chr3", 123203, 127245, "+")
       >>> print(iv)
       chr3:[123203,127245)/+
       >>> iv
@@ -93,15 +113,15 @@ Attributes
       respective positions.
 
 Directional instantiation   
-   .. function:: GenomicInterval_from_directional( chrom, start_d, length, strand="." )
+   .. function:: GenomicInterval_from_directional(chrom, start_d, length, strand=".")
    
       This function allows to create a new ``GenomicInterval`` object specifying
       directional start and length instead of start and end. 
    
 Methods
-   .. method:: GenomicInterval.is_contained_in( iv )
-               GenomicInterval.contains( iv )
-               GenomicInterval.overlaps( iv )
+   .. method:: GenomicInterval.is_contained_in(iv)
+               GenomicInterval.contains(iv)
+               GenomicInterval.overlaps(iv)
                
       These methods test whether the object is contained in, contains, or overlaps
       the second ``GenomicInterval`` object ``iv``. 
@@ -115,13 +135,13 @@ Methods
       
       Note that all three methods return ``True`` for identical intervals.
                
-   .. method:: GenomicInterval.range( step = 1 )
-               GenomicInterval.range_d( step = 1 )
+   .. method:: GenomicInterval.range(step = 1)
+               GenomicInterval.range_d(step = 1)
                
       These methods yield iterators of :class:GenomicPosition objects from
       ``start`` to ``end`` (or, for ``range_d`` from ``start_d`` to ``end_d``).
 
-   .. method:: GenomicInterval.extend_to_include( iv )
+   .. method:: GenomicInterval.extend_to_include(iv)
    
       Change the object's ``start`` end ``end`` values such that ``iv`` becomes contained.
          
@@ -136,28 +156,6 @@ Special methods
    - hashing the object
 
 
-``GenomicPosition``
-===================
-
-A ``GenomicPosition`` represents the position of a single base or base pair, i.e., it is
-an interval of length 1, and hence, the class is a subclass of :class:GenomicInterval.
-
-.. class::  GenomicPosition( chrom, pos, strand='.' )
-
-   The initialisation is as for a :class:GenomicInterval object, but no ``length`` argument is passed.
-   
-Attributes
-
-   .. attribute:: pos
-   
-      **pos** is an alias for :attr:`GenomicInterval.start_d`.
-      
-   All other attributes of :class:`GenomicInterval` are still exposed. Refrain from 
-   using them, unless you want to use the object as an interval, not as a position.
-   Some of them are now read-only to prevent the length to be changed.
-   
-
-
 ``GenomicArray``
 ================
 
@@ -169,7 +167,7 @@ transparently via :class:`GenomicInterval` objects.
 see the Version History page.**
 
 Instantiation
-   .. class:: GenomicArray( chroms, stranded=True, typecode='d', storage='step', memmap_dir='' )
+   .. class:: GenomicArray(chroms, stranded=True, typecode='d', storage='step', memmap_dir='')
 
    Creates a ``GenomicArray``. 
    
@@ -229,11 +227,11 @@ Attributes
       
       .. doctest::
       
-         >>> ga = HTSeq.GenomicArray( [ "chr1", "chr2" ], stranded=False )
+         >>> ga = HTSeq.GenomicArray(["chr1", "chr2"], stranded=False)
          >>> sorted(ga.chrom_vectors.items()) #doctest:+NORMALIZE_WHITESPACE
          [('chr1', {'.': <ChromVector object, chr1:[0,Inf)/., step>}),
           ('chr2', {'.': <ChromVector object, chr2:[0,Inf)/., step>})] 
-         >>> ga = HTSeq.GenomicArray( [ "chr1", "chr2" ], stranded=True )
+         >>> ga = HTSeq.GenomicArray(["chr1", "chr2"], stranded=True)
          >>> sorted([(st[0], sorted(st[1].items())) for st in ga.chrom_vectors.items()])  #doctest:+NORMALIZE_WHITESPACE
          [('chr1', [('+', <ChromVector object, chr1:[0,Inf)/+, step>), 
                     ('-', <ChromVector object, chr1:[0,Inf)/-, step>)]),
@@ -252,36 +250,36 @@ Data access
    
    To set an single position or an interval, use::
    
-      >>> ga[ HTSeq.GenomicPosition( "chr1", 100, "+" ) ] = 7
-      >>> ga[ HTSeq.GenomicInterval( "chr1", 250, 400, "+" ) ] = 20
+      >>> ga[HTSeq.GenomicPosition("chr1", 100, "+")] = 7
+      >>> ga[HTSeq.GenomicInterval("chr1", 250, 400, "+")] = 20
       
    To read a single position::
    
-      >>> ga[ HTSeq.GenomicPosition( "chr1", 300, "+" ) ]
+      >>> ga[HTSeq.GenomicPosition("chr1", 300, "+")]
       20.0
 
-   .. method:: ChromVector.steps( self )
+   .. method:: ChromVector.steps(self)
       
    To read an interval, use a ``GenomicInterval`` object as index, and
    obtain a ``ChromVector`` with a sub-view::
    
-      >>> iv = HTSeq.GenomicInterval( "chr1", 250, 450, "+" )
-      >>> v = ga[ iv ]
+      >>> iv = HTSeq.GenomicInterval("chr1", 250, 450, "+")
+      >>> v = ga[iv]
       >>> v
       <ChromVector object, chr1:[250,450)/+, step>
-      >>> list( v.steps() )  #doctest:+NORMALIZE_WHITESPACE
+      >>> list(v.steps())  #doctest:+NORMALIZE_WHITESPACE
       [(<GenomicInterval object 'chr1', [250,400), strand '+'>, 20.0), 
        (<GenomicInterval object 'chr1', [400,450), strand '+'>, 0.0)]
        
-   Note that you get ( interval, value ) pairs , i.e., you can conveniently cycle
+   Note that you get (interval, value) pairs , i.e., you can conveniently cycle
    through them with::
    
-      >>> for iv, value in ga[ iv ].steps():
+      >>> for iv, value in ga[iv].steps():
       ...    print(iv, value)
       chr1:[250,400)/+ 20.0
       chr1:[400,450)/+ 0.0
       
-   .. method:: GenomicArray.steps( self )
+   .. method:: GenomicArray.steps(self)
  
     You can get all steps from all chromosomes by calling the arrays own ``steps``
     method.
@@ -291,8 +289,8 @@ Modifying values
 
    ChromVector implements the ``__iadd__`` method. Hence you can use ``+=``:
    
-      >>> ga[ HTSeq.GenomicInterval( "chr1", 290, 310, "+" ) ] += 1000
-      >>> list( ga[ HTSeq.GenomicInterval( "chr1", 250, 450, "+" ) ].steps() )  #doctest:+NORMALIZE_WHITESPACE
+      >>> ga[HTSeq.GenomicInterval("chr1", 290, 310, "+")] += 1000
+      >>> list(ga[HTSeq.GenomicInterval("chr1", 250, 450, "+")].steps())  #doctest:+NORMALIZE_WHITESPACE
       [(<GenomicInterval object 'chr1', [250,290), strand '+'>, 20.0), 
        (<GenomicInterval object 'chr1', [290,310), strand '+'>, 1020.0), 
        (<GenomicInterval object 'chr1', [310,400), strand '+'>, 20.0), 
@@ -300,18 +298,26 @@ Modifying values
 
    To do manipulations other than additions, use Chromvector's ``apply`` method:
    
-   .. method:: ChromVector.apply( func )
+   .. method:: ChromVector.apply(func)
    
-       >>> ga[ HTSeq.GenomicInterval( "chr1", 290, 300, "+" ) ].apply( lambda x: x * 2 ) 
-       >>> list( ga[ HTSeq.GenomicInterval( "chr1", 250, 450, "+" ) ].steps() ) #doctest:+NORMALIZE_WHITESPACE
+       >>> ga[HTSeq.GenomicInterval("chr1", 290, 300, "+")].apply(lambda x: x * 2) 
+       >>> list(ga[HTSeq.GenomicInterval("chr1", 250, 450, "+")].steps()) #doctest:+NORMALIZE_WHITESPACE
        [(<GenomicInterval object 'chr1', [250,290), strand '+'>, 20.0), 
         (<GenomicInterval object 'chr1', [290,300), strand '+'>, 2040.0), 
         (<GenomicInterval object 'chr1', [300,310), strand '+'>, 1020.0), 
         (<GenomicInterval object 'chr1', [310,400), strand '+'>, 20.0), 
         (<GenomicInterval object 'chr1', [400,450), strand '+'>, 0.0)]
+      
+Adding a chromosome
+   .. method:: GenomicArray.add_chrom(chrom, length=sys.maxint, start_index=0)
    
-Writing to a file
-   .. method:: GenomicArray.write_bedgraph_file( file_or_filename, strand=".", track_options="" )
+      Adds step vector(s) for a further chromosome. This is useful if you do not have a full
+      list of chromosome names yet when instantiating the ``GenomicArray``.
+      
+I/O from and to files
+   You can read an instance from a BedGraph/BigWig file and write an instance into the same file formats.
+
+   .. method:: GenomicArray.write_bedgraph_file(file_or_filename, strand=".", track_options="")
    
       Write out the data in the GenomicArray as a BedGraph_ track. This is a subtype of the Wiggle_ format
       (i.e., the file extension is usually ".wig") and such files can be conveniently viewed in
@@ -321,13 +327,60 @@ Writing to a file
       cannot store strand information, you have to specify either ``'+'`` or ``'-'`` as the
       strand argument if your ``GenomicArray`` is stranded (``stranded==True``). Typically, you
       will write two wiggle files, one for each strand, and display them together.
-      
-Adding a chromosome
-   .. method:: GenomicArray.add_chrom( chrom, length=sys.maxint, start_index=0 )
-   
-      Adds step vector(s) for a further chromosome. This is useful if you do not have a full
-      list of chromosome names yet when instantiating the ``GenomicArray``.
-      
+
+
+   .. method:: GenomicArray.from_bedgraph_file(file_or_filename, strand=".", typecode="d")
+
+      Create GenomicArray from BedGraph file.
+
+      See GenomicArray.write_bedgraph_file for details on the file format.
+
+        Args:
+            file_or_filename (str, path, or open file handle): Where to load the BedGraph data from.
+            strand ("+", "-", or "."): strandedness of the returned array.
+            typecode ("d", "i", or "l"): Type of data in the file. "d" means floating point (double), "i" is integer, "l" is long integer.
+
+        Returns:
+            A GenomicArray instance with the data. 
+
+
+   .. method:: GenomicArray.write_bigwig_file(filename, strand=".")
+
+        Write GenomicArray to BigWig file.
+
+        BigWig files are used to visualize genomic "tracks", notably in
+        UCSC's genomic viewer. They are, in a sense, the binary compressed
+        equivalent of BedGraph files. This function stores the GenomicArray
+        into such a file for further use.
+
+        Args:
+            filename (str or path): Where to store the data.
+            strand (".", "+", or "-"): Which strand to write to file.
+
+        The BigWig file format is described here:
+        
+            http://genome.ucsc.edu/goldenPath/help/bigWig.html
+
+        NOTE: This function requires the package pyBigWig at:
+
+            https://github.com/deeptools/pyBigWig
+
+        Install it via pip, conda, or see instructions at that page.
+
+   .. method:: GenomicArray.from_bigwig_file(filename, strand=".", typecode="d")
+
+        Create GenomicArray from BigWig file.
+
+        See GenomicArray.write_bigwig for details on the file format.
+
+        Args:
+            filename (str or path): Where to load the data from.
+            strand ("+", "-", or "."): strandedness of the returned array.
+            typecode ("d", "i", or "l"): Type of data in the file. "d" means floating point (double), "i" is integer, "l" is long integer.
+
+        Returns:
+            A GenomicArray instance with the data.
+
 .. _BedGraph: http://genome.ucsc.edu/goldenPath/help/bedgraph.html
 .. _Wiggle: http://genome.ucsc.edu/goldenPath/help/wiggle.html
 .. _IGB: http://igb.bioviz.org/
@@ -341,23 +394,23 @@ A ``GenomicArrayOfSets`` is a sub-class of :class:`GenomicArray` that deal with 
 special case of overlapping features. This is best explained by an example: Let's say, we
 have two features, ``"geneA"`` and ``"geneB"``, that are at overlapping positions::
 
-   >>> ivA = HTSeq.GenomicInterval( "chr1", 100, 300, "." )
-   >>> ivB = HTSeq.GenomicInterval( "chr1", 200, 400, "." )
+   >>> ivA = HTSeq.GenomicInterval("chr1", 100, 300, ".")
+   >>> ivB = HTSeq.GenomicInterval("chr1", 200, 400, ".")
    
 In a ``GenomicArrayOfSets``, the value of each step is a ``set`` and so can hold more than
 one object. The __iadd__ method is overloaded to add elements to the sets:
 
-   >>> gas = HTSeq.GenomicArrayOfSets( ["chr1", "chr2"], stranded=False )
+   >>> gas = HTSeq.GenomicArrayOfSets(["chr1", "chr2"], stranded=False)
    >>> gas[ivA] += "gene A"
    >>> gas[ivB] += "gene B"
-   >>> [(st[0], sorted(st[1])) for st in gas[ HTSeq.GenomicInterval( "chr1", 0, 500, "." ) ].steps()] #doctest:+NORMALIZE_WHITESPACE
+   >>> [(st[0], sorted(st[1])) for st in gas[HTSeq.GenomicInterval("chr1", 0, 500, ".")].steps()] #doctest:+NORMALIZE_WHITESPACE
    [(<GenomicInterval object 'chr1', [0,100), strand '.'>,   []), 
     (<GenomicInterval object 'chr1', [100,200), strand '.'>, ['gene A']), 
     (<GenomicInterval object 'chr1', [200,300), strand '.'>, ['gene A', 'gene B']), 
     (<GenomicInterval object 'chr1', [300,400), strand '.'>, ['gene B']), 
     (<GenomicInterval object 'chr1', [400,500), strand '.'>, [])]
 
-.. class:: GenomicArrayOfSets( chroms, stranded = True )
+.. class:: GenomicArrayOfSets(chroms, stranded = True)
 
    Instantiation is as in :class:`GenomicArray`, only that ``datatype`` is always ``'O'``.
 

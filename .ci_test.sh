@@ -5,7 +5,14 @@ if [ $OS_NAME == 'macos-latest' ]; then
   conda activate ci
 fi
 
-pytest --doctest-glob="*.rst"
+echo "Unit tests"
+pytest test
+if [ $? != 0 ]; then
+    exit 1
+fi
+
+echo "Doctests on documentation"
+pytest --doctest-glob="*.rst" doc/*.rst doc/tutorials/tss.rst
 if [ $? != 0 ]; then
     exit 1
 fi
