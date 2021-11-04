@@ -11,10 +11,6 @@ from HTSeq.scripts.count_reads_in_feature.parameters import CountParameters
 from HTSeq.scripts.count_reads_in_feature.count_reads_per_file import (
     count_reads_single_file
 )
-from HTSeq.scripts.utils import (
-    UnknownChrom,
-    invert_strand
-)
 
 def do_count_reads_in_features(in_param):
     """

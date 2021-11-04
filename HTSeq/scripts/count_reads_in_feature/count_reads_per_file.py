@@ -76,6 +76,26 @@ def get_outputfile_and_template(
 
 
 def get_bam_sam_file_parser(sam_filename):
+    """
+    Get the BAM/SAM file parser and check if the BAM/SAM input file is empty.
+
+    Parameters
+    ----------
+    samout_filename : str
+        The name of SAM/BAM file to write out all SAM alignment records into.
+
+    Returns
+    -------
+    bam_sam_file_reader : HTSeq.BAM_Reader
+        Parser for SAM/BAM/CRAM files. See __init__.py for HTSeq.
+
+    read_seq : itertools.chain
+        Containing the very first read followed by the iterator for the bam_sam_file_reader.
+        If the input file is empty, this will be an empty array.
+
+    pe_mode : boolean
+        Is this a paired-end data?
+    """
     try:
         if sam_filename == "-":
             # BAM_Reader is in HTSeq __init__ file.
@@ -84,11 +104,13 @@ def get_bam_sam_file_parser(sam_filename):
             bam_sam_file_reader = HTSeq.BAM_Reader(sam_filename)
 
         read_seq, pe_mode = check_empty_bam_sam_input_file(bam_sam_file_reader)
-        return bam_sam_file_reader, read_seq, pe_mode
+
     except:
         sys.stderr.write(
             "Error occured when reading beginning of SAM/BAM file.\n")
         raise
+
+    return bam_sam_file_reader, read_seq, pe_mode
 
 
 def check_empty_bam_sam_input_file(bam_sam_file_reader):
