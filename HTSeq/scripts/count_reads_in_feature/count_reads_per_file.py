@@ -160,6 +160,23 @@ def prepare_bam_sam_file_parser(
 
     return bam_sam_file_reader, read_seq, pe_mode
 
+def update_progress(num_reads_processed, pe_mode):
+    """
+    Simple function to update the progress of reads processing.
+
+    Parameters
+    ----------
+    num_reads_processed : int
+        Number of alignment records/pairs processed.
+    pe_mode : boolean
+        Whether the data is paired-end.
+    """
+    if num_reads_processed > 0 and num_reads_processed % 100000 == 0:
+        sys.stderr.write(
+            "%d alignment record%s processed.\n" %
+            (num_reads_processed, "s" if not pe_mode else " pairs"))
+        sys.stderr.flush()
+
 
 def count_reads_single_file(
         isam,
@@ -176,7 +193,7 @@ def count_reads_single_file(
         feature_type,
         id_attribute,
         additional_attributes,
-        quiet,
+        verbose,
         minaqual,
         samout_format,
         samout_filename,
@@ -242,7 +259,7 @@ def count_reads_single_file(
     additional_attributes : array
         Additional feature attributes.
         Commonly, gene_name is suitable for Ensembl GTF files.
-    quiet : boolean
+    verbose : boolean
         Whether to suppress progress report.
     minaqual : int
         Value denoting the MAPQ alignment quality of reads to skip.
@@ -303,15 +320,16 @@ def count_reads_single_file(
         notaligned = 0
         lowqual = 0
         nonunique = 0
-        i = 0
-        for r in read_seq:
-            if i > 0 and i % 100000 == 0 and not quiet:
-                sys.stderr.write(
-                    "%d alignment record%s processed.\n" %
-                    (i, "s" if not pe_mode else " pairs"))
-                sys.stderr.flush()
+        # Just for progress update
+        num_reads_processed = 0
 
-            i += 1
+        for r in read_seq:
+            if not verbose:
+                update_progress(num_reads_processed=i, pe_mode=pe_mode)
+            # TODO: Move me to the bottom! Shouldn't be updating the count
+            # unless the process has finished
+            num_reads_processed += 1
+
             if not pe_mode:
                 if not r.aligned:
                     notaligned += 1
@@ -475,7 +493,7 @@ def count_reads_single_file(
             (read_seq_file.get_line_number_string()))
         raise
 
-    if not quiet:
+    if not verbose:
         sys.stderr.write(
             "%d %s processed.\n" %
             (i, "alignments " if not pe_mode else "alignment pairs"))
