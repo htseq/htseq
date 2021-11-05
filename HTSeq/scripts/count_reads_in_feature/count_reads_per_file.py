@@ -265,6 +265,143 @@ def process_strand(do_invert, read_sequence):
                   and co.size > 0)
     return iv_seq
 
+def check_reads_paired_end(read_sequence,
+                           reads_stats,
+                           secondary_alignment_mode,
+                           supplementary_alignment_mode,
+                           min_read_quality):
+
+    if read_sequence[0] is None or not read_sequence[0].aligned:
+        reads_stats.add_not_aligned_read(read_sequence)
+        return True
+
+    if secondary_alignment_mode == 'ignore':
+        if (
+            read_sequence[0] is not None and
+            read_sequence[0].not_primary_alignment
+        ):
+            return True
+        elif (
+            read_sequence[1] is not None and
+            read_sequence[1].not_primary_alignment
+        ):
+            return True
+
+    if supplementary_alignment_mode == 'ignore':
+        if (read_sequence[0] is not None) and read_sequence[0].supplementary:
+            return True
+        elif (read_sequence[1] is not None) and read_sequence[1].supplementary:
+            return True
+
+    try:
+        not_unique_read = False
+        for i in range(0, 2):
+            if (
+                read_sequence[i] is not None and
+                read_sequence[i].optional_field("NH") > 1
+            ):
+                not_unique_read = True
+        if not_unique_read:
+            reads_stats.add_not_unique_read(read_sequence)
+            if multimapped_mode == 'none':
+                return True
+    except KeyError:
+        pass
+
+    low_qual_read = False
+    for i in range(0, 2):
+        if (
+            read_sequence[i] is not None and
+            read_sequence[i].aQual < min_read_quality
+        ):
+            low_qual_read = True
+    if low_qual_read:
+        reads_stats.add_low_quality_read(read_sequence)
+        return True
+
+    return False
+
+def check_reads_not_paired_end(read_sequence,
+                               reads_stats,
+                               secondary_alignment_mode,
+                               supplementary_alignment_mode,
+                               min_read_quality,
+                               multimapped_mode):
+
+    if not read_sequence.aligned:
+        reads_stats.add_not_aligned_read(read_sequence)
+        return True
+
+    if secondary_alignment_mode == 'ignore' and \
+            read_sequence.not_primary_alignment:
+        return True
+
+    if supplementary_alignment_mode == 'ignore' and \
+            read_sequence.supplementary:
+        return True
+
+    # TODO: Maybe fix if need be as it's not good?
+    try:
+        if read_sequence.optional_field("NH") > 1:
+            reads_stats.add_not_unique_read(read_sequence)
+            if multimapped_mode == 'none':
+                return True
+    except KeyError:
+        pass
+
+    if read_sequence.aQual < min_read_quality:
+        reads_stats.add_low_quality_read(read_sequence)
+        return True
+
+    return False
+
+def get_reads(read_sequence, paired_end, reads_stats, secondary_alignment_mode,
+              supplementary_alignment_mode, minaqual, stranded, multimapped_mode):
+
+    if not paired_end:
+        skip_this_read = check_reads_not_paired_end(
+            read_sequence = read_sequence,
+            reads_stats = reads_stats,
+            secondary_alignment_mode = secondary_alignment_mode,
+            supplementary_alignment_mode = supplementary_alignment_mode,
+            min_read_quality = minaqual,
+            multimapped_mode = multimapped_mode
+        )
+        if skip_this_read:
+            return None
+
+        iv_seq = process_strand(do_invert = stranded == 'reverse',
+                                read_sequence = read_sequence)
+
+    else:
+        skip_this_read = check_reads_paired_end(
+            read_sequence = read_sequence,
+            reads_stats = reads_stats,
+            secondary_alignment_mode = secondary_alignment_mode,
+            supplementary_alignment_mode = supplementary_alignment_mode,
+            min_read_quality = minaqual
+        )
+        if skip_this_read:
+            return None
+
+        # This old if statement is no longer needed as by the time it
+        # gets here, r[0] won't be none and it will have been aligned.
+        # See check_reads_paired_end.
+        # if r[0] is not None and r[0].aligned:
+        iv_seq = process_strand(do_invert = stranded == 'reverse',
+                                    read_sequence = r[0])
+
+        # Note: the next end can be None or not aligned it will still
+        # go through!
+        if read_sequence[1] is not None and read_sequence[1].aligned:
+            iv_seq_next_end = process_strand(
+                do_invert = stranded != 'reverse',
+                read_sequence = read_sequence[1])
+            iv_seq = itertools.chain(iv_seq, iv_seq_next_end)
+
+    return iv_seq
+
+
 def count_reads_single_file(
         isam,
         sam_filename,
@@ -395,75 +532,18 @@ def count_reads_single_file(
             # unless the process has finished
             reads_stats.add_num_reads_processed()
 
-            if not pe_mode:
-                if not r.aligned:
-                    reads_stats.add_not_aligned_read(r)
-                    continue
+            iv_seq = get_reads(
+                read_sequence = r,
+                paired_end = pe_mode,
+                reads_stats = reads_stats,
+                secondary_alignment_mode = secondary_alignment_mode,
+                supplementary_alignment_mode = supplementary_alignment_mode,
+                minaqual = minaqual,
+                stranded = stranded,
+                multimapped_mode = multimapped_mode)
 
-                if ((secondary_alignment_mode == 'ignore') and
-                   r.not_primary_alignment):
-                    continue
-                if ((supplementary_alignment_mode == 'ignore') and
-                   r.supplementary):
-                    continue
-
-                try:
-                    if r.optional_field("NH") > 1:
-                        reads_stats.add_not_unique_read(r)
-                        if multimapped_mode == 'none':
-                            continue
-                except KeyError:
-                    pass
-                if r.aQual < minaqual:
-                    reads_stats.add_low_quality_read(r)
-                    continue
-
-                iv_seq = process_strand(do_invert = stranded == 'reverse',
-                                        read_sequence = r)
-
-            else:
-                if r[0] is not None and r[0].aligned:
-
-                    iv_seq = process_strand(do_invert = stranded == 'reverse',
-                                            read_sequence = r[0])
-                else:
-                    iv_seq = tuple()
-
-                # Not sure what's the deal with 0 and 1 here really..
-                if r[1] is not None and r[1].aligned:
-                    # TODO: maybe inappropriate variable name
-                    iv_seq_next_read = process_strand(
-                        do_invert = stranded != 'reverse',
-                        read_sequence = r[1])
-                    iv_seq = itertools.chain(iv_seq, iv_seq_next_read)
-                else:
-                    # So this is when the previous sequence has not been aligned.
-                    if (r[0] is None) or not (r[0].aligned):
-                        reads_stats.add_not_aligned_read(r)
-                        continue
-
-                if secondary_alignment_mode == 'ignore':
-                    if (r[0] is not None) and r[0].not_primary_alignment:
-                        continue
-                    elif (r[1] is not None) and r[1].not_primary_alignment:
-                        continue
-                if supplementary_alignment_mode == 'ignore':
-                    if (r[0] is not None) and r[0].supplementary:
-                        continue
-                    elif (r[1] is not None) and r[1].supplementary:
-                        continue
-                try:
-                    if ((r[0] is not None and r[0].optional_field("NH") > 1) or
-                       (r[1] is not None and r[1].optional_field("NH") > 1)):
-                        reads_stats.add_not_unique_read(r)
-                        if multimapped_mode == 'none':
-                            continue
-                except KeyError:
-                    pass
-                if ((r[0] and r[0].aQual < minaqual) or
-                   (r[1] and r[1].aQual < minaqual)):
-                    reads_stats.add_low_quality_read(r)
-                    continue
+            if iv_seq is None:
+                continue
 
             try:
                 if overlap_mode == "union":
