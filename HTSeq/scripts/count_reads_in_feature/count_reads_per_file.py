@@ -162,7 +162,7 @@ def prepare_bam_sam_file_parser(
 
 class ReadsStatistics(object):
     """
-    For storing a bunch of statistics about the read sequences.
+    For storing a bunch of statistics about the reads.
     """
 
     def __init__(self, samoutfile, pe_mode, template=None):
@@ -228,6 +228,12 @@ class ReadsStatistics(object):
         """
         Simple function to update the progress of reads processing.
 
+        Parameters
+        ----------
+        force_print : boolean
+            Whether to print progress regardless of number of reads processed
+            or not.
+
         """
 
         if force_print:
@@ -254,7 +260,7 @@ class ReadsStatistics(object):
 
 
 # TODO: Rename me later. Sounds inappropriate now.
-def process_strand(do_invert, read_sequence):
+def process_read(do_invert, read_sequence):
     com = ('M', '=', 'X')
     if do_invert:
         iv_seq = (invert_strand(co.ref_iv)
@@ -265,11 +271,38 @@ def process_strand(do_invert, read_sequence):
                   and co.size > 0)
     return iv_seq
 
-def check_reads_paired_end(read_sequence,
+def check_paired_end_read(read_sequence,
                            reads_stats,
                            secondary_alignment_mode,
                            supplementary_alignment_mode,
-                           min_read_quality):
+                           minaqual,
+                           multimapped_mode):
+
+    """
+    Function to check the read for paired end.
+
+    Parameters
+    ----------
+    read_sequence
+    reads_stats : ReadsStatistics object
+        Object which stores a bunch of statistics about the read sequences.
+    secondary_alignment_mode : str
+        Whether to score secondary alignments (0x100 flag).
+        Choices: score or ignore.
+    supplementary_alignment_mode : str
+        Whether to score supplementary alignments (0x800 flag).
+        Choices: score or ignore.
+    minaqual : int
+        Value denoting the MAPQ alignment quality of reads to skip.
+    multimapped_mode : str
+        Whether and how to score reads that are not uniquely aligned or
+        ambiguously assigned to features.
+        Choices: none, all, fraction, random.
+
+    Returns
+    -------
+    True if read is to be skipped. False otherwise.
+    """
 
     if read_sequence[0] is None or not read_sequence[0].aligned:
         reads_stats.add_not_aligned_read(read_sequence)
@@ -303,6 +336,7 @@ def check_reads_paired_end(read_sequence,
                 not_unique_read = True
         if not_unique_read:
             reads_stats.add_not_unique_read(read_sequence)
+            # TODO: Add unit test case for this
             if multimapped_mode == 'none':
                 return True
     except KeyError:
@@ -312,7 +346,7 @@ def check_reads_paired_end(read_sequence,
     for i in range(0, 2):
         if (
             read_sequence[i] is not None and
-            read_sequence[i].aQual < min_read_quality
+            read_sequence[i].aQual < minaqual
         ):
             low_qual_read = True
     if low_qual_read:
@@ -321,26 +355,54 @@ def check_reads_paired_end(read_sequence,
 
     return False
 
-def check_reads_not_paired_end(read_sequence,
+def check_non_paired_end_read(read_sequence,
                                reads_stats,
                                secondary_alignment_mode,
                                supplementary_alignment_mode,
-                               min_read_quality,
+                               minaqual,
                                multimapped_mode):
+    """
+    Function to check the read for non paired end.
+
+    Parameters
+    ----------
+    read_sequence
+    reads_stats : ReadsStatistics object
+        Object which stores a bunch of statistics about the read sequences.
+    secondary_alignment_mode : str
+        Whether to score secondary alignments (0x100 flag).
+        Choices: score or ignore.
+    supplementary_alignment_mode : str
+        Whether to score supplementary alignments (0x800 flag).
+        Choices: score or ignore.
+    minaqual : int
+        Value denoting the MAPQ alignment quality of reads to skip.
+    multimapped_mode : str
+        Whether and how to score reads that are not uniquely aligned or
+        ambiguously assigned to features.
+        Choices: none, all, fraction, random.
+
+    Returns
+    -------
+    True if read is to be skipped. False otherwise.
+    """
+
 
     if not read_sequence.aligned:
         reads_stats.add_not_aligned_read(read_sequence)
         return True
 
-    if secondary_alignment_mode == 'ignore' and \
-            read_sequence.not_primary_alignment:
+    if (
+        secondary_alignment_mode == 'ignore' and read_sequence.not_primary_alignment
+    ):
         return True
 
-    if supplementary_alignment_mode == 'ignore' and \
-            read_sequence.supplementary:
+    if (
+        supplementary_alignment_mode == 'ignore' and
+        read_sequence.supplementary
+    ):
         return True
 
-    # TODO: Maybe fix if need be as it's not good?
     try:
         if read_sequence.optional_field("NH") > 1:
             reads_stats.add_not_unique_read(read_sequence)
@@ -349,7 +411,7 @@ def check_reads_not_paired_end(read_sequence,
     except KeyError:
         pass
 
-    if read_sequence.aQual < min_read_quality:
+    if read_sequence.aQual < minaqual:
         reads_stats.add_low_quality_read(read_sequence)
         return True
 
@@ -358,43 +420,78 @@ def check_reads_not_paired_end(read_sequence,
 def get_reads(read_sequence, paired_end, reads_stats, secondary_alignment_mode,
               supplementary_alignment_mode, minaqual, stranded, multimapped_mode):
 
+    """
+    Function to process the sequencing reads.
+    Some checks will be done to ensure downstream processing can be done.
+
+    Parameters
+    ----------
+    read_sequence
+    paired_end : boolean
+        Is this a paired-end data?
+    reads_stats : ReadsStatistics object
+        Object which stores a bunch of statistics about the read sequences.
+    secondary_alignment_mode : str
+        Whether to score secondary alignments (0x100 flag).
+        Choices: score or ignore.
+    supplementary_alignment_mode : str
+        Whether to score supplementary alignments (0x800 flag).
+        Choices: score or ignore.
+    minaqual : int
+        Value denoting the MAPQ alignment quality of reads to skip.
+    stranded : str
+        Whether the data to be aligned is from a strand-specific assay.
+        Option is yes, no, reverse.
+        reverse means yes with reversed strand interpretation.
+    multimapped_mode : str
+        Whether and how to score reads that are not uniquely aligned or
+        ambiguously assigned to features.
+        Choices: none, all, fraction, random.
+
+    Returns
+    -------
+    None if the read is to be skipped.
+    Otherwise, processed read.
+    """
+
     if not paired_end:
-        skip_this_read = check_reads_not_paired_end(
+        skip_this_read = check_non_paired_end_read(
             read_sequence = read_sequence,
             reads_stats = reads_stats,
             secondary_alignment_mode = secondary_alignment_mode,
             supplementary_alignment_mode = supplementary_alignment_mode,
-            min_read_quality = minaqual,
+            minaqual = minaqual,
             multimapped_mode = multimapped_mode
         )
         if skip_this_read:
             return None
 
-        iv_seq = process_strand(do_invert = stranded == 'reverse',
+        iv_seq = process_read(do_invert = stranded == 'reverse',
                                 read_sequence = read_sequence)
 
     else:
-        skip_this_read = check_reads_paired_end(
+        skip_this_read = check_paired_end_read(
             read_sequence = read_sequence,
             reads_stats = reads_stats,
             secondary_alignment_mode = secondary_alignment_mode,
             supplementary_alignment_mode = supplementary_alignment_mode,
-            min_read_quality = minaqual
+            minaqual = minaqual,
+            multimapped_mode = multimapped_mode
         )
         if skip_this_read:
             return None
 
         # This old if statement is no longer needed as by the time it
         # gets here, r[0] won't be none and it will have been aligned.
-        # See check_reads_paired_end.
+        # See check_paired_end_read.
         # if r[0] is not None and r[0].aligned:
-        iv_seq = process_strand(do_invert = stranded == 'reverse',
+        iv_seq = process_read(do_invert = stranded == 'reverse',
                                     read_sequence = r[0])
 
         # Note: the next end can be None or not aligned it will still
         # go through!
         if read_sequence[1] is not None and read_sequence[1].aligned:
-            iv_seq_next_end = process_strand(
+            iv_seq_next_end = process_read(
                 do_invert = stranded != 'reverse',
                 read_sequence = read_sequence[1])
             iv_seq = itertools.chain(iv_seq, iv_seq_next_end)
