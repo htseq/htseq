@@ -1,19 +1,24 @@
+import itertools
+import pysam
+import HTSeq
+import sys
+
 class ReadsIO(object):
     """docstring for ReadsIO."""
 
     def __init__(self, sam_filename, supplementary_alignment_mode,
-                 secondary_alignment_mode, order, samout_format):
+                 secondary_alignment_mode, order, samout_format,
+                 samout_filename):
 
         # Set by _prepare_bam_sam_file_parser function below.
         self.bam_sam_file_reader = None
         self.read_seq = None
         self.pe_mode = None
 
-        self._prepare_bam_sam_file_parser(
-            sam_filename,
-            supplementary_alignment_mode,
-            secondary_alignment_mode,
-            order)
+        self._prepare_bam_sam_file_parser(sam_filename,
+                                          supplementary_alignment_mode,
+                                          secondary_alignment_mode,
+                                          order)
 
         # Set by _get_outputfile_and_template function below.
         self.samoutfile = None
@@ -24,12 +29,11 @@ class ReadsIO(object):
             samout_format
         )
 
-    def _prepare_bam_sam_file_parser(
-        sam_filename,
-        supplementary_alignment_mode,
-        secondary_alignment_mode,
-        order
-        ):
+    def _prepare_bam_sam_file_parser(self,
+                                     sam_filename,
+                                     supplementary_alignment_mode,
+                                     secondary_alignment_mode,
+                                     order):
         """
         Prepare the BAM/SAM file parser.
         This will create the parser and prepare an iterator for it.
@@ -131,9 +135,7 @@ class ReadsIO(object):
         if self.samoutfile is not None:
             self.samoutfile.close()
 
-    def _get_outputfile_and_template(
-            samout_filename,
-            samout_format):
+    def _get_outputfile_and_template(self, samout_filename, samout_format):
         """
         Get the template and the object for the output BAM/SAM if possible.
         This was originally inside the try and catch block within the

@@ -10,6 +10,7 @@ from HTSeq.scripts.utils import (
 )
 
 from HTSeq.scripts.count_reads_in_feature.reads_stats import ReadsStatistics
+from HTSeq.scripts.count_reads_in_feature.reads_io_processor import ReadsIO
 
 def get_read_intervals(do_invert, read_sequence):
     com = ('M', '=', 'X')
@@ -252,6 +253,119 @@ def _check_read_then_get_read_intervals(read_sequence, paired_end, reads_stats,
 
     return iv_seq
 
+def _get_feature_set(overlap_mode, iv_seq, features):
+
+    # Combine all features as long as they somewhat overlap to the read
+    if overlap_mode == "union":
+        fs = set()
+        for iv in iv_seq:
+            if iv.chrom not in features.chrom_vectors:
+                raise UnknownChrom
+            for iv2, fs2 in features[iv].steps():
+                fs = fs.union(fs2)
+
+    # Only combine the features which fully overlap to the read.
+    # How does the strict work? It will look for features which overlap
+    # with every part of the read.
+    # The difference with nonempty is when one part of the read align with
+    # a gene, but the other align with no gene.
+    # Strict option will say no feature aligned as there is a part of the
+    # read that cannot be aligned to any feature.
+    # Nonempty option will say the read aligns with that gene as the other
+    # part is "empty" and thus not considered.
+    elif overlap_mode in ("intersection-strict",
+                          "intersection-nonempty"):
+        fs = None
+        for iv in iv_seq:
+            if iv.chrom not in features.chrom_vectors:
+                raise UnknownChrom
+            for iv2, fs2 in features[iv].steps():
+                if ((len(fs2) > 0) or
+                   (overlap_mode == "intersection-strict")):
+                    if fs is None:
+                        fs = fs2.copy()
+                    else:
+                        fs = fs.intersection(fs2)
+    else:
+        sys.exit("Illegal overlap mode.")
+
+    return fs
+
+def _classify_read_against_feature(fs, read_sequence,
+                                   reads_stats, read_io_object):
+    if fs is None or len(fs) == 0:
+        reads_stats.add_empty_read(read_sequence)
+    elif len(fs) > 1:
+        reads_stats.add_ambiguous_read(
+            read_sequence = read_sequence,
+            assignment = "__ambiguous[" + '+'.join(sorted(fs)) + "]"
+        )
+    else:
+        # Read only aligns with one feature
+        read_io_object.write_to_samout(
+            read_sequence = read_sequence,
+            assignment = list(fs)[0]
+            )
+
+def _assign_count(fs, read_sequence, multimapped_mode, reads_stats):
+    if multimapped_mode == 'none':
+        # Read only aligns with one feature, add to count.
+        if len(fs) == 1:
+            reads_stats.add_to_count(feature=list(fs)[0])
+    elif multimapped_mode == 'all':
+        # All features are counted.
+        for fsi in list(fs):
+            reads_stats.add_to_count(feature=fsi)
+    elif multimapped_mode == 'fraction':
+        # Count is divided among the features evenly.
+        value = 1.0 / len(fs)
+        for fsi in list(fs):
+            reads_stats.add_to_count(feature=fsi,
+                                     value=value)
+    elif multimapped_mode == 'random':
+        # Randomly pick a feature to assign the count to.
+        fsi = random.choice(list(fs))
+        reads_stats.add_to_count(feature=fsi)
+    else:
+        sys.exit("Illegal multimap mode.")
+
+def map_and_count_read(overlap_mode, iv_seq,
+                 features, read_sequence,
+                 multimapped_mode, reads_stats,
+                 read_io_object):
+    """
+    This function process each read by assigning it to features.
+
+    Parameters
+    ----------
+    overlap_mode : str
+        The overlap resolution modes, i.e. what to do if a read overlap with more than 1 feature.
+        Option: union, intersection-strict, intersection-nonempty.
+
+    iv_seq : array
+        Intervals of reads.
+
+    features : array
+        A list of features to align the reads to.
+
+    read_sequence : array
+        The read sequence.
+
+    multimapped_mode : str
+        How to handle read which align with multiple features.
+        Option: none, all, fraction, random
+
+    reads_stats : ReadsStatistics object
+        ReadsStatistics object which stores the statistics about the reads
+
+    read_io_object : ReadsIO object
+    """
+
+    fs = _get_feature_set(overlap_mode, iv_seq, features)
+    _classify_read_against_feature(fs, read_sequence, reads_stats, read_io_object)
+    if fs is not None and len(fs) > 0:
+        _assign_count(fs, read_sequence, multimapped_mode, reads_stats)
+
 
 def count_reads_single_file(
         isam,
@@ -350,7 +464,8 @@ def count_reads_single_file(
         supplementary_alignment_mode = supplementary_alignment_mode,
         secondary_alignment_mode = secondary_alignment_mode,
         order = order,
-        samout_format = samout_format
+        samout_format = samout_format,
+        samout_filename = samout_filename
     )
 
     # To store some stats about the reads
@@ -400,119 +515,7 @@ def count_reads_single_file(
     if not verbose:
         reads_stats.print_progress(force_print=True)
 
-    reads_stats.close_samout()
+    read_io_object.close_samout()
 
     res = reads_stats.generate_output(isam=isam)
     return(res)
-
-def _get_feature_set(overlap_mode, iv_seq, features):
-
-    # Combine all features as long as they somewhat overlap to the read
-    if overlap_mode == "union":
-        fs = set()
-        for iv in iv_seq:
-            if iv.chrom not in features.chrom_vectors:
-                raise UnknownChrom
-            for iv2, fs2 in features[iv].steps():
-                fs = fs.union(fs2)
-
-    # Only combine the features which fully overlap to the read.
-    # How does the strict work? It will look for features which overlap
-    # with every part of the read.
-    # The difference with nonempty is when one part of the read align with
-    # a gene, but the other align with no gene.
-    # Strict option will say no feature aligned as there is a part of the
-    # read that cannot be aligned to any feature.
-    # Nonempty option will say the read aligns with that gene as the other
-    # part is "empty" and thus not considered.
-    elif overlap_mode in ("intersection-strict",
-                          "intersection-nonempty"):
-        fs = None
-        for iv in iv_seq:
-            if iv.chrom not in features.chrom_vectors:
-                raise UnknownChrom
-            for iv2, fs2 in features[iv].steps():
-                if ((len(fs2) > 0) or
-                   (overlap_mode == "intersection-strict")):
-                    if fs is None:
-                        fs = fs2.copy()
-                    else:
-                        fs = fs.intersection(fs2)
-    else:
-        sys.exit("Illegal overlap mode.")
-
-    return fs
-
-def _classify_read_against_feature(fs, read_sequence, reads_stats, read_io_object):
-    if fs is None or len(fs) == 0:
-        reads_stats.add_empty_read(read_sequence)
-    elif len(fs) > 1:
-        reads_stats.add_ambiguous_read(
-            read_sequence = read_sequence,
-            assignment = "__ambiguous[" + '+'.join(sorted(fs)) + "]"
-        )
-    else:
-        # Read only aligns with one feature
-        read_io_object.write_to_samout(
-            read_sequence = read_sequence,
-            assignment = list(fs)[0]
-            )
-
-def _assign_count(fs, read_sequence, multimapped_mode, reads_stats):
-    if multimapped_mode == 'none':
-        # Read only aligns with one feature, add to count.
-        if len(fs) == 1:
-            reads_stats.add_to_count(feature=list(fs)[0])
-    elif multimapped_mode == 'all':
-        # All features are counted.
-        for fsi in list(fs):
-            reads_stats.add_to_count(feature=fsi)
-    elif multimapped_mode == 'fraction':
-        # Count is divided among the features evenly.
-        value = 1.0 / len(fs)
-        for fsi in list(fs):
-            reads_stats.add_to_count(feature=fsi,
-                                     value=value)
-    elif multimapped_mode == 'random':
-        # Randomly pick a feature to assign the count to.
-        fsi = random.choice(list(fs))
-        reads_stats.add_to_count(feature=fsi)
-    else:
-        sys.exit("Illegal multimap mode.")
-
-def map_and_count_read(overlap_mode, iv_seq,
-                 features, read_sequence,
-                 multimapped_mode, reads_stats,
-                 read_io_object):
-    """
-    This function process each read by assigning it to features.
-
-    Parameters
-    ----------
-    overlap_mode : str
-        The overlap resolution modes, i.e. what to do if a read overlap with more than 1 feature.
-        Option: union, intersection-strict, intersection-nonempty.
-
-    iv_seq : array
-        Intervals of reads.
-
-    features : array
-        A list of features to align the reads to.
-
-    read_sequence : array
-        The read sequence.
-
-    multimapped_mode : str
-        How to handle read which align with multiple features.
-        Option: none, all, fraction, random
-
-    reads_stats : ReadsStatistics object
-        ReadsStatistics object which stores the statistics about the reads
-
-    read_io_object : ReadsIO object
-    """
-
-    fs = _get_feature_set(overlap_mode, iv_seq, features)
-    _classify_read_against_feature(fs, read_sequence, reads_stats, read_io_object)
-    if fs is not None and len(fs) > 0:
-        _assign_count(fs, read_sequence, multimapped_mode, reads_stats)

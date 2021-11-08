@@ -228,10 +228,11 @@ setup(name='HTSeq',
          'HTSeq.scripts.utils',
          'HTSeq.utils',
          'HTSeq.features',
-         'HTSeq.scripts.count_reads_in_feature.core',
          'HTSeq.scripts.count_reads_in_feature.param_builder',
          'HTSeq.scripts.count_reads_in_feature.parameters',
          'HTSeq.scripts.count_reads_in_feature.count_reads_per_file',
+         'HTSeq.scripts.count_reads_in_feature.reads_stats',
+         'HTSeq.scripts.count_reads_in_feature.reads_io_processor'
       ],
       scripts=[
          'scripts/htseq-qa',

@@ -1,3 +1,6 @@
+import HTSeq
+import sys
+
 from HTSeq.scripts.count_reads_in_feature.reads_io_processor import ReadsIO
 
 class ReadsStatistics(object):
@@ -66,7 +69,7 @@ class ReadsStatistics(object):
         if do_print:
             sys.stderr.write(
                 "%d alignment record%s processed.\n" %
-                (self.num_reads_processed, "s" if not self.pe_mode else " pairs"))
+                (self.num_reads_processed, "s" if not self.read_io_obj.pe_mode else " pairs"))
             sys.stderr.flush()
 
     def generate_output(self, isam):
