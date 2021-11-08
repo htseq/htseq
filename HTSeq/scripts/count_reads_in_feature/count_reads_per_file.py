@@ -9,260 +9,7 @@ from HTSeq.scripts.utils import (
     invert_strand
 )
 
-def _get_outputfile_and_template(
-        samout_filename,
-        samout_format,
-        bam_sam_file_reader):
-    """
-    Get the template and the object for the output BAM/SAM if possible.
-
-    Parameters
-    ----------
-    samout_format : str
-        Format of the output files denoted by samouts.
-        Choices: SAM, BAM, sam, bam.
-    samout_filename : str
-        The name of SAM/BAM file to write out all SAM alignment records into.
-    bam_sam_file_reader : HTSeq.BAM_Reader
-        Parser for SAM/BAM/CRAM files. See __init__.py for HTSeq.
-
-    Returns
-    -------
-    template : pysam.AlignmentFile or None
-        pysam.AlignmentFile object to be used as template.
-        None if no samout_filename given (i.e. samout_filename is None) or if output
-    samoutfile : pysam.AlignmentFile or None or normal file
-        pysam.AlignmentFile object the output file is templated BAM or SAM file.
-        None if no samout_filename given (i.e. samout_filename is None).
-        Normal file if the requested output is neither SAM nor BAM file.
-
-    """
-
-    no_samout_filename_given = samout_filename is None
-    want_templated_bam_output = samout_format in ('bam', 'BAM')
-    # The latter check if we can produce a template
-    want_templated_sam_output = (samout_format in ('sam', 'SAM')) and hasattr(bam_sam_file_reader, 'get_template')
-
-
-    if no_samout_filename_given:
-        template = None
-        samoutfile = None
-
-    # Templated BAM output
-    # The 'b' qualifier in 'wb' indicate a BAM file.
-    elif want_templated_bam_output:
-        template = bam_sam_file_reader.get_template()
-        samoutfile = pysam.AlignmentFile(
-                samout_filename, 'wb',
-                template=template,
-                )
-
-    # Theoretically, this and the templated BAM can be merged into 1 if, but
-    # it's cleaner this way. Leave it.
-    # TODO: what happen if you want untemplated SAM file? It won't reach the
-    # else...
-    elif want_templated_sam_output:
-        template = bam_sam_file_reader.get_template()
-        samoutfile = pysam.AlignmentFile(
-                samout_filename, 'w',
-                template=template,
-                )
-
-    else:
-        template = None
-        samoutfile = open(samout_filename, 'w')
-
-    return template, samoutfile
-
-
-def _prepare_bam_sam_file_parser(
-    sam_filename,
-    supplementary_alignment_mode,
-    secondary_alignment_mode,
-    order
-    ):
-    """
-    Prepare the BAM/SAM file parser.
-    This will create the parser and prepare an iterator for it.
-    Depending on whether we have paired-end reads or not, different iterator
-    will be returned.
-
-    Parameters
-    ----------
-    samout_filename : str
-        The name of SAM/BAM file to write out all SAM alignment records into.
-    secondary_alignment_mode : str
-        Whether to score secondary alignments (0x100 flag).
-        Choices: score or ignore.
-    supplementary_alignment_mode : str
-        Whether to score supplementary alignments (0x800 flag).
-        Choices: score or ignore.
-    order : str
-        Can only be either 'pos' or 'name'. Sorting order of <alignment_file>.
-
-    Returns
-    -------
-    bam_sam_file_reader : HTSeq.BAM_Reader
-        Parser for SAM/BAM/CRAM files. See __init__.py for HTSeq.
-    read_seq : itertools.chain
-        Containing the very first read followed by the iterator for the bam_sam_file_reader.
-        If the input file is empty, this will be an empty array.
-    pe_mode : boolean
-        Is this a paired-end data?
-    """
-    try:
-        if sam_filename == "-":
-            # BAM_Reader is in HTSeq __init__ file.
-            bam_sam_file_reader = HTSeq.BAM_Reader(sys.stdin)
-        else:
-            bam_sam_file_reader = HTSeq.BAM_Reader(sam_filename)
-
-        # See the __iter__ of the SAM_Reader object in HTSeq __init__ file.
-        read_seq_iter = iter(bam_sam_file_reader)
-
-        # Catch empty BAM files
-        try:
-            first_read = next(read_seq_iter)
-            # Is this a paired-end data?
-            pe_mode = first_read.paired_end
-        # FIXME: catchall can hide subtle bugs
-        except:
-            # I thought it is nice to have some kind of warning..
-            sys.stderr.write("Input BAM/SAM file is empty!")
-            first_read = None
-            pe_mode = False
-
-        if first_read is not None:
-            read_seq = itertools.chain([first_read], read_seq_iter)
-        else:
-            read_seq = []
-
-        # What to do if paired-end data?
-        if pe_mode:
-            primary_only = supplementary_alignment_mode == 'ignore' and secondary_alignment_mode == 'ignore'
-
-            if order == "name":
-                read_seq = HTSeq.pair_SAM_alignments(
-                        read_seq,
-                        primary_only=primary_only)
-            elif order == "pos":
-                read_seq = HTSeq.pair_SAM_alignments_with_buffer(
-                        read_seq,
-                        max_buffer_size=max_buffer_size,
-                        primary_only=primary_only)
-            else:
-                raise ValueError("Illegal order specified.")
-
-    except:
-        sys.stderr.write(
-            "Error occured when reading beginning of SAM/BAM file.\n")
-        raise
-
-    return bam_sam_file_reader, read_seq, pe_mode
-
-class ReadsStatistics(object):
-    """
-    For storing a bunch of statistics about the reads.
-    """
-
-    def __init__(self, samoutfile, pe_mode, feature_attr, template=None):
-        self.samoutfile = samoutfile
-        self.template = template
-        self.pe_mode = pe_mode
-
-        self.empty = 0
-        self.ambiguous = 0
-        self.notaligned = 0
-        self.lowqual = 0
-        self.nonunique = 0
-        self.num_reads_processed = 0
-        self.counts = {key: 0 for key in feature_attr}
-
-    def add_num_reads_processed(self):
-        self.num_reads_processed += 1
-
-    def add_empty_read(self, read_sequence):
-        self.empty += 1
-        self.write_to_samout(read_sequence, "__no_feature")
-
-    def add_ambiguous_read(self, read_sequence, assignment):
-        self.ambiguous += 1
-        self.write_to_samout(read_sequence, assignment)
-
-    def add_low_quality_read(self, read_sequence):
-        self.lowqual += 1
-        self.write_to_samout(read_sequence, "__too_low_aQual")
-
-    def add_not_unique_read(self, read_sequence):
-        self.nonunique += 1
-        self.write_to_samout(read_sequence, "__alignment_not_unique")
-
-    def add_not_aligned_read(self, read_sequence):
-        self.notaligned += 1
-        self.write_to_samout(read_sequence, "__not_aligned")
-
-    def add_to_count(self, feature, value=1):
-        self.counts[feature] += value
-
-
-    def write_to_samout(self, read_sequence, assignment):
-        if self.samoutfile is None:
-            return
-        if not self.pe_mode:
-            # I think this makes it such that paired end or not paired end can
-            # be handled in the same manner.
-            updated_read_sequence = (read_sequence,)
-        for read in updated_read_sequence:
-            if read is not None:
-                read.optional_fields.append(('XF', assignment))
-                if template is not None:
-                    samoutfile.write(read.to_pysam_AlignedSegment(template))
-                elif samout_format in ('SAM', 'sam'):
-                    samoutfile.write(read.get_sam_line() + "\n")
-                else:
-                    raise ValueError(
-                        'BAM/SAM output: no template and not a test SAM file',
-                    )
-        return updated_read_sequence
-
-    def close_samout(self):
-        if self.samoutfile is not None:
-            self.samoutfile.close()
-
-    def print_progress(self, force_print=False):
-        """
-        Simple function to update the progress of reads processing.
-
-        Parameters
-        ----------
-        force_print : boolean
-            Whether to print progress regardless of number of reads processed
-            or not.
-
-        """
-
-        if force_print:
-            do_print = True
-        else:
-            do_print = self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0
-
-        if do_print:
-            sys.stderr.write(
-                "%d alignment record%s processed.\n" %
-                (self.num_reads_processed, "s" if not self.pe_mode else " pairs"))
-            sys.stderr.flush()
-
-    def generate_output(self, isam):
-        return {
-            'isam': isam,
-            'counts': self.counts,
-            'empty': self.empty,
-            'ambiguous': self.ambiguous,
-            'lowqual': self.lowqual,
-            'notaligned': self.notaligned,
-            'nonunique': self.nonunique,
-        }
-
+from HTSeq.scripts.count_reads_in_feature.reads_stats import ReadsStatistics
 
 def get_read_intervals(do_invert, read_sequence):
     com = ('M', '=', 'X')
@@ -598,36 +345,25 @@ def count_reads_single_file(
         TODO update me when done refactoring
     """
 
-    read_seq_file, read_seq, pe_mode = _prepare_bam_sam_file_parser(
-        sam_filename,
-        supplementary_alignment_mode,
-        secondary_alignment_mode,
-        order
-        )
-
-    # This was originally inside the try and catch block within the
-    # get_bam_sam_file_parser. Not sure why as the code inside there was just
-    # trying to read the input SAM and BAM file rather than preparing output
-    # file.
-    # TODO: if both the template and the samoutfile is none, what happen then?
-    template, samoutfile = _get_outputfile_and_template(samout_filename,
-                                            samout_format,
-                                            read_seq_file)
-
+    read_io_object = ReadsIO(
+        sam_filename = sam_filename,
+        supplementary_alignment_mode = supplementary_alignment_mode,
+        secondary_alignment_mode = secondary_alignment_mode,
+        order = order,
+        samout_format = samout_format
+    )
 
     # To store some stats about the reads
     reads_stats = ReadsStatistics(
-        samoutfile = samoutfile,
-        pe_mode = pe_mode,
-        feature_attr = feature_attr,
-        template = template
+        read_io_object = read_io_object,
+        feature_attr = feature_attr
     )
 
     try:
-        for r in read_seq:
+        for r in read_io_object.read_seq:
             iv_seq = _check_read_then_get_read_intervals(
                 read_sequence = r,
-                paired_end = pe_mode,
+                paired_end = read_io_object.pe_mode,
                 reads_stats = reads_stats,
                 secondary_alignment_mode = secondary_alignment_mode,
                 supplementary_alignment_mode = supplementary_alignment_mode,
@@ -645,7 +381,8 @@ def count_reads_single_file(
                              features = features,
                              read_sequence = r,
                              multimapped_mode = multimapped_mode,
-                             reads_stats = reads_stats)
+                             reads_stats = reads_stats,
+                             read_io_object = read_io_object)
 
             except UnknownChrom:
                 reads_stats.add_empty_read(r)
@@ -657,7 +394,7 @@ def count_reads_single_file(
     except:
         sys.stderr.write(
             "Error occured when processing input (%s):\n" %
-            (read_seq_file.get_line_number_string()))
+            (read_io_object.bam_sam_file_reader.get_line_number_string()))
         raise
 
     if not verbose:
@@ -706,7 +443,7 @@ def _get_feature_set(overlap_mode, iv_seq, features):
 
     return fs
 
-def _classify_read_against_feature(fs, read_sequence, reads_stats):
+def _classify_read_against_feature(fs, read_sequence, reads_stats, read_io_object):
     if fs is None or len(fs) == 0:
         reads_stats.add_empty_read(read_sequence)
     elif len(fs) > 1:
@@ -716,7 +453,7 @@ def _classify_read_against_feature(fs, read_sequence, reads_stats):
         )
     else:
         # Read only aligns with one feature
-        reads_stats.write_to_samout(
+        read_io_object.write_to_samout(
             read_sequence = read_sequence,
             assignment = list(fs)[0]
             )
@@ -745,7 +482,8 @@ def _assign_count(fs, read_sequence, multimapped_mode, reads_stats):
 
 def map_and_count_read(overlap_mode, iv_seq,
                  features, read_sequence,
-                 multimapped_mode, reads_stats):
+                 multimapped_mode, reads_stats,
+                 read_io_object):
     """
     This function process each read by assigning it to features.
 
@@ -770,9 +508,11 @@ def map_and_count_read(overlap_mode, iv_seq,
 
     reads_stats : ReadsStatistics object
         ReadsStatistics object which stores the statistics about the reads
+
+    read_io_object : ReadsIO object
     """
 
     fs = _get_feature_set(overlap_mode, iv_seq, features)
-    _classify_read_against_feature(fs, read_sequence, reads_stats)
+    _classify_read_against_feature(fs, read_sequence, reads_stats, read_io_object)
     if fs is not None and len(fs) > 0:
         _assign_count(fs, read_sequence, multimapped_mode, reads_stats)
