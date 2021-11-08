@@ -1,4 +1,4 @@
-.. _exon_example:
+.. _tutorial_htseq:
 
 ****************************************
 Opening the black box of ``htseq-count``

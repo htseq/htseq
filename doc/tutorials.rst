@@ -8,9 +8,20 @@ Tutorials
 
 This page contains a few tutorials to help you familiarize yourself with ``HTSeq``, including ``htseq-count`` and its barcode sibiling ``htseq-count-barcodes``.
 
+Parsers
+--------
+- :ref:`tutorial_fastx`: Simple tutorial on hadling fasta and fastq files with ``HTSeq``.
+- :ref:`tutorial_bam`: Simple tutorial on handling SAM/BAM/CRAM files.
+
+Workflows
+---------
 - :ref:`tss`: TSS example for the ``HTSeq`` API
-- :ref:`high_c_example`: Chromatin conformation example for the ``HTSeq`` API
-- :ref:`exon_example`: Explanation of the inner workings of ``htseq-count``
+- :ref:`tutorial_highc`: Chromatin conformation example for the ``HTSeq`` API
+
+Scripts
+-------
+- :ref:`tutorial_htseq`: Explanation of the inner workings of ``htseq-count``
+- :ref:`tutorial_htseq_exon`: Calling ``htseq-count`` at the exon level.
 
 
 .. toctree::
@@ -19,4 +30,10 @@ This page contains a few tutorials to help you familiarize yourself with ``HTSeq
    :titlesonly:
    :hidden:
 
-   tutorials/*
+   tutorials/fastx_reader
+   tutorials/bam_reader
+   tutorials/tss
+   tutorials/highc
+   tutorials/exon_example
+   tutorials/tutorial_exon_level
+
