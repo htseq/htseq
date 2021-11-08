@@ -639,6 +639,7 @@ def count_reads_single_file(
                 stranded = stranded,
                 multimapped_mode = multimapped_mode)
 
+            # It means this read need to be skipped
             if iv_seq is None:
                 continue
 
