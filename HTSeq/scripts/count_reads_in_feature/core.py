@@ -11,6 +11,8 @@ from HTSeq.scripts.count_reads_in_feature.parameters import CountParameters
 from HTSeq.scripts.count_reads_in_feature.count_reads_per_file import (
     count_reads_single_file
 )
+from HTSeq.scripts.utils import _write_output
+
 
 def do_count_reads_in_features(in_param):
     """
@@ -38,7 +40,17 @@ def do_count_reads_in_features(in_param):
     else:
         results = run_serial_count_reads(args)
 
-    in_param.write_results(results)
+    _write_output(
+        results,
+        in_param.sam_filenames,
+        in_param.attributes,
+        in_param.additional_attributes,
+        in_param.output_filename,
+        in_param.output_delimiter,
+        in_param.output_append,
+        sparse = in_param.counts_output_sparse,
+        dtype = np.float32
+    )
 
 def run_serial_count_reads(args):
     """
