@@ -4,32 +4,90 @@ import HTSeq
 import sys
 
 class ReadsIO(object):
-    """docstring for ReadsIO."""
+    """
+    Object to store information and provide functionalities related to the
+    input and output files.
+    This include providing obtaining the parser for the input file, providing
+    facility to write to the output SAM file, etc.
+
+    Attributes
+    ----------
+    bam_sam_file_reader : HTSeq.BAM_Reader
+        Parser for SAM/BAM/CRAM files. See __init__.py for HTSeq.
+        Set by __prepare_bam_sam_file_parser based on the sam_filename parameter.
+
+    read_seq : itertools.chain
+        Containing the very first read followed by the iterator for the bam_sam_file_reader.
+        Set by __prepare_bam_sam_file_parser.
+
+    pe_mode : boolean
+        Boolean denoting whether the input data is paired-end.
+        Set by __prepare_bam_sam_file_parser.
+
+    template : pysam.AlignmentFile or None
+        pysam.AlignmentFile object to be used as template.
+        None if no samout_filename given (i.e. samout_filename is None).
+        Set by __get_outputfile_and_template
+
+    samoutfile : pysam.AlignmentFile or None or normal file
+        pysam.AlignmentFile object the output file is templated BAM or SAM file.
+        None if no samout_filename given (i.e. samout_filename is None).
+        Normal file if the requested output is neither SAM nor BAM file.
+        Set by __get_outputfile_and_template
+    """
 
     def __init__(self, sam_filename, supplementary_alignment_mode,
                  secondary_alignment_mode, order, samout_format,
                  samout_filename):
 
-        # Set by _prepare_bam_sam_file_parser function below.
+        """
+        Initialise the ReadIO object.
+
+        Parameters
+        ----------
+        sam_filename : str
+            Path to the SAM/BAM file containing the mapped reads.
+
+        order : str
+            Can only be either 'pos' or 'name'. Sorting order of <alignment_file>.
+
+        secondary_alignment_mode : str
+            Whether to score secondary alignments (0x100 flag).
+            Choices: score or ignore.
+
+        supplementary_alignment_mode : str
+            Whether to score supplementary alignments (0x800 flag).
+            Choices: score or ignore.
+
+        samout_format : str
+            Format of the output files denoted by samouts.
+            Choices: SAM, BAM, sam, bam.
+
+        samout_filename : str
+            The name of SAM/BAM file to write out all SAM alignment records into.
+        """
+
+        # Set by __prepare_bam_sam_file_parser function below.
+        # Setting to None for now for clarity only.
         self.bam_sam_file_reader = None
         self.read_seq = None
         self.pe_mode = None
 
-        self._prepare_bam_sam_file_parser(sam_filename,
+        self.__prepare_bam_sam_file_parser(sam_filename,
                                           supplementary_alignment_mode,
                                           secondary_alignment_mode,
                                           order)
 
-        # Set by _get_outputfile_and_template function below.
+        # Set by __get_outputfile_and_template function below.
         self.samoutfile = None
         self.template = None
 
-        self._get_outputfile_and_template(
+        self.__get_outputfile_and_template(
             samout_filename,
             samout_format
         )
 
-    def _prepare_bam_sam_file_parser(self,
+    def __prepare_bam_sam_file_parser(self,
                                      sam_filename,
                                      supplementary_alignment_mode,
                                      secondary_alignment_mode,
@@ -112,6 +170,26 @@ class ReadsIO(object):
             raise
 
     def write_to_samout(self, read_sequence, assignment):
+        """
+        Function to write the assignment of a read sequence to SAM/BAM output
+        file.
+
+        Parameters
+        ----------
+        read_sequence : array
+            The read sequence to write out
+
+        assignment : str
+            The assignment of the read sequence.
+            Options:
+                empty: __no_feature,
+                ambiguous: customised message!,
+                not unique: __alignment_not_unique,
+                low quality: __too_low_aQual,
+                not aligned: __not_aligned
+        """
+
+
         if self.samoutfile is None:
             return
         if not self.pe_mode:
@@ -132,10 +210,13 @@ class ReadsIO(object):
         return updated_read_sequence
 
     def close_samout(self):
+        """
+        Close the output SAM file
+        """
         if self.samoutfile is not None:
             self.samoutfile.close()
 
-    def _get_outputfile_and_template(self, samout_filename, samout_format):
+    def __get_outputfile_and_template(self, samout_filename, samout_format):
         """
         Get the template and the object for the output BAM/SAM if possible.
         This was originally inside the try and catch block within the

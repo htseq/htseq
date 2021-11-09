@@ -455,8 +455,10 @@ def count_reads_single_file(
 
     Returns
     -------
-    Dictionary
-        TODO update me when done refactoring
+    res : Dictionary
+        Created by ReadsStatistics.generate_output function.
+        It basically contains the number of reads that are empty, ambiguous,
+        low quality, etc.
     """
 
     read_io_object = ReadsIO(
