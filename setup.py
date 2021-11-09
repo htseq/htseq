@@ -231,6 +231,7 @@ setup(name='HTSeq',
          'HTSeq.features',
          'HTSeq.scripts.count_features.count_features_per_file',
          'HTSeq.scripts.count_features.reads_io_processor',
+         'HTSeq.scripts.count_features.reads_stats',
       ],
       scripts=[
          'scripts/htseq-qa',

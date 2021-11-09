@@ -7,24 +7,7 @@ import pysam
 import HTSeq
 from HTSeq.scripts.utils import invert_strand, UnknownChrom
 from HTSeq.scripts.count_features.reads_io_processor import ReadsIO
-
-
-def write_to_samout(r, assignment, samoutfile, pe_mode, samout_format, template=None):
-    if samoutfile is None:
-        return
-    if not pe_mode:
-        r = (r,)
-    for read in r:
-        if read is not None:
-            read.optional_fields.append(('XF', assignment))
-            if template is not None:
-                samoutfile.write(read.to_pysam_AlignedSegment(template))
-            elif samout_format in ('SAM', 'sam'):
-                samoutfile.write(read.get_sam_line() + "\n")
-            else:
-                raise ValueError(
-                    'BAM/SAM output: no template and not a test SAM file',
-                )
+from HTSeq.scripts.count_features.reads_stats import ReadsStatistics
 
 
 def count_reads_single_file(
@@ -48,14 +31,24 @@ def count_reads_single_file(
         samout_filename,
 ):
     try:
-        # pe_mode, read_seq, read_seq_file, samoutfile, template = _prepare_samoutfile_and_read_seq(sam_filename,
-        #                                                                                           samout_filename,
-        #                                                                                           samout_format)
-        read_io_obj = ReadsIO(sam_filename, samout_filename, samout_format, supplementary_alignment_mode,
-                              secondary_alignment_mode, order, max_buffer_size)
+        read_io_obj = ReadsIO(sam_filename=sam_filename,
+                              samout_filename=samout_filename,
+                              samout_format=samout_format,
+                              supplementary_alignment_mode=supplementary_alignment_mode,
+                              secondary_alignment_mode=secondary_alignment_mode,
+                              order=order,
+                              max_buffer_size=max_buffer_size)
     except:
         sys.stderr.write(
-            "Error occured when reading beginning of SAM/BAM file.\n")
+            "Error occurred when reading beginning of SAM/BAM file.\n")
+        raise
+
+    try:
+        read_stats = ReadsStatistics(feature_attr=feature_attr,
+                                     read_io_object=read_io_obj)
+    except:
+        sys.stderr.write(
+            "Error occurred when preparing object to store the reads' assignments\n")
         raise
 
     # CIGAR match characters (including alignment match, sequence match, and
@@ -64,27 +57,20 @@ def count_reads_single_file(
     counts = {key: 0 for key in feature_attr}
 
     try:
-
         empty = 0
         ambiguous = 0
         notaligned = 0
         lowqual = 0
         nonunique = 0
-        i = 0
-        for r in read_io_obj.read_seq:
-            if i > 0 and i % 100000 == 0 and not quiet:
-                sys.stderr.write(
-                    "%d alignment record%s processed.\n" %
-                    (i, "s" if not read_io_obj.pe_mode else " pairs"))
-                sys.stderr.flush()
 
-            i += 1
+        for r in read_io_obj.read_seq:
+
+            read_stats.print_progress()
+            read_stats.add_num_reads_processed()
+
             if not read_io_obj.pe_mode:
                 if not r.aligned:
-                    notaligned += 1
-                    write_to_samout(r=r, assignment="__not_aligned", samoutfile=read_io_obj.samoutfile,
-                                    pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                                    template=read_io_obj.template)
+                    read_stats.add_not_aligned_read(read_sequence=r)
                     continue
                 if ((secondary_alignment_mode == 'ignore') and
                         r.not_primary_alignment):
@@ -94,21 +80,13 @@ def count_reads_single_file(
                     continue
                 try:
                     if r.optional_field("NH") > 1:
-                        nonunique += 1
-                        write_to_samout(
-                            r=r, assignment="__alignment_not_unique", samoutfile=read_io_obj.samoutfile,
-                            pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                            template=read_io_obj.template)
+                        read_stats.add_not_unique_read(read_sequence=r)
                         if multimapped_mode == 'none':
                             continue
                 except KeyError:
                     pass
                 if r.aQual < minaqual:
-                    lowqual += 1
-                    write_to_samout(
-                        r=r, assignment="__too_low_aQual", samoutfile=read_io_obj.samoutfile,
-                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                        template=read_io_obj.template)
+                    read_stats.add_low_quality_read(read_sequence=r)
                     continue
                 if stranded != "reverse":
                     iv_seq = (co.ref_iv for co in r.cigar if co.type in com
@@ -140,10 +118,7 @@ def count_reads_single_file(
                              if co.type in com and co.size > 0))
                 else:
                     if (r[0] is None) or not (r[0].aligned):
-                        write_to_samout(r=r, assignment="__not_aligned", samoutfile=read_io_obj.samoutfile,
-                                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                                        template=read_io_obj.template)
-                        notaligned += 1
+                        read_stats.add_not_aligned_read(read_sequence=r)
                         continue
                 if secondary_alignment_mode == 'ignore':
                     if (r[0] is not None) and r[0].not_primary_alignment:
@@ -158,21 +133,14 @@ def count_reads_single_file(
                 try:
                     if ((r[0] is not None and r[0].optional_field("NH") > 1) or
                             (r[1] is not None and r[1].optional_field("NH") > 1)):
-                        nonunique += 1
-                        write_to_samout(r=r, assignment="__alignment_not_unique", samoutfile=read_io_obj.samoutfile,
-                                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                                        template=read_io_obj.template)
+                        read_stats.add_not_unique_read(read_sequence=r)
                         if multimapped_mode == 'none':
                             continue
                 except KeyError:
                     pass
                 if ((r[0] and r[0].aQual < minaqual) or
                         (r[1] and r[1].aQual < minaqual)):
-                    lowqual += 1
-                    write_to_samout(
-                        r=r, assignment="__too_low_aQual", samoutfile=read_io_obj.samoutfile,
-                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                        template=read_io_obj.template)
+                    read_stats.add_low_quality_read(read_sequence=r)
                     continue
 
             try:
@@ -200,21 +168,12 @@ def count_reads_single_file(
                     sys.exit("Illegal overlap mode.")
 
                 if fs is None or len(fs) == 0:
-                    write_to_samout(r=r, assignment="__no_feature", samoutfile=read_io_obj.samoutfile,
-                                    pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                                    template=read_io_obj.template)
-                    empty += 1
+                    read_stats.add_empty_read(read_sequence=r)
                 elif len(fs) > 1:
-                    write_to_samout(
-                        r=r, assignment="__ambiguous[" + '+'.join(sorted(fs)) + "]", samoutfile=read_io_obj.samoutfile,
-                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                        template=read_io_obj.template)
-                    ambiguous += 1
+                    read_stats.add_ambiguous_read(read_sequence=r,
+                                                  assignment="__ambiguous[" + '+'.join(sorted(fs)) + "]")
                 else:
-                    write_to_samout(
-                        r=r, assignment=list(fs)[0], samoutfile=read_io_obj.samoutfile,
-                        pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                        template=read_io_obj.template)
+                    read_stats.add_good_read_assignment(read_sequence=r, assignment=list(fs)[0])
 
                 if fs is not None and len(fs) > 0:
                     if multimapped_mode == 'none':
@@ -233,9 +192,7 @@ def count_reads_single_file(
                         sys.exit("Illegal multimap mode.")
 
             except UnknownChrom:
-                write_to_samout(r=r, assignment="__no_feature", samoutfile=read_io_obj.samoutfile,
-                                pe_mode=read_io_obj.pe_mode, samout_format=samout_format,
-                                template=read_io_obj.template)
+                read_stats.add_empty_read(read_sequence=r)
                 empty += 1
 
     except:
@@ -247,59 +204,27 @@ def count_reads_single_file(
     if not quiet:
         sys.stderr.write(
             "%d %s processed.\n" %
-            (i, "alignments " if not read_io_obj.pe_mode else "alignment pairs"))
+            (read_stats.num_reads_processed, "alignments " if not read_io_obj.pe_mode else "alignment pairs"))
         sys.stderr.flush()
 
-    if read_io_obj.samoutfile is not None:
-        read_io_obj.samoutfile.close()
+    read_io_obj.close_samoutfile()
 
-    return {
-        'isam': isam,
-        'counts': counts,
-        'empty': empty,
-        'ambiguous': ambiguous,
-        'lowqual': lowqual,
-        'notaligned': notaligned,
-        'nonunique': nonunique,
-    }
+    res = read_stats.get_output(isam, counts)
+    return res
+    # return {
+    #     'isam': isam,
+    #     'counts': counts,
+    #     'empty': empty,
+    #     'ambiguous': ambiguous,
+    #     'lowqual': lowqual,
+    #     'notaligned': notaligned,
+    #     'nonunique': nonunique,
+    # }
 
 
-def _prepare_samoutfile_and_read_seq(sam_filename, samout_filename, samout_format):
-    if sam_filename == "-":
-        read_seq_file = HTSeq.BAM_Reader(sys.stdin)
-    else:
-        read_seq_file = HTSeq.BAM_Reader(sam_filename)
-    # Get template for output BAM/SAM if possible
-    if samout_filename is None:
-        template = None
-        samoutfile = None
-    elif samout_format in ('bam', 'BAM'):
-        template = read_seq_file.get_template()
-        samoutfile = pysam.AlignmentFile(
-            samout_filename, 'wb',
-            template=template,
-        )
-    elif (samout_format in ('sam', 'SAM')) and \
-            hasattr(read_seq_file, 'get_template'):
-        template = read_seq_file.get_template()
-        samoutfile = pysam.AlignmentFile(
-            samout_filename, 'w',
-            template=template,
-        )
-    else:
-        template = None
-        samoutfile = open(samout_filename, 'w')
-    read_seq_iter = iter(read_seq_file)
-    # Catch empty BAM files
-    try:
-        first_read = next(read_seq_iter)
-        pe_mode = first_read.paired_end
-    # FIXME: catchall can hide subtle bugs
-    except:
-        first_read = None
-        pe_mode = False
-    if first_read is not None:
-        read_seq = itertools.chain([first_read], read_seq_iter)
-    else:
-        read_seq = []
-    return pe_mode, read_seq, read_seq_file, samoutfile, template
+def _print_progress(quiet, read_io_obj, reads_counter):
+    if reads_counter > 0 and reads_counter % 100000 == 0 and not quiet:
+        sys.stderr.write(
+            "%d alignment record%s processed.\n" %
+            (reads_counter, "s" if not read_io_obj.pe_mode else " pairs"))
+        sys.stderr.flush()

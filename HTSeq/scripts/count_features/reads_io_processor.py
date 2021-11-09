@@ -16,9 +16,32 @@ class ReadsIO(object):
         self.read_seq_file = None
         self.template = None
         self.samoutfile = None
+        self.samout_format = samout_format
 
         self._prepare_samoutfile_and_read_seq(sam_filename, samout_filename, samout_format)
         self._set_read_seq(supplementary_alignment_mode, secondary_alignment_mode, order, max_buffer_size)
+
+    def write_to_samout(self, read_sequence, assignment):
+        if self.samoutfile is None:
+            return
+        if not self.pe_mode:
+            # TODO not sure if this is good in all honesty..
+            read_sequence = (read_sequence,)
+        for read in read_sequence:
+            if read is not None:
+                read.optional_fields.append(('XF', assignment))
+                if self.template is not None:
+                    self.samoutfile.write(read.to_pysam_AlignedSegment(self.template))
+                elif self.samout_format in ('SAM', 'sam'):
+                    self.samoutfile.write(read.get_sam_line() + "\n")
+                else:
+                    raise ValueError(
+                        'BAM/SAM output: no template and not a test SAM file',
+                    )
+
+    def close_samoutfile(self):
+        if self.samoutfile is not None:
+            self.samoutfile.close()
 
     def _prepare_samoutfile_and_read_seq(self, sam_filename, samout_filename, samout_format):
         if sam_filename == "-":
