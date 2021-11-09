@@ -70,10 +70,10 @@ class ReadsStatistics(object):
                 (self.num_reads_processed, "s" if not self.read_io_obj.pe_mode else " pairs"))
             sys.stderr.flush()
 
-    def get_output(self, isam, counts):
+    def get_output(self, isam):
         return {
             'isam': isam,
-            'counts': counts,
+            'counts': self.counts,
             'empty': self.empty,
             'ambiguous': self.ambiguous,
             'lowqual': self.lowqual,

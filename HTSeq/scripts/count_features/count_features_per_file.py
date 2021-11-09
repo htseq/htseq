@@ -54,7 +54,6 @@ def count_reads_single_file(
     # CIGAR match characters (including alignment match, sequence match, and
     # sequence mismatch
     com = ('M', '=', 'X')
-    counts = {key: 0 for key in feature_attr}
 
     try:
 
@@ -88,28 +87,7 @@ def count_reads_single_file(
                 iv_seq = _get_iv_seq_pe_read(com, r, stranded)
 
             try:
-                if overlap_mode == "union":
-                    fs = set()
-                    for iv in iv_seq:
-                        if iv.chrom not in features.chrom_vectors:
-                            raise UnknownChrom
-                        for iv2, fs2 in features[iv].steps():
-                            fs = fs.union(fs2)
-                elif overlap_mode in ("intersection-strict",
-                                      "intersection-nonempty"):
-                    fs = None
-                    for iv in iv_seq:
-                        if iv.chrom not in features.chrom_vectors:
-                            raise UnknownChrom
-                        for iv2, fs2 in features[iv].steps():
-                            if ((len(fs2) > 0) or
-                                    (overlap_mode == "intersection-strict")):
-                                if fs is None:
-                                    fs = fs2.copy()
-                                else:
-                                    fs = fs.intersection(fs2)
-                else:
-                    sys.exit("Illegal overlap mode.")
+                fs = _align_reads_to_feature_set(features, iv_seq, overlap_mode)
 
                 if fs is None or len(fs) == 0:
                     read_stats.add_empty_read(read_sequence=r)
@@ -120,18 +98,20 @@ def count_reads_single_file(
                     read_stats.add_good_read_assignment(read_sequence=r, assignment=list(fs)[0])
 
                 if fs is not None and len(fs) > 0:
+                    fs = list(fs)
                     if multimapped_mode == 'none':
                         if len(fs) == 1:
-                            counts[list(fs)[0]] += 1
+                            read_stats.add_to_count(feature=fs[0])
                     elif multimapped_mode == 'all':
-                        for fsi in list(fs):
-                            counts[fsi] += 1
+                        for fsi in fs:
+                            read_stats.add_to_count(feature=fsi)
                     elif multimapped_mode == 'fraction':
-                        for fsi in list(fs):
-                            counts[fsi] += 1.0 / len(fs)
+                        val = 1.0 / len(fs)
+                        for fsi in fs:
+                            read_stats.add_to_count(feature=fsi, value=val)
                     elif multimapped_mode == 'random':
-                        fsi = random.choice(list(fs))
-                        counts[fsi] += 1
+                        fsi = random.choice(fs)
+                        read_stats.add_to_count(feature=fsi)
                     else:
                         sys.exit("Illegal multimap mode.")
 
@@ -146,24 +126,37 @@ def count_reads_single_file(
 
     if not quiet:
         read_stats.print_progress(force_print=True)
-        # sys.stderr.write(
-        #     "%d %s processed.\n" %
-        #     (read_stats.num_reads_processed, "alignments " if not read_io_obj.pe_mode else "alignment pairs"))
-        # sys.stderr.flush()
 
     read_io_obj.close_samoutfile()
 
-    res = read_stats.get_output(isam, counts)
+    res = read_stats.get_output(isam)
     return res
-    # return {
-    #     'isam': isam,
-    #     'counts': counts,
-    #     'empty': empty,
-    #     'ambiguous': ambiguous,
-    #     'lowqual': lowqual,
-    #     'notaligned': notaligned,
-    #     'nonunique': nonunique,
-    # }
+
+
+def _align_reads_to_feature_set(features, iv_seq, overlap_mode):
+    if overlap_mode == "union":
+        fs = set()
+        for iv in iv_seq:
+            if iv.chrom not in features.chrom_vectors:
+                raise UnknownChrom
+            for iv2, fs2 in features[iv].steps():
+                fs = fs.union(fs2)
+    elif overlap_mode in ("intersection-strict",
+                          "intersection-nonempty"):
+        fs = None
+        for iv in iv_seq:
+            if iv.chrom not in features.chrom_vectors:
+                raise UnknownChrom
+            for iv2, fs2 in features[iv].steps():
+                if ((len(fs2) > 0) or
+                        (overlap_mode == "intersection-strict")):
+                    if fs is None:
+                        fs = fs2.copy()
+                    else:
+                        fs = fs.intersection(fs2)
+    else:
+        sys.exit("Illegal overlap mode.")
+    return fs
 
 
 def _get_iv_seq_pe_read(com, r, stranded):
