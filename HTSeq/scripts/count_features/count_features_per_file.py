@@ -63,64 +63,29 @@ def count_reads_single_file(
             read_stats.print_progress()
             read_stats.add_num_reads_processed()
 
+            # todo can move this into a function, but not necessary.
             if not read_io_obj.pe_mode:
-                bad_read = _assess_non_pe_read(read_sequence=r,
-                                               read_stats=read_stats,
-                                               secondary_alignment_mode=secondary_alignment_mode,
-                                               supplementary_alignment_mode=supplementary_alignment_mode,
-                                               multimapped_mode=multimapped_mode,
-                                               minaqual=minaqual)
+                skip_read = _assess_non_pe_read(read_sequence=r,
+                                                read_stats=read_stats,
+                                                secondary_alignment_mode=secondary_alignment_mode,
+                                                supplementary_alignment_mode=supplementary_alignment_mode,
+                                                multimapped_mode=multimapped_mode,
+                                                minaqual=minaqual)
 
-                if bad_read:
+                if skip_read:
                     continue
                 iv_seq = _get_iv_seq_non_pe_read(com, r, stranded)
             else:
-                if r[0] is not None and r[0].aligned:
-                    if stranded != "reverse":
-                        iv_seq = (co.ref_iv for co in r[0].cigar
-                                  if co.type in com and co.size > 0)
-                    else:
-                        iv_seq = (invert_strand(co.ref_iv) for co in r[0].cigar
-                                  if co.type in com and co.size > 0)
-                else:
-                    iv_seq = tuple()
-                if r[1] is not None and r[1].aligned:
-                    if stranded != "reverse":
-                        iv_seq = itertools.chain(
-                            iv_seq,
-                            (invert_strand(co.ref_iv) for co in r[1].cigar
-                             if co.type in com and co.size > 0))
-                    else:
-                        iv_seq = itertools.chain(
-                            iv_seq,
-                            (co.ref_iv for co in r[1].cigar
-                             if co.type in com and co.size > 0))
-                else:
-                    if (r[0] is None) or not (r[0].aligned):
-                        read_stats.add_not_aligned_read(read_sequence=r)
-                        continue
-                if secondary_alignment_mode == 'ignore':
-                    if (r[0] is not None) and r[0].not_primary_alignment:
-                        continue
-                    elif (r[1] is not None) and r[1].not_primary_alignment:
-                        continue
-                if supplementary_alignment_mode == 'ignore':
-                    if (r[0] is not None) and r[0].supplementary:
-                        continue
-                    elif (r[1] is not None) and r[1].supplementary:
-                        continue
-                try:
-                    if ((r[0] is not None and r[0].optional_field("NH") > 1) or
-                            (r[1] is not None and r[1].optional_field("NH") > 1)):
-                        read_stats.add_not_unique_read(read_sequence=r)
-                        if multimapped_mode == 'none':
-                            continue
-                except KeyError:
-                    pass
-                if ((r[0] and r[0].aQual < minaqual) or
-                        (r[1] and r[1].aQual < minaqual)):
-                    read_stats.add_low_quality_read(read_sequence=r)
+
+                # todo these assessor used to be at the bottom, after creating the iv_seq and checking whether
+                #  the first element of the paired end is aligned. Kind of nuts really as it wastes time?
+                #  need more testing though
+                skip_read = _assess_pe_read(minaqual, multimapped_mode, r, read_stats,
+                                            secondary_alignment_mode, supplementary_alignment_mode)
+                if skip_read:
                     continue
+
+                iv_seq = _get_iv_seq_pe_read(com, r, stranded)
 
             try:
                 if overlap_mode == "union":
@@ -199,6 +164,71 @@ def count_reads_single_file(
     #     'notaligned': notaligned,
     #     'nonunique': nonunique,
     # }
+
+
+def _get_iv_seq_pe_read(com, r, stranded):
+    if r[0] is not None and r[0].aligned:
+        iv_seq = _get_iv_seq_pe_read_first(com, r, stranded)
+    else:
+        iv_seq = tuple()
+    if r[1] is not None and r[1].aligned:
+        iv_seq = _get_iv_seq_pe_read_second(com, iv_seq, r, stranded)
+    return iv_seq
+
+
+def _assess_pe_read(minaqual, multimapped_mode, r, read_stats, secondary_alignment_mode,
+                    supplementary_alignment_mode):
+    if (r[0] is None) or not (r[0].aligned):
+        read_stats.add_not_aligned_read(read_sequence=r)
+        return True
+
+    if secondary_alignment_mode == 'ignore':
+        if (r[0] is not None) and r[0].not_primary_alignment:
+            return True
+        elif (r[1] is not None) and r[1].not_primary_alignment:
+            return True
+    if supplementary_alignment_mode == 'ignore':
+        if (r[0] is not None) and r[0].supplementary:
+            return True
+        elif (r[1] is not None) and r[1].supplementary:
+            return True
+    try:
+        if ((r[0] is not None and r[0].optional_field("NH") > 1) or
+                (r[1] is not None and r[1].optional_field("NH") > 1)):
+            read_stats.add_not_unique_read(read_sequence=r)
+            if multimapped_mode == 'none':
+                return True
+    except KeyError:
+        pass
+    if ((r[0] and r[0].aQual < minaqual) or
+            (r[1] and r[1].aQual < minaqual)):
+        read_stats.add_low_quality_read(read_sequence=r)
+        return True
+    return False
+
+
+def _get_iv_seq_pe_read_second(com, iv_seq, r, stranded):
+    if stranded != "reverse":
+        iv_seq = itertools.chain(
+            iv_seq,
+            (invert_strand(co.ref_iv) for co in r[1].cigar
+             if co.type in com and co.size > 0))
+    else:
+        iv_seq = itertools.chain(
+            iv_seq,
+            (co.ref_iv for co in r[1].cigar
+             if co.type in com and co.size > 0))
+    return iv_seq
+
+
+def _get_iv_seq_pe_read_first(com, r, stranded):
+    if stranded != "reverse":
+        iv_seq = (co.ref_iv for co in r[0].cigar
+                  if co.type in com and co.size > 0)
+    else:
+        iv_seq = (invert_strand(co.ref_iv) for co in r[0].cigar
+                  if co.type in com and co.size > 0)
+    return iv_seq
 
 
 def _get_iv_seq_non_pe_read(com, r, stranded):
