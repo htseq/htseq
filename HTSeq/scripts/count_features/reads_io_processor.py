@@ -7,8 +7,16 @@ import sys
 class ReadsIO(object):
     """docstring for ReadsIO."""
 
-    def __init__(self, sam_filename, samout_filename, samout_format, supplementary_alignment_mode,
-                 secondary_alignment_mode, order, max_buffer_size):
+    def __init__(
+        self,
+        sam_filename,
+        samout_filename,
+        samout_format,
+        supplementary_alignment_mode,
+        secondary_alignment_mode,
+        order,
+        max_buffer_size,
+    ):
 
         # Set by _prepare_bam_sam_file_parser function below.
         self.pe_mode = None
@@ -20,7 +28,12 @@ class ReadsIO(object):
 
         self._set_BAM_reader(sam_filename)
         self._set_output_template(samout_filename, samout_format)
-        self._set_read_seq(supplementary_alignment_mode, secondary_alignment_mode, order, max_buffer_size)
+        self._set_read_seq(
+            supplementary_alignment_mode,
+            secondary_alignment_mode,
+            order,
+            max_buffer_size,
+        )
 
     def write_to_samout(self, read_sequence, assignment):
         if self.samoutfile is None:
@@ -30,14 +43,14 @@ class ReadsIO(object):
             read_sequence = (read_sequence,)
         for read in read_sequence:
             if read is not None:
-                read.optional_fields.append(('XF', assignment))
+                read.optional_fields.append(("XF", assignment))
                 if self.template is not None:
                     self.samoutfile.write(read.to_pysam_AlignedSegment(self.template))
-                elif self.samout_format in ('SAM', 'sam'):
+                elif self.samout_format in ("SAM", "sam"):
                     self.samoutfile.write(read.get_sam_line() + "\n")
                 else:
                     raise ValueError(
-                        'BAM/SAM output: no template and not a test SAM file',
+                        "BAM/SAM output: no template and not a test SAM file",
                     )
 
     def close_samoutfile(self):
@@ -59,8 +72,13 @@ class ReadsIO(object):
         else:
             self.read_seq_file = HTSeq.BAM_Reader(sam_filename)
 
-    def _set_read_seq(self, supplementary_alignment_mode, secondary_alignment_mode, order,
-                      max_buffer_size):
+    def _set_read_seq(
+        self,
+        supplementary_alignment_mode,
+        secondary_alignment_mode,
+        order,
+        max_buffer_size,
+    ):
 
         """
         Prepare the BAM/SAM file iterator.
@@ -101,20 +119,22 @@ class ReadsIO(object):
             self.read_seq = []
 
         if self.pe_mode:
-            if ((supplementary_alignment_mode == 'ignore') and
-                    (secondary_alignment_mode == 'ignore')):
+            if (supplementary_alignment_mode == "ignore") and (
+                secondary_alignment_mode == "ignore"
+            ):
                 primary_only = True
             else:
                 primary_only = False
             if order == "name":
                 self.read_seq = HTSeq.pair_SAM_alignments(
-                    self.read_seq,
-                    primary_only=primary_only)
+                    self.read_seq, primary_only=primary_only
+                )
             elif order == "pos":
                 self.read_seq = HTSeq.pair_SAM_alignments_with_buffer(
                     self.read_seq,
                     max_buffer_size=max_buffer_size,
-                    primary_only=primary_only)
+                    primary_only=primary_only,
+                )
             else:
                 raise ValueError("Illegal order specified.")
 
@@ -134,19 +154,22 @@ class ReadsIO(object):
         if samout_filename is None:
             self.template = None
             self.samoutfile = None
-        elif samout_format in ('bam', 'BAM'):
+        elif samout_format in ("bam", "BAM"):
             self.template = self.read_seq_file.get_template()
             self.samoutfile = pysam.AlignmentFile(
-                samout_filename, 'wb',
+                samout_filename,
+                "wb",
                 template=self.template,
             )
-        elif (samout_format in ('sam', 'SAM')) and \
-                hasattr(self.read_seq_file, 'get_template'):
+        elif (samout_format in ("sam", "SAM")) and hasattr(
+            self.read_seq_file, "get_template"
+        ):
             self.template = self.read_seq_file.get_template()
             self.samoutfile = pysam.AlignmentFile(
-                samout_filename, 'w',
+                samout_filename,
+                "w",
                 template=self.template,
             )
         else:
             self.template = None
-            self.samoutfile = open(samout_filename, 'w')
+            self.samoutfile = open(samout_filename, "w")

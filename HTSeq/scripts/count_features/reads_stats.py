@@ -4,11 +4,16 @@ import sys
 
 class ReadsStatistics(object):
     """
-    For storing a bunch of statistics about the reads.
-    read_io_obj : ReadsIO object
+    For storing the read counts
     """
 
     def __init__(self, feature_attr, read_io_object):
+        '''Initialize storage for the read counts
+
+        Args:
+            feature_attr (list of str): Feature names
+            read_io_object (ReadsIO): Read processor
+        '''
         self.read_io_obj = read_io_object
 
         self.empty = 0
@@ -36,8 +41,7 @@ class ReadsStatistics(object):
 
     def add_not_unique_read(self, read_sequence):
         self.nonunique += 1
-        self.read_io_obj.write_to_samout(read_sequence,
-                                         "__alignment_not_unique")
+        self.read_io_obj.write_to_samout(read_sequence, "__alignment_not_unique")
 
     def add_not_aligned_read(self, read_sequence):
         self.notaligned += 1
@@ -62,21 +66,27 @@ class ReadsStatistics(object):
         if force_print:
             do_print = True
         else:
-            do_print = self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0
+            do_print = (
+                self.num_reads_processed > 0 and self.num_reads_processed % 100000 == 0
+            )
 
         if do_print:
             sys.stderr.write(
-                "%d alignment record%s processed.\n" %
-                (self.num_reads_processed, "s" if not self.read_io_obj.pe_mode else " pairs"))
+                "%d alignment record%s processed.\n"
+                % (
+                    self.num_reads_processed,
+                    "s" if not self.read_io_obj.pe_mode else " pairs",
+                )
+            )
             sys.stderr.flush()
 
     def get_output(self, isam):
         return {
-            'isam': isam,
-            'counts': self.counts,
-            'empty': self.empty,
-            'ambiguous': self.ambiguous,
-            'lowqual': self.lowqual,
-            'notaligned': self.notaligned,
-            'nonunique': self.nonunique,
+            "isam": isam,
+            "counts": self.counts,
+            "empty": self.empty,
+            "ambiguous": self.ambiguous,
+            "lowqual": self.lowqual,
+            "notaligned": self.notaligned,
+            "nonunique": self.nonunique,
         }
