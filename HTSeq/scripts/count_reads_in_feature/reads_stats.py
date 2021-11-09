@@ -7,7 +7,34 @@ class ReadsStatistics(object):
     """
     For storing a bunch of statistics about the reads.
 
+    Attributes
+    ----------
     read_io_obj : ReadsIO object
+        This is used so that when we update the read sequence assignment, the
+        assignment itself can be written to the output.
+        It is a pain if everytime you do this you have to pass the object.
+
+    empty : int
+        Number of sequences that cannot be mapped to any feature.
+
+    ambigious : int
+        Number of sequences that cannot be confidently mapped to one feature.
+
+    notaligned : int
+        Number of sequences that are yet aligned.
+
+    lowqual : int
+        Number of sequences that are low quality.
+
+    nonunique : int
+        Number of sequences that are not unique (there is a duplicate).
+
+    num_reads_processed : int
+        Number of sequences processed thus far.
+
+    counts : dict
+        Counter for number of sequences mapped to each feature in a list
+        supplied by the user.
 
     """
 
@@ -73,6 +100,28 @@ class ReadsStatistics(object):
             sys.stderr.flush()
 
     def generate_output(self, isam):
+        """
+        Create an output dictionary detailing the number of reads processed and
+        their status (not aligned, ambiguous, low quality, not mapped to any
+        feature, not unique), as well as the number of reads processed, and the
+        counter for each feature (how many read sequences mapped to it).
+
+        Parameters
+        ----------
+        isam : int
+        Input files' indexing for the purpose of parallel processing.
+        This basically tell you which input file is being processed by this
+        instance of function.
+
+        Returns
+        -------
+        dictionary
+            Detailing the number of reads processed and
+            their status (not aligned, ambiguous, low quality, not mapped to any
+            feature, not unique), as well as the number of reads processed, and
+            the counter for each feature (how many read sequences mapped to it).
+        """
+        
         return {
             'isam': isam,
             'counts': self.counts,
