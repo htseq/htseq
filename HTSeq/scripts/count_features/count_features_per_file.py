@@ -30,6 +30,33 @@ def count_reads_single_file(
         samout_format,
         samout_filename,
 ):
+    """
+    Fixme: there are some redundant parameters here.. feature_type, id_attribute, additional_attributes
+    Parameters
+    ----------
+    isam
+    sam_filename
+    features
+    feature_attr
+    order
+    max_buffer_size
+    stranded
+    overlap_mode
+    multimapped_mode
+    secondary_alignment_mode
+    supplementary_alignment_mode
+    feature_type
+    id_attribute
+    additional_attributes
+    quiet
+    minaqual
+    samout_format
+    samout_filename
+
+    Returns
+    -------
+
+    """
     try:
         read_io_obj = ReadsIO(sam_filename=sam_filename,
                               samout_filename=samout_filename,
@@ -63,6 +90,7 @@ def count_reads_single_file(
             read_stats.add_num_reads_processed()
 
             # todo can move this into a function, but not necessary.
+            #  this basically try to get the interval/read sequence.
             if not read_io_obj.pe_mode:
                 skip_read = _assess_non_pe_read(read_sequence=r,
                                                 read_stats=read_stats,
@@ -86,34 +114,11 @@ def count_reads_single_file(
 
                 iv_seq = _get_iv_seq_pe_read(com, r, stranded)
 
+            # this bit updates the counts obtained from aligning reads to feature sets.
             try:
                 fs = _align_reads_to_feature_set(features, iv_seq, overlap_mode)
 
-                if fs is None or len(fs) == 0:
-                    read_stats.add_empty_read(read_sequence=r)
-                elif len(fs) > 1:
-                    read_stats.add_ambiguous_read(read_sequence=r,
-                                                  assignment="__ambiguous[" + '+'.join(sorted(fs)) + "]")
-                else:
-                    read_stats.add_good_read_assignment(read_sequence=r, assignment=list(fs)[0])
-
-                if fs is not None and len(fs) > 0:
-                    fs = list(fs)
-                    if multimapped_mode == 'none':
-                        if len(fs) == 1:
-                            read_stats.add_to_count(feature=fs[0])
-                    elif multimapped_mode == 'all':
-                        for fsi in fs:
-                            read_stats.add_to_count(feature=fsi)
-                    elif multimapped_mode == 'fraction':
-                        val = 1.0 / len(fs)
-                        for fsi in fs:
-                            read_stats.add_to_count(feature=fsi, value=val)
-                    elif multimapped_mode == 'random':
-                        fsi = random.choice(fs)
-                        read_stats.add_to_count(feature=fsi)
-                    else:
-                        sys.exit("Illegal multimap mode.")
+                _update_feature_set_counts(fs, multimapped_mode, r, read_stats)
 
             except UnknownChrom:
                 read_stats.add_empty_read(read_sequence=r)
@@ -131,6 +136,33 @@ def count_reads_single_file(
 
     res = read_stats.get_output(isam)
     return res
+
+
+def _update_feature_set_counts(fs, multimapped_mode, r, read_stats):
+    if fs is None or len(fs) == 0:
+        read_stats.add_empty_read(read_sequence=r)
+    elif len(fs) > 1:
+        read_stats.add_ambiguous_read(read_sequence=r,
+                                      assignment="__ambiguous[" + '+'.join(sorted(fs)) + "]")
+    else:
+        read_stats.add_good_read_assignment(read_sequence=r, assignment=list(fs)[0])
+    if fs is not None and len(fs) > 0:
+        fs = list(fs)
+        if multimapped_mode == 'none':
+            if len(fs) == 1:
+                read_stats.add_to_count(feature=fs[0])
+        elif multimapped_mode == 'all':
+            for fsi in fs:
+                read_stats.add_to_count(feature=fsi)
+        elif multimapped_mode == 'fraction':
+            val = 1.0 / len(fs)
+            for fsi in fs:
+                read_stats.add_to_count(feature=fsi, value=val)
+        elif multimapped_mode == 'random':
+            fsi = random.choice(fs)
+            read_stats.add_to_count(feature=fsi)
+        else:
+            sys.exit("Illegal multimap mode.")
 
 
 def _align_reads_to_feature_set(features, iv_seq, overlap_mode):
