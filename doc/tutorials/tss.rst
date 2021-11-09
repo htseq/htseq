@@ -1,7 +1,7 @@
 .. _tss:
 
 **********************************************
-A detailed use case: Transcription start sites
+Tutorial: Transcription start sites (TSS)
 **********************************************
 
 .. currentmodule:: HTSeq

@@ -221,6 +221,7 @@ setup(name='HTSeq',
       py_modules=[
          'HTSeq._HTSeq_internal',
          'HTSeq.StepVector',
+         'HTSeq.StretchVector',
          'HTSeq._version',
          'HTSeq.scripts.qa',
          'HTSeq.scripts.count',

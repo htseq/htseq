@@ -22,6 +22,48 @@ except ImportError:
 data_folder = conftest.get_data_folder()
 
 
+class TestGenomicInterval(unittest.TestCase):
+    def test_init(self):
+        iv = HTSeq.GenomicInterval(
+            'chr1', 100, 200, ".",
+        )
+
+
+class TestChromVector(unittest.TestCase):
+    def test_init_step(self):
+        # Autoallocation
+        cv = HTSeq.ChromVector.create(
+            HTSeq.GenomicInterval('chr1', 100, 200, "."),
+            typecode='d',
+            storage='step',
+        )
+
+    def test_init_stretch(self):
+        # Autoallocation
+        cv = HTSeq.ChromVector.create(
+            HTSeq.GenomicInterval('chr1', 100, 200, "."),
+            typecode='d',
+            storage='stretch',
+        )
+
+    def test_steps_stretch(self):
+        cv = HTSeq.ChromVector.create(
+            HTSeq.GenomicInterval('chr1', 100, 200, "."),
+            typecode='d',
+            storage='stretch',
+        )
+        cv[120:130] = 45
+        cv[129:140] = 89
+        cv[180: 182] = 1
+        steps = list(cv.steps())
+        self.assertEqual(steps[0][0], HTSeq.GenomicInterval('chr1', 120, 129))
+        self.assertEqual(steps[1][0], HTSeq.GenomicInterval('chr1', 129, 140))
+        self.assertEqual(steps[2][0], HTSeq.GenomicInterval('chr1', 180, 182))
+        self.assertEqual(steps[0][1], 45)
+        self.assertEqual(steps[1][1], 89)
+        self.assertEqual(steps[2][1], 1)
+
+
 class TestGenomicArray(unittest.TestCase):
     def test_init(self):
         # Autoallocation

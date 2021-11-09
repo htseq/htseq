@@ -1,7 +1,7 @@
-.. _high_c_example:
+.. _tutorial_highc:
 
 **********************************
-High C data exploration
+Tutorial: High C data exploration
 **********************************
 
 .. currentmodule:: HTSeq

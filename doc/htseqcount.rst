@@ -239,7 +239,7 @@ Options
 
    Mode to handle reads that align to or are assigned to more than one feature
    in the overlap `<mode>` of choice (see -m option). `<nonunique mode>` are
-   ``none`` and ``all`` (default: ``none``)
+   ``none``, ``all``, ``fraction``, and ``random`` (default: ``none``)
 
 .. cmdoption:: --secondary-alignments=<mode>
 

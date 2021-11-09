@@ -13,6 +13,7 @@ import HTSeq
 from HTSeq._HTSeq import *
 from HTSeq.utils import FileOrSequence
 from HTSeq.features import *
+from HTSeq.StretchVector import StretchVector
 from HTSeq._version import __version__
 
 
@@ -594,7 +595,7 @@ _vcf_typemap = {
 }
 
 
-class VariantCall(object):
+class VariantCall:
     '''Class representing a variant call, close to VCF format'''
 
     def __init__(
@@ -859,7 +860,7 @@ class WiggleReader(FileOrSequence):
                     yield (GenomicInterval(chrom, pos, pos + span, '.'), float(tmp[1]))
 
 
-class BAM_Reader(object):
+class BAM_Reader:
     '''Parser for SAM/BAM/CRAM files.
 
     This is a thin wrapper on top of pysam.AlignmentFile. It detects
@@ -887,9 +888,9 @@ class BAM_Reader(object):
             import pysam
         except ImportError:
             sys.stderr.write(
-                "Could not import pysam. Please install pysam " +
-                "to use the BAM_Reader class")
+                "Please install pysam to use the BAM_Reader class")
             raise
+        self._open_file()
 
     def _open_file(self):
         self.sf = pysam.AlignmentFile(
@@ -901,31 +902,18 @@ class BAM_Reader(object):
         self.sf.close()
 
     def __enter__(self):
-        self._open_file()
         return self
 
     def __exit__(self, type, value, traceback):
         self._close_file()
 
     def __iter__(self):
-        if self.sf is None:
-            self._open_file()
-            call_exit = True
-        else:
-            call_exit = False
-        try:
-            self.record_no = 0
-            for pa in self.sf:
-                yield SAM_Alignment.from_pysam_AlignedSegment(pa, self.sf)
-                self.record_no += 1
-        finally:
-            if call_exit:
-                self._close_file()
-                self.sf = None
+        self.record_no = 0
+        for pa in self.sf:
+            yield SAM_Alignment.from_pysam_AlignedSegment(pa, self.sf)
+            self.record_no += 1
 
     def fetch(self, reference=None, start=None, end=None, region=None):
-        if self.sf is None:
-            self._open_file()
         self.record_no = 0
         try:
             for pa in self.sf.fetch(reference, start, end, region):
@@ -961,13 +949,9 @@ class BAM_Reader(object):
             yield SAM_Alignment.from_pysam_AlignedRead(pa, self.sf)
 
     def get_header_dict(self):
-        if self.sf is None:
-            self._open_file()
         return self.sf.header
 
     def get_template(self):
-        if self.sf is None:
-            self._open_file()
         return self.sf
 
 
@@ -975,7 +959,7 @@ class BAM_Reader(object):
 SAM_Reader = BAM_Reader
 
 
-class BAM_Writer(object):
+class BAM_Writer:
     '''Writer for SAM/BAM/CRAM files, a thin layer over pysam.AlignmentFile'''
     def __init__(
             self,
@@ -989,7 +973,7 @@ class BAM_Writer(object):
             import pysam
         except ImportError:
             sys.stderr.write(
-                "Please Install PySam to use the BAM_Writer Class (http://code.google.com/p/pysam/)")
+                "Please Install pysam to use the BAM_Writer Class")
             raise
 
         self.filename = filename
@@ -1016,6 +1000,12 @@ class BAM_Writer(object):
 
     def close(self):
         self.sf.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
 
 
 class BED_Reader(FileOrSequence):
@@ -1076,3 +1066,65 @@ class BED_Reader(FileOrSequence):
             f.itemRgb = [int(a) for a in fields[8].split(",")
                          ] if len(fields) > 8 else None
             yield(f)
+
+
+class BigWig_Reader:
+    '''A simple reader for BigWig files (using pyBigWig)'''
+
+    def __init__(self, filename):
+        '''Parser for BigWig files, a thin layer over pyBigWig.
+
+        Arguments:
+           filename (str, Path): The path to the input file to read
+        '''
+        global pyBigWig
+
+        try:
+            import pyBigWig
+        except ImportError:
+            sys.stderr.write(
+                "Please Install pyBigWig to use the BigWig_Reader Class")
+            raise
+
+        self.filename = filename
+        self.sf = pyBigWig.open(filename)
+
+    def close(self):
+        self.sf.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def chroms(self):
+        '''Return the list of chromosomes and their lengths, as a dictionary.
+
+        Example:
+
+        bw.chroms() -> {'chr1': 4568999, 'chr2': 87422, ...}
+        '''
+        return self.sf.chroms()
+
+    def intervals(self, chrom, strand='.', raw=False):
+        '''Lazy iterator over genomic intervals
+
+        Args:
+            chrom (str): The chromosome/scaffold to find intervals for.
+            strand ('.', '+', or '-'): Strandedness of the yielded
+              GenomicInterval. If raw=True, this argument is ignored.
+            raw (bool): If True, return the raw triplet from pyBigWig. If False,
+              return the result wrapped in a GenomicInterval with the
+              appropriate strandedness.
+        '''
+        for (chrom, start, end) in self.sf.intervals(chrom):
+            if raw:
+                yield (chrom, start, end)
+            else:
+                yield GenomicInterval(chrom, start, end, strand=strand)
+
+
+# TODO: make a BigWig_Writer class with buffered write operations, i.e. move it
+# from the .pyx file. One would probably want to lazy out the header by element
+# as well.

@@ -15,6 +15,7 @@ import numpy
 cimport numpy
 
 from HTSeq import StepVector
+from HTSeq.StretchVector import StretchVector
 from HTSeq import _HTSeq_internal
 
 
@@ -61,14 +62,14 @@ cdef class GenomicInterval:
         self.end = end
         self.strand = strand
         if self.start > self.end:
-            raise ValueError, "start is larger than end"
+            raise ValueError("start is larger than end")
 
     property strand:
         def __set__(self, strand):
             strand = intern(strand)
             if not(strand is strand_plus or strand is strand_minus or
                     strand is strand_nostrand):
-                raise ValueError, "Strand must be'+', '-', or '.'."
+                raise ValueError("Strand must be'+', '-', or '.'.")
             self._strand = strand
 
         def __get__(self):
@@ -234,12 +235,12 @@ cdef class GenomicInterval:
     cpdef extend_to_include(GenomicInterval self, GenomicInterval iv):
         """Extend the interval such that it includes iv."""
         if iv is None:
-            raise TypeError, "Cannot extend an interval to include None."
+            raise TypeError("Cannot extend an interval to include None.")
         if self.chrom != iv.chrom:
-            raise ValueError, "Cannot extend an interval to include an interval on another chromosome."
+            raise ValueError("Cannot extend an interval to include an interval on another chromosome.")
         if self.strand is not strand_nostrand and iv.strand is not strand_nostrand and \
                 self.strand is not iv.strand:
-            raise ValueError, "Cannot extend an interval to include an interval on another strand."
+            raise ValueError("Cannot extend an interval to include an interval on another strand.")
         self.start = min(self.start, iv.start)
         self.end = max(self.end, iv.end)
 
@@ -372,6 +373,10 @@ cdef class ChromVector(object):
             ncv.array = StepVector.StepVector.create(
                 typecode=typecode,
             )
+        elif storage == "stretch":
+            ncv.array = StretchVector(
+                    typecode=typecode,
+            )
 
         else:
             raise ValueError("Illegal storage mode.")
@@ -387,7 +392,7 @@ cdef class ChromVector(object):
     @classmethod
     def _create_view(cls, ChromVector vec, GenomicInterval iv):
         if iv.length == 0:
-            raise IndexError, "Cannot subset to zero-length interval."
+            raise IndexError("Cannot subset to zero-length interval.")
         v = cls()
         v.iv = iv
         v.array = vec.array
@@ -465,14 +470,14 @@ cdef class ChromVector(object):
             else:
                 start = index_slice.start
                 if start < self.iv.start:
-                    raise IndexError, "start too small"
+                    raise IndexError("start too small")
 
             if index_slice.stop is None:
                 stop = self.iv.end
             else:
                 stop = index_slice.stop
                 if stop > self.iv.end:
-                    raise IndexError, "stop too large"
+                    raise IndexError("stop too large")
 
             iv = GenomicInterval(self.iv.chrom, start, stop, self.iv.strand)
 
@@ -632,13 +637,15 @@ cdef class GenomicArray(object):
             typecode ('d', 'i', 'l', 'b', 'O'): what kind of data the array
               will contain. 'd' for double, 'i' for int, 'l' for long int, 'b'
               for boolean, 'O' for arbitrary objects (e.g. sets).
-            storage ('step', 'ndarray', or 'memmap'): What kind of storage to
-              use. 'ndarray' is appropriate for short chromosomes and stores
-              each position in the genome into memory. 'memmap' stores all
-              positions, but maps the memory onto disk for larger chromosomes.
-              'step' is a sparse representation similar to CSR matrices whereby
-              only the boundaries between genomic stretches with differing
-              data content are stored - see HTSeq.StepVector.
+            storage ('step', 'stretch', 'ndarray', or 'memmap'): What kind of
+              storage to use. 'ndarray' is appropriate for short chromosomes
+              and stores each position in the genome into memory. 'memmap'
+              stores all positions, but maps the memory onto disk for larger
+              chromosomes. 'step' is a sparse representation similar to CSR
+              matrices whereby only the boundaries between genomic stretches
+              with differing data content are stored - see HTSeq.StepVector.
+              'stretch' is a sparse representation with rare, dense 'islands'
+              of data in a sea of missing data along chromosomes.
             memmap_dir (str): If using 'memmap' storage, what folder to store
               the memory maps. These can get quite big.
             header (str): A header with metadata (e.g. when parsing a BedGraph
@@ -658,14 +665,14 @@ cdef class GenomicArray(object):
 
         if self.auto_add_chroms:
             chroms = []
-            if storage != 'step':
+            if storage not in ('step', 'stretch'):
                 raise TypeError("Automatic adding of chromosomes can " + \
-                    " only be used with storage type 'StepVector'.")
+                    " only be used with storage type 'step' or 'stretch'.")
 
         elif isinstance(chroms, list):
-            if storage != 'step':
+            if storage not in ('step', 'stretch'):
                 raise TypeError("Indefinite-length chromosomes can " + \
-                    " only be used with storage type 'StepVector'.")
+                    " only be used with storage type 'step' or 'stretch'.")
             chroms = dict([(c, sys.maxsize) for c in chroms])
 
         elif not isinstance(chroms, dict):
@@ -798,9 +805,9 @@ cdef class GenomicArray(object):
         sep = separator
 
         if (not self.stranded) and strand != ".":
-            raise ValueError, "Strand specified in unstranded GenomicArray."
+            raise ValueError("Strand specified in unstranded GenomicArray.")
         if self.stranded and strand not in (strand_plus, strand_minus):
-            raise ValueError, "Strand must be specified for stranded GenomicArray."
+            raise ValueError("Strand must be specified for stranded GenomicArray.")
         if hasattr(file_or_filename, "write"):
             f = file_or_filename
         else:
@@ -907,6 +914,7 @@ cdef class GenomicArray(object):
 
         Args:
             filename (str or path): Where to store the data.
+            strand (".", "+", or "-"): Which strand to write to file.
 
         The BigWig file format is described here:
         
@@ -926,9 +934,9 @@ cdef class GenomicArray(object):
             )
 
         if (not self.stranded) and strand != ".":
-            raise ValueError, "Strand specified in unstranded GenomicArray."
+            raise ValueError("Strand specified in unstranded GenomicArray.")
         if self.stranded and strand not in (strand_plus, strand_minus):
-            raise ValueError, "Strand must be specified for stranded GenomicArray."
+            raise ValueError("Strand must be specified for stranded GenomicArray.")
 
         with pyBigWig.open(filename, "w") as bw:
             # Write header with chromosome info
@@ -994,7 +1002,10 @@ cdef class GenomicArray(object):
                 'pyBigWig is required to write a GenomicArray to a bigWig file',
             )
 
-        with pyBigWig.open(filename) as bw:
+        # Avoid circular import
+        from HTSeq import BigWig_Reader
+
+        with BigWig_Reader(filename) as bw:
             chrom_dict = dict(bw.chroms())
 
             # Create the instance with specified chromosomes
@@ -1006,7 +1017,7 @@ cdef class GenomicArray(object):
             )
 
             for chrom in chrom_dict:
-                intervals = bw.intervals(chrom)
+                intervals = bw.intervals(chrom, raw=True)
                 for i, (start, end, value) in enumerate(intervals):
                     # Set the chromosome offset with the first value, since
                     # they are ordered. The StepVector will be offset compared
@@ -1140,9 +1151,9 @@ cdef class Sequence(object):
         cdef int seq_length = len(self.seq)
 
         if numpy.PyArray_DIMS(count_array)[0] < seq_length:
-            raise ValueError, "'count_array' too small for sequence."
+            raise ValueError("'count_array' too small for sequence.")
         if numpy.PyArray_DIMS(count_array)[1] < 5:
-            raise ValueError, "'count_array' has too few columns."
+            raise ValueError("'count_array' has too few columns.")
 
         cdef numpy.npy_intp i
         cdef char b
@@ -1160,7 +1171,7 @@ cdef class Sequence(object):
             elif b in [b'N', b'n', b'.']:
                 count_array[i, 4] += 1
             else:
-                raise ValueError, "Illegal base letter encountered."
+                raise ValueError("Illegal base letter encountered.")
 
         return None
 
@@ -1231,7 +1242,7 @@ cdef class SequenceWithQualities(Sequence):
         Sequence.__init__(self, seq, name)
         if qualscale != "noquals":
             if len(seq) != len(qualstr):
-                raise ValueError, "'seq' and 'qualstr' do not have the same length."
+                raise ValueError("'seq' and 'qualstr' do not have the same length.")
             self._qualstr = qualstr
         else:
             self._qualstr = b''
@@ -1242,9 +1253,9 @@ cdef class SequenceWithQualities(Sequence):
     cdef _fill_qual_arr(SequenceWithQualities self):
         cdef int seq_len = len(self.seq)
         if self._qualscale == "missing":
-            raise ValueError, "Quality string missing."
+            raise ValueError("Quality string missing.")
         if seq_len != len(self._qualstr):
-            raise ValueError, "Quality string has not the same length as sequence."
+            raise ValueError("Quality string has not the same length as sequence.")
         cdef numpy.ndarray[numpy.uint8_t, ndim= 1] qualarr = numpy.empty((seq_len, ), numpy.uint8)
         cdef int i
         cdef char * qualstr = self._qualstr
@@ -1259,7 +1270,7 @@ cdef class SequenceWithQualities(Sequence):
                 qualarr[i] = 10 * \
                     math.log10(1 + 10 ** (qualstr[i] - 64) / 10.0)
         else:
-            raise ValueError, "Illegal quality scale '%s'." % self._qualscale
+            raise ValueError("Illegal quality scale '%s'." % self._qualscale)
         self._qualarr = qualarr
 
     property qual:
@@ -1270,9 +1281,9 @@ cdef class SequenceWithQualities(Sequence):
 
         def __set__(self, newvalue):
             if not (isinstance(newvalue, numpy.ndarray) and newvalue.dtype == numpy.uint8):
-                raise TypeError, "qual can only be assigned a numpy array of type numpy.uint8"
+                raise TypeError("qual can only be assigned a numpy array of type numpy.uint8")
             if not (newvalue.shape == (len(self.seq), )):
-                raise TypeError, "assignment to qual with illegal shape"
+                raise TypeError("assignment to qual with illegal shape")
             self._qualarr = newvalue
             self._qualstr = b""
             self._qualscale = "none"
@@ -1301,7 +1312,7 @@ cdef class SequenceWithQualities(Sequence):
         cdef numpy.ndarray[numpy.uint8_t, ndim = 1] qual_array
         if qualstr_phred_cstr[0] == 0:
             if self._qualscale == "noquals":
-                raise ValueError, "Quality string missing"
+                raise ValueError("Quality string missing")
             if self._qualscale == "phred":
                 self._qualstr_phred = self._qualstr
             else:
@@ -1360,14 +1371,14 @@ cdef class SequenceWithQualities(Sequence):
         cdef numpy.npy_intp qual_size = numpy.PyArray_DIMS(count_array)[1]
 
         if seq_length > numpy.PyArray_DIMS(count_array)[0]:
-            raise ValueError, "'count_array' too small for sequence."
+            raise ValueError("'count_array' too small for sequence.")
 
         cdef numpy.npy_intp i
         cdef numpy.npy_int q
         for i in range(seq_length):
             q = qual_array[i]
             if(q >= qual_size):
-                raise ValueError, "Too large quality value encountered."
+                raise ValueError("Too large quality value encountered.")
             count_array[i, q] += 1
 
         return None
@@ -1466,7 +1477,7 @@ cdef class CigarOperation(object):
         self.query_from = qfrom
         self.query_to = qto
         if check and not self.check():
-            raise ValueError, "Inconsistent CIGAR operation."
+            raise ValueError("Inconsistent CIGAR operation.")
 
     def __repr__(self):
         return "< %s: %d base(s) %s on ref iv %s, query iv [%d,%d) >" % (
@@ -1500,13 +1511,13 @@ cpdef list parse_cigar(str cigar_string, int ref_left=0, str chrom="", str stran
     cdef str code
     split_cigar = _re_cigar_codes.split(cigar_string)
     if split_cigar[-1] != '' or len(split_cigar) % 2 != 1:
-        raise ValueError, "Illegal CIGAR string '%s'" % cigar_string
+        raise ValueError("Illegal CIGAR string '%s'" % cigar_string)
     cl = []
     for i in range(len(split_cigar) // 2):
         try:
             size = int(split_cigar[2 * i])
         except ValueError:
-            raise ValueError, "Illegal CIGAR string '%s'" % cigar_string
+            raise ValueError("Illegal CIGAR string '%s'" % cigar_string)
         code = split_cigar[2 * i + 1]
         cl.append((code, size))
     return build_cigar_list(cl, ref_left, chrom, strand)
@@ -1548,7 +1559,7 @@ cpdef list build_cigar_list(list cigar_pairs, int ref_left=0, str chrom="", str 
             res.append(CigarOperation(
                 'P', size, rpos, rpos, qpos, qpos, chrom, strand))
         else:
-            raise ValueError, "Unknown CIGAR code '%s' encountered." % code
+            raise ValueError("Unknown CIGAR code '%s' encountered." % code)
     return res
 
 
@@ -1653,7 +1664,7 @@ cdef class BowtieAlignment(AlignmentWithSequenceReversal):
 
 cdef _parse_SAM_optional_field_value(str field):
     if len(field) < 5 or field[2] != ':' or field[4] != ':':
-        raise ValueError, "Malformatted SAM optional field '%'" % field
+        raise ValueError("Malformatted SAM optional field '%'" % field)
     if field[3] == 'A':
         return field[5]
     elif field[3] == 'i':
@@ -1670,7 +1681,7 @@ cdef _parse_SAM_optional_field_value(str field):
         else:
             return numpy.array(field[7:].split(','), int)
     else:
-        raise ValueError, "SAM optional field with illegal type letter '%s'" % field[2]
+        raise ValueError("SAM optional field with illegal type letter '%s'" % field[2])
 
 
 cdef class SAM_Alignment(AlignmentWithSequenceReversal):
@@ -1868,15 +1879,15 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
 
         fields = line.rstrip().split("\t")
         if len(fields) < 10:
-            raise ValueError, "SAM line does not contain at least 11 tab-delimited fields."
+            raise ValueError("SAM line does not contain at least 11 tab-delimited fields.")
         (qname, flag, rname, pos, mapq, cigar, mrnm, mpos, isize,
          seq, qual) = fields[0:11]
         optional_fields = fields[11:]
 
         if seq.count("=") > 0:
-            raise ValueError, "Sequence in SAM file contains '=', which is not supported."
+            raise ValueError("Sequence in SAM file contains '=', which is not supported.")
         if seq.count(".") > 0:
-            raise ValueError, "Sequence in SAM file contains '.', which is not supported."
+            raise ValueError("Sequence in SAM file contains '.', which is not supported.")
         flagint = int(flag)
 
         if flagint & 0x0004:     # flag "query sequence is unmapped"
@@ -1884,7 +1895,7 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
             cigarlist = None
         else:
             if rname == "*":
-                raise ValueError, "Malformed SAM line: RNAME == '*' although flag bit &0x0004 cleared"
+                raise ValueError("Malformed SAM line: RNAME == '*' although flag bit &0x0004 cleared")
             # SAM is one-based, but HTSeq is zero-based!
             posint = int(pos) - 1
             if flagint & 0x0010:      # flag "strand of the query"
@@ -1916,7 +1927,7 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
                 alnmt.mate_start = None
             else:
                 if mrnm == "*":
-                    raise ValueError, "Malformed SAM line: MRNM == '*' although flag bit &0x0008 cleared"
+                    raise ValueError("Malformed SAM line: MRNM == '*' although flag bit &0x0008 cleared")
                 posint = int(mpos) - 1
                 if flagint & 0x0020:   # flag "strand of the mate"
                     strand = "-"
@@ -2000,9 +2011,9 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
             return res[0][1]
         else:
             if len(res) == 0:
-                raise KeyError, "SAM optional field tag %s not found" % tag
+                raise KeyError("SAM optional field tag %s not found" % tag)
             else:
-                raise ValueError, "SAM optional field tag %s not unique" % tag
+                raise ValueError("SAM optional field tag %s not unique" % tag)
 
     def raw_optional_fields(self):
         res = []
@@ -2034,9 +2045,9 @@ cpdef list quotesafe_split(bytes s, bytes split=b';', bytes quote=b'"'):
     cdef char split_c = split[0]
     cdef char quote_c = quote[0]
     if len(split) != 1:
-        raise ValueError, "'split' must be length 1"
+        raise ValueError("'split' must be length 1")
     if len(quote) != 1:
-        raise ValueError, "'quote' must be length 1"
+        raise ValueError("'quote' must be length 1")
     while s_c[i] != 0:
         if s_c[i] == quote_c:
             in_quote = not in_quote
@@ -2046,5 +2057,5 @@ cpdef list quotesafe_split(bytes s, bytes split=b';', bytes quote=b'"'):
         i += 1
     l.append(s[begin_token:])
     if in_quote:
-        raise ValueError, "unmatched quote"
+        raise ValueError("unmatched quote")
     return l

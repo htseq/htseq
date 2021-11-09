@@ -6,6 +6,7 @@ PYTHON=python3
 
 set -e
 
+SCRIPT_FOLDER=$(realpath $(dirname $0))
 CLEAN=0
 CONDA=0
 PYTEST_ARGS=test
@@ -13,7 +14,11 @@ VENV_DIR=.venv
 VERBOSE=0
 SKIP_INSTALL=0
 
-while getopts ":coavst:k:" OPTION; do
+GOT_CLI_OPTS=0
+while getopts ":cadovst:k:" OPTION; do
+    if [ x$GOT_CLI_OPTS = x0 ]; then
+        echo "Command line options:"
+    fi
     echo "$OPTION"
     case $OPTION in
         c)
@@ -21,6 +26,9 @@ while getopts ":coavst:k:" OPTION; do
           ;;
 	a)
 	  CONDA=1
+	  ;;
+	d)
+          PYTEST_ARGS='--doctest-glob="*.rst" doc/*.rst doc/tutorials/tss.rst'
 	  ;;
         o)
           PYTEST_ARGS=test/test_htseq-count.py
@@ -81,5 +89,5 @@ else
   if [ x$VERBOSE = x1 ]; then
     echo "PATH=${VENV_DIR}/bin:${PATH} ${PYTEST} ${PYTEST_ARGS}"
   fi
-  PATH=${VENV_DIR}/bin:${PATH} $PYTEST ${PYTEST_ARGS}
+  PATH=${SCRIPT_FOLDER}/${VENV_DIR}/bin:${PATH} $PYTEST ${PYTEST_ARGS}
 fi

@@ -6,6 +6,46 @@ Version history
 
 Next version (current master)
 =============================
+TBA
+
+Major release. All users are encouraged to upgrade (when released!).
+
+API features:
+
+- Added BigWig_Reader
+- Added I/O functions for ``GenomicArray`` to/from bedGraph and BigWig files
+- ``make_feature_genomicarrayofsets`` now supports multiple primary attributes
+- ``make_feature_genomicarrayofsets`` can now add chromosome info as an additional attribute
+- Improved context manager support (``with`` statement) for parsers
+- Support for ``pathlib.Path`` objects
+
+Scripts:
+
+- Refactoring of ``htseq-count`` for readability
+- Added exon-level counting to ``htseq-count``
+- Added output formats to ``htseq-count``: loom, h5ad, mtx files
+- The above all apply to ``htseq-count-barcodes`` as well.
+
+Documentation:
+
+- Modernized template of docs
+- Added tutorial on High C analysis
+- Added step by step explanation of ``htseq-count`` logic
+- Improved API documentation on a number of interfaces
+- Improved docstrings throughout
+
+Tests/Infrastructure:
+
+- Better testing infra (e.g. ``test.sh``)
+- Many more unit tests
+
+Bug fixes:
+
+- Fixed a bug with templates SAM files
+- Fixed a bug about ``ChromVector`` steps.
+- Fixed a bug about file opening (thanks @mruffalo)
+- Fixed a bug about ambiguous reads (thanks @Mashin6)
+- Improved style of code and documentation
 
 Version 0.13.5
 ==============
