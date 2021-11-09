@@ -1,3 +1,4 @@
+# DEPRECATE AND REMOVE ME IN THE FUTURE
 import sys
 import argparse
 import operator
