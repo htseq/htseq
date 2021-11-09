@@ -13,6 +13,7 @@ import HTSeq
 from HTSeq._HTSeq import *
 from HTSeq.utils import FileOrSequence
 from HTSeq.features import *
+from HTSeq.StretchVector import StretchVector
 from HTSeq._version import __version__
 
 
