@@ -18,7 +18,8 @@ class ReadsIO(object):
         self.samoutfile = None
         self.samout_format = samout_format
 
-        self._prepare_samoutfile_and_read_seq(sam_filename, samout_filename, samout_format)
+        self._set_BAM_reader(sam_filename)
+        self._set_output_template(samout_filename, samout_format)
         self._set_read_seq(supplementary_alignment_mode, secondary_alignment_mode, order, max_buffer_size)
 
     def write_to_samout(self, read_sequence, assignment):
@@ -43,16 +44,48 @@ class ReadsIO(object):
         if self.samoutfile is not None:
             self.samoutfile.close()
 
-    def _prepare_samoutfile_and_read_seq(self, sam_filename, samout_filename, samout_format):
+    def _set_BAM_reader(self, sam_filename):
+        """
+        Convert the input SAM/BAM files into a parser.
+
+        Parameters
+        ----------
+        sam_filename : str
+            The name of SAM/BAM file to write out all SAM alignment records into.
+
+        """
         if sam_filename == "-":
             self.read_seq_file = HTSeq.BAM_Reader(sys.stdin)
         else:
             self.read_seq_file = HTSeq.BAM_Reader(sam_filename)
-        # Get template for output BAM/SAM if possible
-        self._set_output_template(samout_filename, samout_format)
 
     def _set_read_seq(self, supplementary_alignment_mode, secondary_alignment_mode, order,
                       max_buffer_size):
+
+        """
+        Prepare the BAM/SAM file iterator.
+        Note, only run this after _set_BAM_reader as you need self.read_seq_file to be set.
+        This will create a parser and prepare an iterator for it.
+        Depending on whether we have paired-end reads or not, different iterator
+        will be returned.
+
+        Parameters
+        ----------
+        supplementary_alignment_mode : str
+            Whether to score supplementary alignments (0x800 flag).
+            Choices: score or ignore.
+        secondary_alignment_mode : str
+            Whether to score secondary alignments (0x100 flag).
+            Choices: score or ignore.
+        order : str
+            Can only be either 'pos' or 'name'. Sorting order of <alignment_file>.
+        max_buffer_size : int
+            When <alignment_file> is paired end sorted by position, allow only so many reads to stay in memory
+            until the mates are found (raising this number will use more memory).
+            Has no effect for single end or paired end sorted by name.
+
+        """
+
         read_seq_iter = iter(self.read_seq_file)
         # Catch empty BAM files
         try:
@@ -86,6 +119,18 @@ class ReadsIO(object):
                 raise ValueError("Illegal order specified.")
 
     def _set_output_template(self, samout_filename, samout_format):
+        """
+        Set up the SAM/BAM output files (and corresponding template) if possible.
+
+        Parameters
+        ----------
+        samout_filename : str
+            The name of SAM/BAM file to write out all SAM alignment records into.
+        samout_format : str
+            Format of the output files denoted by samouts.
+            Choices: SAM, BAM, sam, bam.
+
+        """
         if samout_filename is None:
             self.template = None
             self.samoutfile = None
