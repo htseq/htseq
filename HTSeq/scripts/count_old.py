@@ -1,3 +1,4 @@
+# DEPRECATE AND REMOVE ME IN THE FUTURE
 import sys
 import argparse
 import operator
@@ -48,10 +49,14 @@ def count_reads_single_file(
         for read in r:
             if read is not None:
                 read.optional_fields.append(('XF', assignment))
-                if samout_format in ('SAM', 'sam'):
+                if template is not None:
+                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                elif samout_format in ('SAM', 'sam'):
                     samoutfile.write(read.get_sam_line() + "\n")
                 else:
-                    samoutfile.write(read.to_pysam_AlignedSegment(template))
+                    raise ValueError(
+                        'BAM/SAM output: no template and not a test SAM file',
+                    )
 
     try:
         if sam_filename == "-":
@@ -59,7 +64,7 @@ def count_reads_single_file(
         else:
             read_seq_file = HTSeq.BAM_Reader(sam_filename)
 
-        # Get template for output BAM
+        # Get template for output BAM/SAM if possible
         if samout_filename is None:
             template = None
             samoutfile = None
@@ -67,6 +72,13 @@ def count_reads_single_file(
             template = read_seq_file.get_template()
             samoutfile = pysam.AlignmentFile(
                     samout_filename, 'wb',
+                    template=template,
+                    )
+        elif (samout_format in ('sam', 'SAM')) and \
+                hasattr(read_seq_file, 'get_template'):
+            template = read_seq_file.get_template()
+            samoutfile = pysam.AlignmentFile(
+                    samout_filename, 'w',
                     template=template,
                     )
         else:
