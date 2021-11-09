@@ -57,11 +57,6 @@ def count_reads_single_file(
     counts = {key: 0 for key in feature_attr}
 
     try:
-        empty = 0
-        ambiguous = 0
-        notaligned = 0
-        lowqual = 0
-        nonunique = 0
 
         for r in read_io_obj.read_seq:
 
@@ -69,32 +64,16 @@ def count_reads_single_file(
             read_stats.add_num_reads_processed()
 
             if not read_io_obj.pe_mode:
-                if not r.aligned:
-                    read_stats.add_not_aligned_read(read_sequence=r)
+                bad_read = _assess_non_pe_read(read_sequence=r,
+                                               read_stats=read_stats,
+                                               secondary_alignment_mode=secondary_alignment_mode,
+                                               supplementary_alignment_mode=supplementary_alignment_mode,
+                                               multimapped_mode=multimapped_mode,
+                                               minaqual=minaqual)
+
+                if bad_read:
                     continue
-                if ((secondary_alignment_mode == 'ignore') and
-                        r.not_primary_alignment):
-                    continue
-                if ((supplementary_alignment_mode == 'ignore') and
-                        r.supplementary):
-                    continue
-                try:
-                    if r.optional_field("NH") > 1:
-                        read_stats.add_not_unique_read(read_sequence=r)
-                        if multimapped_mode == 'none':
-                            continue
-                except KeyError:
-                    pass
-                if r.aQual < minaqual:
-                    read_stats.add_low_quality_read(read_sequence=r)
-                    continue
-                if stranded != "reverse":
-                    iv_seq = (co.ref_iv for co in r.cigar if co.type in com
-                              and co.size > 0)
-                else:
-                    iv_seq = (invert_strand(co.ref_iv)
-                              for co in r.cigar if (co.type in com and
-                                                    co.size > 0))
+                iv_seq = _get_iv_seq_non_pe_read(com, r, stranded)
             else:
                 if r[0] is not None and r[0].aligned:
                     if stranded != "reverse":
@@ -193,7 +172,6 @@ def count_reads_single_file(
 
             except UnknownChrom:
                 read_stats.add_empty_read(read_sequence=r)
-                empty += 1
 
     except:
         sys.stderr.write(
@@ -202,10 +180,11 @@ def count_reads_single_file(
         raise
 
     if not quiet:
-        sys.stderr.write(
-            "%d %s processed.\n" %
-            (read_stats.num_reads_processed, "alignments " if not read_io_obj.pe_mode else "alignment pairs"))
-        sys.stderr.flush()
+        read_stats.print_progress(force_print=True)
+        # sys.stderr.write(
+        #     "%d %s processed.\n" %
+        #     (read_stats.num_reads_processed, "alignments " if not read_io_obj.pe_mode else "alignment pairs"))
+        # sys.stderr.flush()
 
     read_io_obj.close_samoutfile()
 
@@ -222,9 +201,38 @@ def count_reads_single_file(
     # }
 
 
-def _print_progress(quiet, read_io_obj, reads_counter):
-    if reads_counter > 0 and reads_counter % 100000 == 0 and not quiet:
-        sys.stderr.write(
-            "%d alignment record%s processed.\n" %
-            (reads_counter, "s" if not read_io_obj.pe_mode else " pairs"))
-        sys.stderr.flush()
+def _get_iv_seq_non_pe_read(com, r, stranded):
+    # TODO: rename me. I'm not sure what this is doing..
+    if stranded != "reverse":
+        iv_seq = (co.ref_iv for co in r.cigar if co.type in com
+                  and co.size > 0)
+    else:
+        iv_seq = (invert_strand(co.ref_iv)
+                  for co in r.cigar if (co.type in com and
+                                        co.size > 0))
+    return iv_seq
+
+
+def _assess_non_pe_read(read_sequence, read_stats, secondary_alignment_mode, supplementary_alignment_mode,
+                        multimapped_mode, minaqual):
+    if not read_sequence.aligned:
+        read_stats.add_not_aligned_read(read_sequence=read_sequence)
+        return True
+    if ((secondary_alignment_mode == 'ignore') and
+            read_sequence.not_primary_alignment):
+        return True
+    if ((supplementary_alignment_mode == 'ignore') and
+            read_sequence.supplementary):
+        return True
+    try:
+        if read_sequence.optional_field("NH") > 1:
+            read_stats.add_not_unique_read(read_sequence=read_sequence)
+            if multimapped_mode == 'none':
+                return True
+    except KeyError:
+        pass
+    if read_sequence.aQual < minaqual:
+        read_stats.add_low_quality_read(read_sequence=read_sequence)
+        return True
+
+    return False
