@@ -6,9 +6,9 @@ PYTHON=python3
 
 set -e
 
-SCRIPT_FOLDER=$(realpath $(dirname $0))
+#SCRIPT_FOLDER=$(realpath $(dirname $0))
 CLEAN=0
-CONDA=0
+CONDA=1
 PYTEST_ARGS=test
 VENV_DIR=.venv
 VERBOSE=0
@@ -58,8 +58,10 @@ if [ x$CLEAN = x1 ]; then
 fi
 
 if [ x$CONDA = x1 ]; then
-  source /opt/anaconda/bin/activate
-  conda activate scanpy
+#  source /opt/anaconda/bin/activate
+#  conda activate scanpy
+  source /Users/givanna/miniconda3/bin/activate
+  conda activate htseq
   PYTHON=python
   PIP=pip
   PYTEST=pytest
