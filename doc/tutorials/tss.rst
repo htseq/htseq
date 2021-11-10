@@ -35,12 +35,11 @@ We start with the straight-forward way of calculating the full coverage first
 and then summing up the profile. This can be done as described in the :ref:`Tour <tour>`::
 
    >>> import HTSeq
-   >>> bamfile = HTSeq.BAM_Reader("SRR001432_head.bam")
-   >>> gtffile = HTSeq.GFF_Reader("Homo_sapiens.GRCh37.56_chrom1.gtf")
    >>> coverage = HTSeq.GenomicArray("auto", stranded=False, typecode="i")
-   >>> for almnt in bamfile:
-   ...    if almnt.aligned:
-   ...       coverage[almnt.iv] += 1
+   >>> with HTSeq.BAM_Reader("SRR001432_head.bam") as bamfile:
+   ...     for almnt in bamfile:
+   ...        if almnt.aligned:
+   ...           coverage[almnt.iv] += 1
 
 To find the location of all transcription start sites, we can look in the GTF
 file for exons with exon number 1 (as indicated by the ``exon_number``
@@ -49,6 +48,7 @@ The following loop extracts and prints this information (using ``itertools.islic
 to go through only the first 100 features in the GTF file)::
 
    >>> import itertools
+   >>> gtffile = HTSeq.GFF_Reader("Homo_sapiens.GRCh37.56_chrom1.gtf")
    >>> for feature in itertools.islice(gtffile, 100):
    ...    if feature.type == "exon" and feature.attr["exon_number"] == "1":
    ...       print(feature.attr["gene_id"], feature.attr["transcript_id"], feature.iv.start_d_as_pos)
@@ -330,6 +330,7 @@ around it.
 To demonstrate how this data structure can be used, we take a specific read that 
 we selected as a good example::
 
+   >>> bamfile = HTSeq.BAM_Reader("SRR001432_head.bam")
    >>> for almnt in bamfile:
    ...     if almnt.read.name.startswith("SRR001432.700 "):
    ...         break

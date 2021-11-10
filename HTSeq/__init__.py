@@ -898,14 +898,15 @@ class BAM_Reader:
                 check_sq=self.check_sq,
                 )
 
-    def _close_file(self):
+    def close(self):
+        """Close the BAM file for clean up"""
         self.sf.close()
 
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
-        self._close_file()
+        self.close()
 
     def __iter__(self):
         self.record_no = 0

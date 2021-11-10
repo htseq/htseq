@@ -38,7 +38,7 @@ def count_reads_in_features(args):
        (e.g. multimappers)
     """
 
-    # Load feature GenomicArray of sets to mark overlaps
+    # Load feature GenomicArrayOfSets to mark overlaps
     gff = HTSeq.GFF_Reader(args.featuresfilename)
     feature_scan = HTSeq.make_feature_genomicarrayofsets(
         gff,

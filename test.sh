@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Adapted from python-igraph, original author Tamas Nepus:
+# https://github.com/igraph/python-igraph/blob/709e7023aef4f4c4c93d385f4ed11adab6f7cbae/test.sh
+
 PYTHON=python3
 
 ###############################################################################
