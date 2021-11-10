@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Adapted from python-igraph, original author Tamas Nepus:
+# https://github.com/igraph/python-igraph/blob/709e7023aef4f4c4c93d385f4ed11adab6f7cbae/test.sh
+
 PYTHON=python3
 
 ###############################################################################
@@ -58,8 +61,13 @@ if [ x$CLEAN = x1 ]; then
 fi
 
 if [ x$CONDA = x1 ]; then
-  source /opt/anaconda/bin/activate
-  conda activate scanpy
+  if [ -d /opt/anaconda ]; then
+    source /opt/anaconda/bin/activate
+    conda activate scanpy
+  else
+    source /Users/givanna/miniconda3/bin/activate
+    conda activate htseq
+  fi
   PYTHON=python
   PIP=pip
   PYTEST=pytest

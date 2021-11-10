@@ -10,11 +10,11 @@ High C experiments are a collection of experimental approaches that aim at measu
 
 This tutorial demonstrates how to use ``HTSeq`` to perform an exploratory analysis of high C reads from a BAM file. It is not a complete end-to-end solution to analyze raw reads, but it is hopefully educational to understand how to use ``HTSeq`` in a flexible and powerful way.
 
-``HTSeq`` is not a read aligner: the data used in this tutorial are derived from the publicly accessible example data from the package `HiC-Pro`_, which is available here: https://zerkalo.curie.fr/partage/HiC-Pro/HiCPro_results/HiC_Pro_v2.7.9_test_data/bowtie_results/bwt2/dixon_2M/SRR400264_00_hg19.bwt2pairs.bam. The data itself was originally published by `Dixon et al. (2012)`_ and the reads were aligned using bowtie2. The BAM file we are using is unsorted, i.e. read1 and read2 of each paired-end are on subsequent lines. 
+``HTSeq`` is not a read aligner: the data used in this tutorial are derived from the publicly accessible example data from the package `HiC-Pro`_, which is available here: https://zerkalo.curie.fr/partage/HiC-Pro/HiCPro_results/HiC_Pro_v2.7.9_test_data/bowtie_results/bwt2/dixon_2M/SRR400264_00_hg19.bwt2pairs.bam. The data itself was originally published by `Dixon et al. (2012)`_ and the reads were aligned using bowtie2. The BAM file we are using is unsorted, i.e. read1 and read2 of each paired-end are on subsequent lines.
 
 Step 1: check the lay of the (genomic) land
 -------------------------------------------
-We start by loading the BAM file and checking for chromoeome names and lengths::
+We start by loading the BAM file and checking for chromosome names and lengths::
 
     >>> import HTSeq
     >>> bamfile = HTSeq.BAM_Reader("SRR400264_00_hg19.bwt2pairs.bam")
@@ -67,7 +67,7 @@ and the parsing itself::
     >>>             hits[0].append(i)
     >>>         if read2.iv.overlaps(window_iv):
     >>>             hits[1].append(i)
-    >>> 
+    >>>
     >>>     for i1 in hits[0]:
     >>>         for i2 in hits[1]:
     >>>             coverage[i1, i2] += 1
@@ -151,7 +151,7 @@ The natural structure of the data appears if we remove the diagonal and replot::
 
     >>> covnd = coverage.copy()
     >>> covnd[np.arange(covnd.shape[0]), np.arange(covnd.shape[0])] = 0
-    >>> 
+    >>>
     >>> fig, ax = plt.subplots(figsize=(7, 6))
     >>> ax.matshow(
     ...     covnd,
