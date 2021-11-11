@@ -12,6 +12,7 @@ Parsers
 --------
 - :ref:`tutorial_fastx`: Simple tutorial on hadling fasta and fastq files with ``HTSeq``.
 - :ref:`tutorial_bam`: Simple tutorial on handling SAM/BAM/CRAM files.
+- :ref:`step_vs_stretch`: Explanation of the different data structures used to store sparse genomic data.
 
 Workflows
 ---------
@@ -32,6 +33,7 @@ Scripts
 
    tutorials/fastx_reader
    tutorials/bam_reader
+   tutorials/step_vs_stretch_vector
    tutorials/tss
    tutorials/highc
    tutorials/exon_example
