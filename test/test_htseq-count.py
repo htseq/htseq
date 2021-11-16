@@ -430,6 +430,22 @@ class HTSeqCountBarcodes(HTSeqCountBase):
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withbarcodes_chromosome_info.tsv',
             })
 
+    def test_output_tsv_correct_UMI(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', 'test_output.tsv',
+                '-m', 'intersection-nonempty',
+                '--nonunique', 'none',
+                '--secondary-alignments', 'score',
+                '--supplementary-alignments', 'score',
+                '--correct-UMI-distance', '1',
+                f'{data_folder}/yeast_RNASeq_excerpt_withbarcodes.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withbarcodes_correctUMI_1.tsv',
+            })
+
     @unittest.skipIf(anndata is None, "test case depends on anndata")
     def test_output_h5ad(self):
         self._run({

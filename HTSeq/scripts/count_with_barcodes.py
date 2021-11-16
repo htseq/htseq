@@ -19,6 +19,41 @@ from HTSeq.scripts.utils import (
 )
 
 
+def correct_barcodes(counts, hamming=1):
+    '''Correct barcodes, usually UMIs.
+
+    Notice: This function does not use recursive correction. Recursion sounds
+    great in theory, but due to experimental corner cases it can lead to
+    overcorrection and loss of signal.
+    '''
+    if hamming == 0:
+        return
+
+    # Count reads from all feature per barcode, and prepare to oder
+    n_reads = Counter({key: sum(val.values()) for key, val in counts.items()})
+
+    # Order by counts, from most to least
+    order = [umi for (umi, _) in n_reads.most_common()]
+
+    # Get close Hamming distances, and aggregate them into higher count ones
+    umi_vectors = np.array([list(x) for x in order])
+    idx_left = list(range(len(order)))
+    while idx_left:
+        i = idx_left.pop(0)
+        vi = ''.join(umi_vectors[i])
+        # Distance from all remaining barcodes
+        dis = (umi_vectors[i] != umi_vectors[idx_left]).sum(axis=1)
+        # Get indices of barcodes within reach
+        idx = (dis <= hamming).nonzero()[0]
+        js = [idx_left[idxi] for idxi in idx]
+        for j in js:
+            # Merge barcode counts into higher count one
+            vj = ''.join(umi_vectors[j])
+            counts[vi].update(counts.pop(vj))
+        # Shorten list of remaining UMIs
+        idx_left = [j for j in idx_left if j not in js]
+
+
 def count_reads_with_barcodes(
         sam_filename,
         features,
@@ -39,6 +74,7 @@ def count_reads_with_barcodes(
         samout_filename,
         cb_tag,
         ub_tag,
+        correct_ub_distance,
         ):
 
     def write_to_samout(r, assignment, samoutfile, template=None):
@@ -329,11 +365,17 @@ def count_reads_with_barcodes(
     if samoutfile is not None:
         samoutfile.close()
 
-    # UMI consensus by majority rule
+    # A UMI could be mapped to more than one feature. We count the feature
+    # with the highest number of reads. In case of ties, we discard the whole
+    # UMI to be on the safe side (it should not happen anyway).
     cbs = sorted(counts.keys())
     counts_noumi = {}
     for cb in cbs:
         counts_cell = Counter()
+
+        # Correct barcodes within a certain Hamming distance
+        correct_barcodes(counts[cb], hamming=correct_ub_distance)
+
         for ub, udic in counts.pop(cb).items():
             # In case of a tie, do not increment either feature
             top = udic.most_common(2)
@@ -371,6 +413,7 @@ def count_reads_in_features(
         counts_output_sparse,
         cb_tag,
         ub_tag,
+        correct_ub_distance,
         ):
     '''Count reads in features, parallelizing by file'''
 
@@ -431,6 +474,7 @@ def count_reads_in_features(
         samout,
         cb_tag,
         ub_tag,
+        correct_ub_distance,
         )
 
     # Write output
@@ -605,9 +649,21 @@ def main():
             '--UMI', type=str, dest='ub_tag',
             default='UB',
             help='BAM tag used for the unique molecular identifier, also ' +
-            ' known as molecular barcode (default compatible ' +
+            'known as molecular barcode (default compatible ' +
             'with 10X Genomics Chromium is UB).',
             )
+
+    pa.add_argument(
+            '--correct-UMI-distance',
+            type=int,
+            choices=[0, 1, 2],
+            dest='correct_ub_distance',
+            default=0,
+            help='Correct for sequencing errors in the UMI tag, based on ' +
+            'Hamming distance. For each UMI, if another UMI with more reads ' +
+            'within 1 or 2 mutations is found, merge this UMI\'s reads into ' +
+            'the more popular one. The default is to not correct UMIs.',
+    )
 
     pa.add_argument(
             "-q", "--quiet", action="store_true", dest="quiet",
@@ -640,6 +696,7 @@ def main():
                 args.counts_output_sparse,
                 args.cb_tag,
                 args.ub_tag,
+                args.correct_ub_distance,
                 )
     except:
         sys.stderr.write("  %s\n" % str(sys.exc_info()[1]))
