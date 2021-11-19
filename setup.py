@@ -5,18 +5,49 @@ import os
 from distutils.log import INFO as logINFO
 
 
+this_directory = os.path.abspath(os.path.dirname(__file__))
+
+
+def update_version():
+    import subprocess as sp
+    # Try getting the latest release tag
+    version = None
+    try:
+        output = sp.check_output(
+                'git describe --tags --abbrev=0',
+                shell=True,
+                )
+        if not isinstance(output, str):
+            output = output.decode().strip('\n')
+        if output.startswith('release_'):
+            version = output.split('_')[1]
+    except:
+        pass
+
+    # Fallback is reading from VERSION file
+    if version is not None:
+        with open(os.path.join(this_directory, 'VERSION'), 'wt') as fversion:
+            fversion.write(version+'\n')
+    else:
+        with open(os.path.join(this_directory, 'VERSION')) as fversion:
+            version = fversion.readline().rstrip()
+
+    # Update version from VERSION file into module
+    with open(os.path.join(this_directory, 'HTSeq', '_version.py'), 'wt') as fversion:
+        fversion.write('__version__ = "'+version+'"')
+
+    return version
+
+
 if ((sys.version_info[0] == 2) or
    (sys.version_info[0] == 3 and sys.version_info[1] < 5)):
     sys.stderr.write("Error in setup script for HTSeq:\n")
     sys.stderr.write("HTSeq requires Python 3.5+.")
     sys.exit(1)
 
-# Update version from VERSION file into module
-this_directory = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(this_directory, 'VERSION')) as fversion:
-    version = fversion.readline().rstrip()
-with open(os.path.join(this_directory, 'HTSeq', '_version.py'), 'wt') as fversion:
-    fversion.write('__version__ = "'+version+'"')
+
+# Get version
+version = update_version()
 
 # Get README file content
 with open(os.path.join(this_directory, 'README.md')) as f:
