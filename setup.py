@@ -40,9 +40,9 @@ def update_version():
 
 
 if ((sys.version_info[0] == 2) or
-   (sys.version_info[0] == 3 and sys.version_info[1] < 5)):
+   (sys.version_info[0] == 3 and sys.version_info[1] < 7)):
     sys.stderr.write("Error in setup script for HTSeq:\n")
-    sys.stderr.write("HTSeq requires Python 3.5+.")
+    sys.stderr.write("HTSeq requires Python 3.7+.")
     sys.exit(1)
 
 

@@ -6,7 +6,7 @@ Installation
 
 HTSeq is available from the `Python Package Index (PyPI)`_:
 
-To use HTSeq, you need Python_ 3.6 or above with:
+To use HTSeq, you need Python_ 3.7 or above with:
 
 - NumPy_, a commonly used Python package for numerical calculations
 - Pysam_, a Python interface to samtools_.
