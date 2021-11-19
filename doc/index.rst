@@ -14,12 +14,13 @@ HTSeq is a Python package for high-throughput sequencing assays.
 
 * For downloads and installation instructions, see :ref:`install`.
 
-* For an example on the kind of analyses you can do with HTSeq and the design of
-  the package, see :ref:`tour`.
+* For a thorough example, see :ref:`tour`.
+
+* For tutorials about specific analyses, see :ref:`tutorials`.
 
 * For documentation on `htseq-count`, see :ref:`htseqcount`.
   
-* See the reference documentation for details on specific functions. 
+* Reference API documentation is available on the other pages. 
 
 Citation
 ========
