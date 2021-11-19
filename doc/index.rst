@@ -59,8 +59,9 @@ Authors
 
 HTSeq is currently developed by:
 
-* `Fabio Zanini`_ at `UNSW Sydney`_ (fabio *dot* zanini *at* unsw *dot* edu *dot* au)
+* `Givanna Putri`_ at UNSW Sydney (g *dot* putri *at* unsw *dot* edu *dot* au)
 * `Simon Anders`_ (anders *at* embl *dot* de) at `EMBL Heidelberg`_ (`Genome Biology Unit`_).
+* `Fabio Zanini`_ at `UNSW Sydney`_ (fabio *dot* zanini *at* unsw *dot* edu *dot* au)
 
 License
 =======
@@ -79,6 +80,7 @@ The full text of the GNU General Public License, version 3, can be found
 here: http://www.gnu.org/licenses/gpl-3.0-standalone.html
 
 
+.. _`Givanna Putri`: https://fabilab.org/pages/people/html
 .. _`Fabio Zanini`: https://fabilab.org
 .. _`Simon Anders`: https://www.embl.de/research/units/genome_biology/huber/members/index.php?s_personId=6001
 .. _`UNSW Sydney`: https://www.unsw.edu.au/
