@@ -30,7 +30,7 @@ jobs:
     - name: Deploy source and manylinux wheels
       env:
         PYTHON_VERSION: ${{ matrix.python-version }}
-        SOURCE_VERSION: 3.6
+        SOURCE_VERSION: 3.7
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD_PYPI: ${{ secrets.PYPI_PASSWORD }}
         TWINE_PASSWORD_TESTPYPI: ${{ secrets.TESTPYPI_PASSWORD }}
