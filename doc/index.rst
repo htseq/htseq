@@ -26,11 +26,16 @@ Citation
 
 HTSeq is described in the following publications:
 
-  | Fabio Zanini et al.
-  | *HTSeq 2.0 -- Efficient manipulation of high-throughput sequencing data with long genomes*
-  | in preparation (2021)
+  | G Putri, S Anders, PT Pyl, JE Pimanda, F Zanini
+  | **Analysing high-throughput sequencing data with HTSeq 2.0**
+  | `preprint`_ and submitted (2021)
 
-If you use HTSeq in research, please cite this paper in your publication. I've maintained and developed the package for 5 years and it really helps if you cite the paper. Thank you!
+.. _`preprint`: https://cloudstor.aarnet.edu.au/plus/s/ogDptHRkIGz276T/download
+
+If you use HTSeq in research, please cite this paper in your publication.
+
+.. note:: bioRxiv rejected this preprint saying it's not proper research. You can
+   use the link above to see the preprint.
 
 The original package is described in:
 
