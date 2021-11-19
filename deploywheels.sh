@@ -52,7 +52,13 @@ fi
 echo "PYTHON_VERSION: ${PYTHON_VERSION}"
 export PYTHON_FDN=cp$(echo ${PYTHON_VERSION} | sed 's/\.//')
 PYBINS="/opt/python/${PYTHON_FDN}*/bin"
+
+# New manylinux spec means we have to query the actual line
 HTSEQ_VERSION=$(cat /io/VERSION)
+HTSEQ_WHEEL_FILE=$(ls /io/wheelhouse/HTSeq-*.whl)
+echo "HTSEQ_VERSION: ${HTSEQ_VERSION}"
+echo "HTSEQ_WHEEL_FILE: ${HTSEQ_WHEEL_FILE}"
+
 ERRS=0
 for PYBIN in ${PYBINS}; do
   PYVER=$(basename $(dirname ${PYBIN}))
@@ -61,7 +67,7 @@ for PYBIN in ${PYBINS}; do
   echo "TWINE_USERNAME=$TWINE_USERNAME"
   echo "TWINE_PASSWORD=$TWINE_PASSWORD"
   ${PYBIN}/pip install twine
-  ${PYBIN}/twine upload --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" /io/wheelhouse/HTSeq-${HTSEQ_VERSION}-${PYVER}-manylinux2010_x86_64.whl
+  ${PYBIN}/twine upload --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" ${HTSEQ_WHEEL_FILE}
   if [ $? != 0 ]; then
     ERRS=1
   fi
