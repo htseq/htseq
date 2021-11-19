@@ -8,7 +8,7 @@ HTSeq: High-throughput sequence analysis in Python
 :Date: |today|
 :Version: |version|
 
-HTSeq is a Python package for high-throughput sequencing assays.
+HTSeq is a Python package for analysis of high-throughput sequencing data.
 
 * For a high-level description of the package, see the :ref:`overview`.
 
