@@ -25,18 +25,16 @@ HTSeq is a Python package for analysis of high-throughput sequencing data.
 Citation
 ========
 
-HTSeq is described in the following publications:
+**If you use HTSeq in your research, please cite this paper:**
 
   | G Putri, S Anders, PT Pyl, JE Pimanda, F Zanini
   | **Analysing high-throughput sequencing data with HTSeq 2.0**
-  | `preprint`_ and submitted (2021)
+  | `arXiv`_ and submitted (2021)
 
-.. _`preprint`: https://cloudstor.aarnet.edu.au/plus/s/ogDptHRkIGz276T/download
+.. _`arXiv`: https://arxiv.org/abs/2112.00939
 
-If you use HTSeq in research, please cite this paper in your publication.
-
-.. note:: bioRxiv rejected this preprint saying it's not proper research. You can
-   use the link above to see the preprint.
+.. note:: bioRxiv rejected this preprint saying it's not proper research. Thankfully,
+   the arXiv is a little more supportive of open source and open science.
 
 The original package is described in:
 
