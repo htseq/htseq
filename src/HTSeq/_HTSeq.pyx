@@ -725,21 +725,7 @@ cdef class GenomicArray(object):
             if self.auto_add_chroms:
                 # Add a new chromosome
                 if index.chrom not in self.chrom_vectors:
-                    self.add_chrom(
-                            index.chrom,
-                            length=index.end - index.start,
-                            start_index=index.start,
-                    )
-                # Extend a known chromosome
-                else:
-                    if self.stranded:
-                        self.chrom_vectors[index.chrom][index.strand].extend_to_include(
-                            index,
-                        )
-                    else:
-                        self.chrom_vectors[index.chrom][strand_nostrand].extend_to_include(
-                            index,
-                        )
+                    self.add_chrom(index.chrom)
 
             if self.stranded:
                 self.chrom_vectors[index.chrom][index.strand][

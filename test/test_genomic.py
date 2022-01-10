@@ -134,6 +134,7 @@ class TestGenomicArray(unittest.TestCase):
             steps.append((iv.chrom, iv.start, iv.end, value))
 
         steps_exp = [
+            ('chr19',        0, 49302000, 0.0),
             ('chr19', 49302000, 49302300, -1.0),
             ('chr19', 49302300, 49302600, -0.75),
             ('chr19', 49302600, 49302900, -0.50),
@@ -143,6 +144,7 @@ class TestGenomicArray(unittest.TestCase):
             ('chr19', 49303800, 49304100, 0.50),
             ('chr19', 49304100, 49304400, 0.75),
             ('chr19', 49304400, 49304700, 1.00),
+            ('chr19', 49304700, sys.maxsize, 0.0),
         ]
         self.assertEqual(steps, steps_exp)
 
@@ -181,6 +183,30 @@ class TestGenomicArray(unittest.TestCase):
                     bw2.intervals(chrom),
                 )
 
+    def test_access_out_of_range(self):
+        """ Ensure chromosomes are made with infinite size, which can be accessed  """
+
+        def _get_arrays():
+            return {
+                "Provided chrom": HTSeq.GenomicArray(["1"], typecode='O'),
+                "Auto chrom": HTSeq.GenomicArray("auto", typecode='O'),
+            }
+
+        # Test we can access unknown regions without error
+        unknown_iv = HTSeq.GenomicInterval('1', 200, 300, "+")
+        for name, genomic_array in _get_arrays().items():
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown in " + name)
+
+        # Test accessing unknown regions works the same even if we call setter first
+        known_iv = HTSeq.GenomicInterval('1', 0, 100, strand='+')
+        for name, genomic_array in _get_arrays().items():
+            # Call setter first before getter
+            genomic_array[known_iv] = "test"
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown after calling setter in " + name)
 
 
 
