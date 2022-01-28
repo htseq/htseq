@@ -177,25 +177,32 @@ def _check_samouts(sam_filenames, samout_format, samouts):
 
 def _parse_sanitize_cmdline_arguments():
     pa = argparse.ArgumentParser(
-        usage="%(prog)s [options] alignment_file gff_file",
-        description="This script takes one or more alignment files in SAM/BAM "
-        + "format and a feature file in GFF format and calculates for each feature "
-        + "the number of reads mapping to it. See "
-        + "http://htseq.readthedocs.io/en/master/count.html for details.",
-        epilog="Written by Simon Anders (sanders@fs.tum.de), "
-        + "European Molecular Biology Laboratory (EMBL) and Fabio Zanini "
-        + "(fabio.zanini@unsw.edu.au), UNSW Sydney. (c) 2010-2020. "
-        + "Released under the terms of the GNU General Public License v3. "
-        + "Part of the 'HTSeq' framework, version %s." % HTSeq.__version__,
+        add_help=False,
     )
     pa.add_argument(
         "--version", action="store_true", help="Show software version and exit"
     )
     args, argv = pa.parse_known_args()
+
     # Version is the only case where the BAM and GTF files are optional
     if args.version:
         print(HTSeq.__version__)
         sys.exit()
+
+    pa = argparse.ArgumentParser(
+        parents=[pa],
+        description="This script takes one or more alignment files in SAM/BAM "
+        + "format and a feature file in GFF format and calculates for each feature "
+        + "the number of reads mapping to it. See "
+        + "http://htseq.readthedocs.io/en/master/count.html for details.",
+        epilog="Written by Simon Anders (sanders@fs.tum.de), "
+        + "European Molecular Biology Laboratory (EMBL) and Givanna Putri "
+        + "(g.putri@unsw.edu.au) and and Fabio Zanini "
+        + "(fabio.zanini@unsw.edu.au), UNSW Sydney. (c) 2010-2021. "
+        + "Released under the terms of the GNU General Public License v3. "
+        + "Part of the 'HTSeq' framework, version %s." % HTSeq.__version__,
+    )
+
     pa.add_argument(
         "samfilenames",
         nargs="+",

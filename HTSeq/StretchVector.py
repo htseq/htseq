@@ -470,4 +470,22 @@ class StretchVector:
         """Iterate over intervals and stretches ("islands")."""
         return zip(self.ivs, self.stretches)
 
-    
+    def copy(self):
+        """Make a copy the StretchVector and of all its stretches"""
+        sv_new = StretchVector(typecode=self.typecode)
+        for iv, stretch in self:
+            sv_new.ivs.append(Interval(iv.start, iv.end))
+            sv_new.stretches.append(stretch.copy())
+        return sv_new
+
+    def shift(self, offset):
+        """Shift all stretch intervals by a constant number
+
+        Args:
+            offset (int): Shift the start and end coordinates of each stretch
+              by this amount.
+        Returns:
+            None. The function acts in place.
+        """
+        for i, iv in self.ivs:
+            self.ivs[i] = Interval(iv.start + offset, iv.end + offset)

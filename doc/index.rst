@@ -4,33 +4,37 @@
 HTSeq: High-throughput sequence analysis in Python
 ************************************************************
 
-:Author: Fabio Zanini, Simon Anders and contributors
+:Author: Fabio Zanini, Simon Anders, Givanna Putri and contributors
 :Date: |today|
 :Version: |version|
 
-HTSeq is a Python package for high-throughput sequencing assays.
+HTSeq is a Python package for analysis of high-throughput sequencing data.
 
 * For a high-level description of the package, see the :ref:`overview`.
 
 * For downloads and installation instructions, see :ref:`install`.
 
-* For an example on the kind of analyses you can do with HTSeq and the design of
-  the package, see :ref:`tour`.
+* For a thorough example, see :ref:`tour`.
+
+* For tutorials about specific analyses, see :ref:`tutorials`.
 
 * For documentation on `htseq-count`, see :ref:`htseqcount`.
   
-* See the reference documentation for details on specific functions. 
+* Reference API documentation is available on the other pages. 
 
 Citation
 ========
 
-HTSeq is described in the following publications:
+If you use HTSeq in your research, **please cite this paper:**
 
-  | Fabio Zanini et al.
-  | *HTSeq 2.0 -- Efficient manipulation of high-throughput sequencing data with long genomes*
-  | in preparation (2021)
+  | G Putri, S Anders, PT Pyl, JE Pimanda, F Zanini
+  | **Analysing high-throughput sequencing data with HTSeq 2.0**
+  | `arXiv:2112.00939`_ (2021)
 
-If you use HTSeq in research, please cite this paper in your publication. I've maintained and developed the package for 5 years and it really helps if you cite the paper. Thank you!
+.. _`arXiv:2112.00939`: https://arxiv.org/abs/2112.00939
+
+.. note:: bioRxiv rejected this preprint saying it's not proper research. Thankfully,
+   the arXiv is a little more supportive of open source and open science.
 
 The original package is described in:
 
@@ -53,8 +57,9 @@ Authors
 
 HTSeq is currently developed by:
 
-* `Fabio Zanini`_ at `UNSW Sydney`_ (fabio *dot* zanini *at* unsw *dot* edu *dot* au)
+* `Givanna Putri`_ at UNSW Sydney (g *dot* putri *at* unsw *dot* edu *dot* au)
 * `Simon Anders`_ (anders *at* embl *dot* de) at `EMBL Heidelberg`_ (`Genome Biology Unit`_).
+* `Fabio Zanini`_ at `UNSW Sydney`_ (fabio *dot* zanini *at* unsw *dot* edu *dot* au)
 
 License
 =======
@@ -73,6 +78,7 @@ The full text of the GNU General Public License, version 3, can be found
 here: http://www.gnu.org/licenses/gpl-3.0-standalone.html
 
 
+.. _`Givanna Putri`: https://fabilab.org/pages/people/html
 .. _`Fabio Zanini`: https://fabilab.org
 .. _`Simon Anders`: https://www.embl.de/research/units/genome_biology/huber/members/index.php?s_personId=6001
 .. _`UNSW Sydney`: https://www.unsw.edu.au/

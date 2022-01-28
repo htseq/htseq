@@ -47,4 +47,5 @@ chown -R --reference=/io/setup.py /io/wheelhouse/
 echo "Build source dist..."
 cd /io
 ${PYBIN}/python setup.py sdist --dist-dir /io/wheelhouse/
-echo "Done building"
+echo "Done building, ls of /io/wheelhouse:"
+ls /io/wheelhouse
