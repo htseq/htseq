@@ -121,7 +121,9 @@ def count_reads_single_file(
 
     try:
         for r in read_io_obj.read_seq:
-            read_stats.print_progress()
+
+            if not quiet:
+                read_stats.print_progress()
             read_stats.add_num_reads_processed()
 
             # todo can move this into a function, but not necessary.
