@@ -210,8 +210,6 @@ def count_reads_with_barcodes(
 
             i += 1
 
-            # cb, ub = identify_barcodes(r)
-
             try:
                 cb, ub = identify_barcodes(r)
             except:
