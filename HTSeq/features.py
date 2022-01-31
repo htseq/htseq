@@ -10,6 +10,13 @@ from HTSeq._HTSeq import *
 from HTSeq.utils import FileOrSequence
 
 
+# GFF regular expressions for cache
+_re_attr_main = re.compile("\s*([^\s\=]+)[\s=]+(.*)")
+_re_attr_empty = re.compile("^\s*$")
+_re_gff_meta_comment = re.compile("##\s*(\S+)\s+(\S*)")
+
+
+
 class GenomicFeature(object):
     """A genomic feature, i.e., an interval on a genome with metadata.
 
@@ -72,46 +79,9 @@ class GenomicFeature(object):
                          self.iv.strand, frame, attr_str)) + "\n"
 
 
-_re_attr_main = re.compile("\s*([^\s\=]+)[\s=]+(.*)")
-_re_attr_empty = re.compile("^\s*$")
 
 
-def parse_GFF_attribute_string(attrStr, extra_return_first_value=False):
-    """Parses a GFF attribute string and returns it as a dictionary.
 
-    If 'extra_return_first_value' is set, a pair is returned: the dictionary
-    and the value of the first attribute. This might be useful if this is the
-    ID.
-    """
-    if attrStr.endswith("\n"):
-        attrStr = attrStr[:-1]
-    d = {}
-    first_val = "_unnamed_"
-    for (i, attr) in zip(
-            itertools.count(),
-            quotesafe_split(attrStr.encode())):
-        attr = attr.decode()
-        if _re_attr_empty.match(attr):
-            continue
-        if attr.count('"') not in (0, 2):
-            raise ValueError(
-                "The attribute string seems to contain mismatched quotes.")
-        mo = _re_attr_main.match(attr)
-        if not mo:
-            raise ValueError("Failure parsing GFF attribute line")
-        val = mo.group(2)
-        if val.startswith('"') and val.endswith('"'):
-            val = val[1:-1]
-        d[sys.intern(mo.group(1))] = sys.intern(val)
-        if extra_return_first_value and i == 0:
-            first_val = val
-    if extra_return_first_value:
-        return (d, first_val)
-    else:
-        return d
-
-
-_re_gff_meta_comment = re.compile("##\s*(\S+)\s+(\S*)")
 
 
 class GFF_Reader(FileOrSequence):
@@ -122,12 +92,36 @@ class GFF_Reader(FileOrSequence):
     file.
 
     Iterating over the object then yields GenomicFeature objects.
+
+    Args:
+        filename_or_sequence: input file or iterator of lines
+        end_included: whether the end coordinate of intervals is included in
+          the interval itself. This is common in GTF but not the Python
+          standard, hence this argument.
+        gff_version: Which version of the GFF format to use (2 or 3). The None
+          default has the following meaning. If the input is a filename, use
+          version 2 if it ends with gtf or gtf.gz (case insensitive), else use
+          version 3. If an iterator, use version 2 by default. Notice that GFF3
+          does not use quotes in gene names et similia, while GTF does.
     """
 
-    def __init__(self, filename_or_sequence, end_included=True):
+    def __init__(self, filename_or_sequence, end_included=True, gff_version=None):
         super().__init__(filename_or_sequence)
         self.end_included = end_included
         self.metadata = {}
+        if gff_version is None:
+            self._guess_gff_version()
+
+    def _guess_gff_version(self):
+        if not self.fos_is_path:
+            gff_version = 2
+        else:
+            fos = os.fspath(self.fos)
+            if fos.lower().endswith((".gtf.gz", ".gtf.gzip", ".gtf")):
+                gff_version = 2
+            else:
+                gff_version = 3
+        self.gff_version = gff_version
 
     def __iter__(self):
         for line in super().__iter__():
@@ -143,7 +137,11 @@ class GFF_Reader(FileOrSequence):
                 continue
             (seqname, source, feature, start, end, score,
              strand, frame, attributeStr) = line.split("\t", 8)
-            (attr, name) = parse_GFF_attribute_string(attributeStr, True)
+            (attr, name) = self.parse_GFF_attribute_string(
+                    attributeStr,
+                    True,
+                    self.gff_version,
+                    )
             iv = GenomicInterval(
                     seqname,
                     int(start) - 1, int(end) - 1 + int(self.end_included),
@@ -158,6 +156,58 @@ class GFF_Reader(FileOrSequence):
             f.frame = frame
             f.attr = attr
             yield f
+
+    @staticmethod
+    def parse_GFF_attribute_string(
+            attrStr,
+            extra_return_first_value=False,
+            gff_version=2,
+        ):
+        """Parses a GFF attribute string and returns it as a dictionary.
+    
+        If 'extra_return_first_value' is set, a pair is returned: the dictionary
+        and the value of the first attribute. This might be useful if this is the
+        ID.
+
+        Args:
+            attrStr: the GFF attribute string to parse
+            extra_return_first_value: whether to return the pair explained above
+            gff_version: which GFF format rules to use (2 or 3)
+        """
+        if attrStr.endswith("\n"):
+            attrStr = attrStr[:-1]
+        d = {}
+        first_val = "_unnamed_"
+
+        if gff_version == 2:
+            iterator = quotesafe_split(attrStr.encode())
+        else:
+            # GFF3 does not care about quotes
+            iterator = attrStr.encode().split(b';')
+
+        for (i, attr) in enumerate(iterator):
+            attr = attr.decode()
+            if _re_attr_empty.match(attr):
+                continue
+
+            if (gff_version == 2) and (attr.count('"') not in (0, 2)):
+                raise ValueError(
+                    "The attribute string seems to contain mismatched quotes.")
+            mo = _re_attr_main.match(attr)
+            if not mo:
+                raise ValueError("Failure parsing GFF attribute line")
+            val = mo.group(2)
+
+            # GFF3 does not split quotes
+            if (gff_version == 2) and val.startswith('"') and val.endswith('"'):
+                val = val[1:-1]
+            d[sys.intern(mo.group(1))] = sys.intern(val)
+            if extra_return_first_value and i == 0:
+                first_val = val
+        if extra_return_first_value:
+            return (d, first_val)
+        else:
+            return d
 
 
 def _parse_feature_query(feature_query):
