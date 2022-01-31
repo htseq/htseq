@@ -98,6 +98,20 @@ def count_reads_with_barcodes(
         '''Identify barcode from the read or pair (both must have the same)'''
         if not pe_mode:
             r = (r,)
+
+        # If either cell or UMI barcode doesn't exist, just raise exception
+        has_cb_tag = False
+        has_ub_tag = False
+        for read in r:
+            if read is not None:
+                # If tags have not been found, then try to find it
+                if not has_cb_tag:
+                    has_cb_tag = read.has_optional_field(cb_tag)
+                if not has_ub_tag:
+                    has_ub_tag = read.has_optional_field(ub_tag)
+        if not has_cb_tag or not has_ub_tag:
+            raise Exception("Missing cell or UMI barcode")
+
         # cell, UMI
         barcodes = [None, None]
         nbar = 0
@@ -196,7 +210,14 @@ def count_reads_with_barcodes(
 
             i += 1
 
-            cb, ub = identify_barcodes(r)
+            try:
+                cb, ub = identify_barcodes(r)
+            except:
+                # Happens when cb or ub is not found
+                write_to_samout(
+                    r, "__too_low_aQual", samoutfile,
+                    template)
+                continue
 
             if not pe_mode:
                 if not r.aligned:
