@@ -2005,6 +2005,18 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
                  self.read_as_aligned.qualstr.decode(),
                  '\t'.join(self.raw_optional_fields())))
 
+    def has_optional_field(SAM_Alignment self, str tag):
+        '''Check if this alignment has the specified optional field
+
+        Args: 
+            tag: the field to look for.
+        Returns: a bool with True if the field has been found, False otherwise.
+        '''
+        for p in self.optional_fields:
+            if p[0] == tag:
+                return True
+        return False
+
     def optional_field(SAM_Alignment self, str tag):
         res = [p for p in self.optional_fields if p[0] == tag]
         if len(res) == 1:
