@@ -65,8 +65,8 @@ if [ x$CONDA = x1 ]; then
     source /opt/anaconda/bin/activate
     conda activate scanpy
   else
-    source /Users/givanna/miniconda3/bin/activate
-    conda activate htseq
+    source /Users/z3535002/opt/miniconda3/bin/activate
+    conda activate htseq_dev
   fi
   PYTHON=python
   PIP=pip
