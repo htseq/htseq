@@ -131,6 +131,15 @@ def test_bam_inconsistent_mate(data_folder):
     print("Test passed")
 
 
+def test_bam_optional_field(data_folder):
+    print('Test optional fields in BAM alignment')
+    bamfile = HTSeq.BAM_Reader(data_folder+"inconsistent_mate.bam")
+    for read in bamfile:
+        read.has_optional_field('NO')
+        break
+    print("Test passed")
+
+
 def test_pickle():
     import pickle
 

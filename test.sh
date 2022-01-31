@@ -77,7 +77,7 @@ else
   PYTEST=$VENV_DIR/bin/pytest
 
   if [ ! -d $VENV_DIR ]; then
-      $PYTHON -m venv $VENV_DIR
+      python -m venv $VENV_DIR
   fi
   $VENV_DIR/bin/pip install -U pip wheel numpy pybigwig
 fi
