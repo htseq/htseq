@@ -140,6 +140,14 @@ def test_bam_optional_field(data_folder):
     print("Test passed")
 
 
+def test_GFF3(data_folder):
+    print('Test GFF3 reader')
+    with HTSeq.GFF_Reader(data_folder+'GCF_000001405.39_GRCh38.p13_genomic_subsample.gff.gz') as reader:
+        for line in reader:
+            pass
+    print("Test passed")
+
+
 def test_pickle():
     import pickle
 

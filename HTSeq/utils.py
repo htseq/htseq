@@ -31,21 +31,23 @@ class FileOrSequence:
         self.line_no = None
         self.lines = None
 
-    def __enter__(self):
         try:
-            fos = os.fspath(self.fos)
-            fos_is_path = True
+            os.fspath(self.fos)
+            self.fos_is_path = True
         except TypeError:
             # assumed to be a file handle
-            lines = self.fos
-            fos_is_path = False
-        
-        if fos_is_path:
+            self.fos_is_path = False
+
+    def __enter__(self):
+        if self.fos_is_path:
+            fos = os.fspath(self.fos)
             self.should_close = True
             if fos.lower().endswith((".gz", ".gzip")):
                 lines = gzip.open(self.fos, 'rt')
             else:
                 lines = open(self.fos)
+        else:
+            lines = self.fos
 
         self.lines = lines
         return self
