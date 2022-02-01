@@ -17,6 +17,7 @@ class step_vector {
    step_vector( );
    const T operator[]( long int i ) const;
    void set_value( long int from, long int to, T value );
+   void remove_step (long int i );
    void add_value( long int from, long int to, T value );
    void apply_to_values( long int from, long int to, void (*func)( T & val ) );
    const_iterator get_values( long int from ) const;
@@ -96,6 +97,18 @@ void step_vector<T>::set_value( long int from, long int to, T value )
          }
       }
    }
+}
+
+
+template< class T >
+void step_vector<T>::remove_step( long int i )
+{
+
+   typename std::map< long int, T>::iterator it = m.lower_bound( i );
+   // A step should exactly start at this value
+   assert( it->first == i );
+   m.erase( it, m.upper_bound(i) );
+
 }
 
 template< class T >

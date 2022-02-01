@@ -4,7 +4,7 @@
 HTSeq: High-throughput sequence analysis in Python
 ************************************************************
 
-:Author: Fabio Zanini, Simon Anders and contributors
+:Author: Fabio Zanini, Simon Anders, Givanna Putri and contributors
 :Date: |today|
 :Version: |version|
 
