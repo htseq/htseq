@@ -160,7 +160,6 @@ class TestGenomicArray(unittest.TestCase):
             steps.append((iv.chrom, iv.start, iv.end, value))
 
         steps_exp = [
-            ('chr19',        0, 49302000, 0.0),
             ('chr19', 49302000, 49302300, -1.0),
             ('chr19', 49302300, 49302600, -0.75),
             ('chr19', 49302600, 49302900, -0.50),
@@ -170,7 +169,6 @@ class TestGenomicArray(unittest.TestCase):
             ('chr19', 49303800, 49304100, 0.50),
             ('chr19', 49304100, 49304400, 0.75),
             ('chr19', 49304400, 49304700, 1.00),
-            ('chr19', 49304700, sys.maxsize, 0.0),
         ]
         self.assertEqual(steps, steps_exp)
 
