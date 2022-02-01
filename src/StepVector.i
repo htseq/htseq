@@ -113,6 +113,7 @@ class step_vector_pystyle_iterator
    }
 
 %exception set_value { TRY_CATCH_INDEX }
+%exception remove_step { TRY_CATCH_INDEX }
 %exception add_value { TRY_CATCH_INDEX }
 
 template< class T >
@@ -122,6 +123,7 @@ class step_vector_for_python {
    static const long int max_index;
    step_vector_for_python( );
    void set_value( long int from, long int to, T value );
+   void remove_step( long int i );
    void add_value( long int from, long int to, T value );
    step_vector_pystyle_iterator<T> get_all_values_pystyle( ) const;  
    step_vector_pystyle_iterator<T> get_values_pystyle( long int from ) const;
@@ -319,6 +321,14 @@ class StepVector(object):
             return res
         else:
             return next(self._swigobj.get_values_pystyle(index)).second
+
+    def remove_step(self, start):
+        """Remve a step with this starting coordinate, in place.
+
+        Args:
+            start: Starting coordinate of the step.
+        """
+        self._swigobj.remove_step(start)
         
     def __iter__(self):
         """When asked to provide an iterator, a StepVector will yield all its
