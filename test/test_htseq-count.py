@@ -502,31 +502,46 @@ class HTSeqCountBarcodes(HTSeqCountBase):
             'expected_fn': f'{data_folder}/10x_pbmc1k/subsampled_with_missing_barcodes_counts.csv',
             }, remove_res_files = False)
 
-        df = pd.read_csv(data_folder + '/10x_pbmc1k/subsampled_with_missing_barcodes_counts.csv',
-                         header=None,
-                         delimiter='\t')
-        df.columns = ['gene_ids', 'count']
-        self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000188976']['count']), 1)
-        self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000251562']['count']), 1)
+        # Check the result. The count csv should not register any reads with low quality
+        # The SAM file should assign low quality to reads without cell or UMI barcode
 
-        other_genes = ['__no_feature', '__ambiguous', '__too_low_aQual', '__not_aligned', '__alignment_not_unique']
+        samfile = None
+        try:
+            df = pd.read_csv(data_folder + '/10x_pbmc1k/subsampled_with_missing_barcodes_counts.csv',
+                             header=None,
+                             delimiter='\t')
+            df.columns = ['gene_ids', 'count']
+            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000188976']['count']), 1)
+            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000251562']['count']), 1)
 
-        for g in other_genes:
-            self.assertEqual(int(df.loc[df['gene_ids'] == g]['count']), 0)
+            other_genes = ['__no_feature', '__ambiguous', '__too_low_aQual', '__not_aligned', '__alignment_not_unique']
 
-        samfile = pysam.AlignmentFile(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.sam")
-        read_assignments = ['ENSG00000251562', 'ENSG00000188976', '__too_low_aQual', '__too_low_aQual',
-                            '__too_low_aQual', '__too_low_aQual', '__too_low_aQual']
-        read_idx = 0
-        for read in samfile.fetch(until_eof=True):
-            tag_val = read.get_tag("XF")
-            self.assertEqual(tag_val, read_assignments[read_idx])
-            read_idx += 1
-        samfile.close()
-        
-        # clean up
-        os.remove(data_folder + '/10x_pbmc1k/subsampled_with_missing_barcodes_counts.csv')
-        os.remove(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.sam")
+            for g in other_genes:
+                self.assertEqual(int(df.loc[df['gene_ids'] == g]['count']), 0)
+
+            samfile = pysam.AlignmentFile(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.sam")
+            read_assignments = {
+                "A00228:279:HFWFVDMXX:2:1385:2085:18975": "__too_low_aQual",
+                "A00228:279:HFWFVDMXX:1:2158:25464:1313": "ENSG00000251562",
+                "A00228:279:HFWFVDMXX:2:1168:11153:29168": "ENSG00000188976",
+                "A00228:279:HFWFVDMXX:1:1425:2781:12665": "__too_low_aQual",
+                "A00228:279:HFWFVDMXX:2:2322:8621:9157": "__too_low_aQual",
+                "A00228:279:HFWFVDMXX:1:2119:24270:19351": "__too_low_aQual",
+                "A00228:279:HFWFVDMXX:2:2249:1045:2707": "__too_low_aQual",
+                "A00228:279:HFWFVDMXX:2:2401:14172:19210": "__too_low_aQual"
+            }
+
+            for read in samfile.fetch(until_eof=True):
+                qname_str = read.qname
+                tag_val = read.get_tag("XF")
+                self.assertEqual(tag_val, read_assignments[qname_str])
+
+        finally:
+            # clean up
+            if samfile is not None:
+                samfile.close()
+            os.remove(data_folder + '/10x_pbmc1k/subsampled_with_missing_barcodes_counts.csv')
+            os.remove(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.sam")
 
 
 if __name__ == '__main__':
