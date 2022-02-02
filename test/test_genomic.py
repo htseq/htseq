@@ -113,6 +113,31 @@ class TestGenomicArray(unittest.TestCase):
             for step, step_exp in zip(steps, steps_exp):
                 self.assertEqual(step, step_exp)
 
+    def test_access_out_of_range(self):
+        """ Ensure chromosomes are made with infinite size, which can be accessed  """
+
+        def _get_arrays():
+            return {
+                "Provided chrom": HTSeq.GenomicArray(["1"], typecode='O'),
+                "Auto chrom": HTSeq.GenomicArray("auto", typecode='O'),
+            }
+
+        # Test we can access unknown regions without error
+        unknown_iv = HTSeq.GenomicInterval('1', 200, 300, "+")
+        for name, genomic_array in _get_arrays().items():
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown in " + name)
+
+        # Test accessing unknown regions works the same even if we call setter first
+        known_iv = HTSeq.GenomicInterval('1', 0, 100, strand='+')
+        for name, genomic_array in _get_arrays().items():
+            # Call setter first before getter
+            genomic_array[known_iv] = "test"
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown after calling setter in " + name)
+
     def test_bedgraph(self):
         def compare_bedgraph_line(line1, line2):
             fields1 = line1.split()
@@ -129,6 +154,7 @@ class TestGenomicArray(unittest.TestCase):
             data_folder+'example_bedgraph.bedgraph',
             strand='.',
         )
+
         steps = []
         for iv, value in ga.steps():
             steps.append((iv.chrom, iv.start, iv.end, value))
@@ -181,6 +207,30 @@ class TestGenomicArray(unittest.TestCase):
                     bw2.intervals(chrom),
                 )
 
+    def test_access_out_of_range(self):
+        """ Ensure chromosomes are made with infinite size, which can be accessed  """
+
+        def _get_arrays():
+            return {
+                "Provided chrom": HTSeq.GenomicArray(["1"], typecode='O'),
+                "Auto chrom": HTSeq.GenomicArray("auto", typecode='O'),
+            }
+
+        # Test we can access unknown regions without error
+        unknown_iv = HTSeq.GenomicInterval('1', 200, 300, "+")
+        for name, genomic_array in _get_arrays().items():
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown in " + name)
+
+        # Test accessing unknown regions works the same even if we call setter first
+        known_iv = HTSeq.GenomicInterval('1', 0, 100, strand='+')
+        for name, genomic_array in _get_arrays().items():
+            # Call setter first before getter
+            genomic_array[known_iv] = "test"
+            step = list(genomic_array[unknown_iv].steps())[0]
+            unknown_value = step[1]
+            self.assertIsNone(unknown_value, msg="Access unknown after calling setter in " + name)
 
 
 

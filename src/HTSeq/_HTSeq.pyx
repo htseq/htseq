@@ -33,27 +33,27 @@ cdef class GenomicInterval:
 
         Properties:
 
-        chrom: The name of a sequence (i.e., chromosome, contig, etc.). 
+        chrom: The name of a sequence (i.e., chromosome, contig, etc.).
         start: The start of the interval. Even on the reverse strand,
           this is always the smaller of the two values 'start' and 'end'.
           Note that all positions should be given as 0-based value!
-        end: The end of the interval. Following Python convention for 
+        end: The end of the interval. Following Python convention for
           ranges, this in one more than the coordinate of the last base
           that is considered part of the sequence.
         strand: The strand, as a single character, '+' or '-'. '.' indicates
           that the strand is irrelavant. (Alternatively, pass a Strand object.)
         length: The length of the interval, i.e., end - start
         start_d: The "directional start" position. This is the position of the
-          first base of the interval, taking the strand into account. Hence, 
-          this is the same as 'start' except when strand == '-', in which 
+          first base of the interval, taking the strand into account. Hence,
+          this is the same as 'start' except when strand == '-', in which
           case it is end-1.
-        end_d: The "directional end": Usually, the same as 'end', but for 
+        end_d: The "directional end": Usually, the same as 'end', but for
           strand=='-1', it is start-1.
     """
 
     def __init__(GenomicInterval self, str chrom, long start, long end,
                  str strand=strand_nostrand):
-        """See the class docstring for the meaning of the slots. Note that 
+        """See the class docstring for the meaning of the slots. Note that
         there is also a factory function, 'from_directional', to be used if
         you wish to specify start_d and length.
         """
@@ -95,7 +95,7 @@ cdef class GenomicInterval:
 
     property length:
 
-        """The length is calculated as end - start. If you set the length, 
+        """The length is calculated as end - start. If you set the length,
         'start_d' will be preserved, i.e., 'end' is changed, unless the strand
         is '-', in which case 'start' is changed."""
 
@@ -110,7 +110,7 @@ cdef class GenomicInterval:
 
     property start_d:
         """See the class docstring for the meaning of the 'directional start'.
-        Note that if you set 'start_d', both the start and the end are changed, 
+        Note that if you set 'start_d', both the start and the end are changed,
         such the interval gets the requested new directional start and its
         length stays unchanged."""
 
@@ -167,11 +167,11 @@ cdef class GenomicInterval:
         return hash((self.chrom, self.start, self.end, self.strand))
 
     cpdef is_contained_in(GenomicInterval self, GenomicInterval iv):
-        """Returns a boolean value indicating whether the 'self' interval 
+        """Returns a boolean value indicating whether the 'self' interval
         is fully within the 'iv' interval.
 
         This is deemed the case if
-          - both are on the same chromosome, and    
+          - both are on the same chromosome, and
           - both are on the same strand, or at least one of them is
              not stranded (i.e., has strand == '.'), and
           - self.start >= iv.start, and
@@ -189,7 +189,7 @@ cdef class GenomicInterval:
         return True
 
     cpdef contains(GenomicInterval self, GenomicInterval iv):
-        """Returns a boolean value indicating whether the 'self' interval 
+        """Returns a boolean value indicating whether the 'self' interval
         fully contains the 'iv' interval.
 
         See 'is_contained_in' for the exact criteria.
@@ -199,11 +199,11 @@ cdef class GenomicInterval:
         return iv.is_contained_in(self)
 
     cpdef overlaps(GenomicInterval self, GenomicInterval iv):
-        """Returns a boolean value indicating whether the 'self' interval 
+        """Returns a boolean value indicating whether the 'self' interval
         overlaps the 'iv' interval.
 
         This is deemed the case if
-          - both are on the same chromosome, and    
+          - both are on the same chromosome, and
           - both are on the same strand, or at least one of them is
              not stranded (i.e., has strand == '.'), and
           - the actual intervals overlap
@@ -260,7 +260,7 @@ cdef class GenomicPosition(GenomicInterval):
     """Position of a nucleotide or base pair on a reference genome.
 
     Properties:
-       chrom: The name of a sequence (i.e., chromosome, contig, etc.). 
+       chrom: The name of a sequence (i.e., chromosome, contig, etc.).
        pos: The position on the sequence specified by seqname.
           The position should always be given as 0-based value!
        strand: The strand, as a single character, '+' or '-'. '.' indicates
@@ -383,7 +383,8 @@ cdef class ChromVector(object):
 
         ncv._storage = storage
         ncv.typecode = typecode
-        # TODO: Test whether offset works properly
+        # NOTE: As long as autochromosomes in GenomicArray are infinite length
+        # this has pretty limited use, but that might change
         ncv.offset = iv.start
         ncv.is_vector_of_sets = False
         ncv.memmap_dir = memmap_dir
@@ -413,7 +414,7 @@ cdef class ChromVector(object):
         self.iv.extend_to_include(iv)
         self.offset = self.iv.start
 
-        # Step 2: extend the array if needed, and shift-copy the old values 
+        # Step 2: extend the array if needed, and shift-copy the old values
         if self._storage == 'ndarray':
             if self.typecode != 'O':
                 array = numpy.zeros(shape=(self.iv.length,), dtype=self.typecode)
@@ -462,7 +463,7 @@ cdef class ChromVector(object):
             if index_int < self.iv.start or index_int >= self.iv.end:
                 raise IndexError
             return self.array[index_int - self.offset]
-        
+
         elif isinstance(index, slice):
             index_slice = index
             if index_slice.start is None:
@@ -484,7 +485,7 @@ cdef class ChromVector(object):
             if not self.iv.contains(iv):
                 raise IndexError
             return ChromVector._create_view(self, iv)
-        
+
         elif isinstance(index, GenomicInterval):
             if not self.iv.contains(index):
                 raise IndexError
@@ -615,7 +616,7 @@ cdef class GenomicArray(object):
     cdef public dict chrom_vectors
     cdef readonly bint stranded
     cdef readonly str typecode
-    cdef public bint auto_add_chroms
+    cdef public str auto_add_chroms
     cdef readonly str storage
     cdef readonly str memmap_dir
     cdef public str header
@@ -628,9 +629,11 @@ cdef class GenomicArray(object):
 
         Args:
             chroms (str, list, or dict): Chromosomes in the GenomicArray. If
-              'auto', guess as the array gets filled. If a list, make infinitely
-              long chromosomes with those names, their length will be guessed
-              as they get filled. If a dict, keys are chromosome names and 
+              'auto', make infinitely long chromosomes upon the first get or
+              set. If 'auto-write', never make new chromosomes upon a get but
+              make large enough chromosomes upon the first set.
+              If a list, make infinitely long chromosomes with those names.
+              If a dict, keys are chromosome names and
               values are their lengths in base pairs. The first two options are
               only available for the 'step' storage (see below).
             stranded (bool): whether the array stores strandedness information.
@@ -657,7 +660,7 @@ cdef class GenomicArray(object):
         '''
 
 
-        self.auto_add_chroms = chroms == "auto"
+        self.auto_add_chroms = chroms if chroms in ('auto', 'auto-write') else ''
         self.chrom_vectors = {}
         self.stranded = stranded
         self.typecode = typecode
@@ -689,8 +692,11 @@ cdef class GenomicArray(object):
             if self.stranded and index.strand not in (strand_plus, strand_minus):
                 raise KeyError(
                     "Non-stranded index used for stranded GenomicArray.")
-            if self.auto_add_chroms and index.chrom not in self.chrom_vectors:
+
+            # Auto-add chromosome: always infinite size
+            if (self.auto_add_chroms == 'auto') and index.chrom not in self.chrom_vectors:
                 self.add_chrom(index.chrom)
+
             if isinstance(index, GenomicPosition):
                 if self.stranded:
                     return self.chrom_vectors[index.chrom][index.strand][index.pos]
@@ -718,18 +724,26 @@ cdef class GenomicArray(object):
                 return
             raise NotImplementedError(
                     "Required assignment signature not yet implemented.")
+
         if isinstance(index, GenomicInterval):
             if self.stranded and index.strand not in (strand_plus, strand_minus):
                 raise KeyError(
                     "Non-stranded index used for stranded GenomicArray.")
-            if self.auto_add_chroms:
+
+            # Auto-add chromosome: always infinite size
+            # Before changing this, make sure __setitem__ and __getitem__ are
+            # consistent
+            if self.auto_add_chroms in ('auto', 'auto-write'):
                 # Add a new chromosome
                 if index.chrom not in self.chrom_vectors:
-                    self.add_chrom(
-                            index.chrom,
-                            length=index.end - index.start,
-                            start_index=index.start,
-                    )
+                    if self.auto_add_chroms == 'auto':
+                        self.add_chrom(index.chrom)
+                    else:
+                        self.add_chrom(
+                                index.chrom,
+                                length=index.end - index.start,
+                                start_index=index.start,
+                        )
                 # Extend a known chromosome
                 else:
                     if self.stranded:
@@ -799,7 +813,7 @@ cdef class GenomicArray(object):
             separator (str): the pattern that separates the columns.
 
         The BedGraph file format is described here:
-        
+
             http://genome.ucsc.edu/goldenPath/help/bedgraph.html
         '''
         sep = separator
@@ -872,7 +886,7 @@ cdef class GenomicArray(object):
 
             # Create the instance with autochromosomes
             array = cls(
-                "auto",
+                "auto-write",
                 stranded=strand != ".",
                 typecode=typecode,
                 storage='step',
@@ -917,7 +931,7 @@ cdef class GenomicArray(object):
             strand (".", "+", or "-"): Which strand to write to file.
 
         The BigWig file format is described here:
-        
+
             http://genome.ucsc.edu/goldenPath/help/bigWig.html
 
         NOTE: This function requires the package pyBigWig at:
@@ -1226,7 +1240,7 @@ cdef class Sequence(object):
 
 cdef class SequenceWithQualities(Sequence):
     """A Sequence with base-call quality scores.
-    It now has property  'qual', an integer NumPy array of Sanger/Phred 
+    It now has property  'qual', an integer NumPy array of Sanger/Phred
     quality scores of the  base calls.
     """
 
@@ -1573,7 +1587,7 @@ cdef class Alignment(object):
     provide these attributes:
       read:      a SequenceWithQualities object with the read
       aligned:   whether the read is aligned
-      iv:        a GenomicInterval object with the alignment position 
+      iv:        a GenomicInterval object with the alignment position
     """
 
     def __init__(self, read, iv):
@@ -1611,7 +1625,7 @@ cdef class Alignment(object):
 
 cdef class AlignmentWithSequenceReversal(Alignment):
     """Many aligners report the read's sequence in reverse-complemented form
-    when it was mapped to the reverse strand. For such alignments, a 
+    when it was mapped to the reverse strand. For such alignments, a
     daughter class of this one should be used.
 
     Then, the read is stored as aligned in the 'read_as_aligned' field,
@@ -1641,8 +1655,8 @@ cdef class AlignmentWithSequenceReversal(Alignment):
 cdef class BowtieAlignment(AlignmentWithSequenceReversal):
     """When reading in a Bowtie file, objects of the class BowtieAlignment
     are returned. In addition to the 'read' and 'iv' fields (see Alignment
-    class), the fields 'reserved' and 'substitutions' are provided. These 
-    contain the content of the respective columns of the Bowtie output 
+    class), the fields 'reserved' and 'substitutions' are provided. These
+    contain the content of the respective columns of the Bowtie output
 
     [A parser for the substitutions field will be added soon.]
     """
@@ -1686,7 +1700,7 @@ cdef _parse_SAM_optional_field_value(str field):
 
 cdef class SAM_Alignment(AlignmentWithSequenceReversal):
     """When reading in a SAM file, objects of the class SAM_Alignment
-    are returned. In addition to the 'read', 'iv' and 'aligned' fields (see 
+    are returned. In addition to the 'read', 'iv' and 'aligned' fields (see
     Alignment class), the following fields are provided:
      - aQual: the alignment quality score
      - cigar: a list of CigarOperatio objects, describing the alignment
@@ -2008,7 +2022,7 @@ cdef class SAM_Alignment(AlignmentWithSequenceReversal):
     def has_optional_field(SAM_Alignment self, str tag):
         '''Check if this alignment has the specified optional field
 
-        Args: 
+        Args:
             tag: the field to look for.
         Returns: a bool with True if the field has been found, False otherwise.
         '''
