@@ -233,7 +233,6 @@ class TestGenomicArray(unittest.TestCase):
             self.assertIsNone(unknown_value, msg="Access unknown after calling setter in " + name)
 
 
-
 if __name__ == '__main__':
 
     suite = TestGenomicArray()

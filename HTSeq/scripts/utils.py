@@ -217,7 +217,11 @@ def _count_table_to_h5ad(
     # If they have anndata, they have scipy and pandas too
     import pandas as pd
 
-    feature_metadata = pd.DataFrame(feature_metadata)
+    # We don't have additional attribute (e.g. gene name) for htseq specific features like __no_feature.
+    # Hence the trick is to convert the array to series so the value for htseq specific features like __no_feature
+    # column is set NaN.
+    # See: https://stackoverflow.com/questions/19736080/creating-dataframe-from-a-dictionary-where-entries-have-different-lengths
+    feature_metadata = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in feature_metadata.items()]))
     feature_metadata.set_index(feature_metadata.columns[0], inplace=True)
 
     adata = anndata.AnnData(

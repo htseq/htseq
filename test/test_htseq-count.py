@@ -6,6 +6,7 @@ import pysam
 import pytest
 import conftest
 import pandas as pd
+import math
 
 try:
     import scipy
@@ -318,6 +319,42 @@ class HTSeqCount(HTSeqCountBase):
                 ],
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withNH_counts_additional_attributes_chromosome_info.tsv',
             })
+
+    def test_additional_attributes_h5ad(self):
+        # Get gene name as additional attr but output as h5ad file.
+        self._run({
+            'call': [
+                self.cmd,
+                '-m', 'intersection-nonempty',
+                '--nonunique', 'none',
+                '--secondary-alignments', 'score',
+                '--supplementary-alignments', 'score',
+                '--additional-attr', 'gene_name',
+                '--additional-attr', 'exon_number',
+                '-c', f'{data_folder}/10x_pbmc1k/subsampled_with_missing_barcodes_counts.h5ad',
+                f'{data_folder}/10x_pbmc1k/subsampled_with_missing_barcodes.sam',
+                f'{data_folder}/10x_pbmc1k/HomoSapiens.GRCh38-2020-A_subsampled.gtf',
+                ],
+            'expected_fn': f'{data_folder}/10x_pbmc1k/subsampled_with_missing_barcodes_counts.h5ad',
+            }, remove_res_files=False)
+
+        # Check gene name and exon number is there
+        try:
+            dat = anndata.read_h5ad(f'{data_folder}/10x_pbmc1k/subsampled_with_missing_barcodes_counts.h5ad')
+            self.assertEqual(dat.var.loc['ENSG00000188976', 'gene_name'], 'NOC2L')
+            self.assertEqual(dat.var.loc['ENSG00000251562', 'gene_name'], 'MALAT1')
+            self.assertEqual(dat.var.loc['ENSG00000188976', 'exon_number'], '2')
+            self.assertEqual(dat.var.loc['ENSG00000251562', 'exon_number'], '2')
+
+            htseq_specific_features = ['__no_feature', '__ambiguous', '__too_low_aQual',
+                                       '__not_aligned', '__alignment_not_unique']
+            for feat in htseq_specific_features:
+                self.assertTrue(math.isnan(dat.var.loc[feat, 'gene_name']))
+                self.assertTrue(math.isnan(dat.var.loc[feat, 'exon_number']))
+
+        finally:
+            # clean up
+            os.remove(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.h5ad")
 
     def test_nonunique_fraction(self):
         self._run({
