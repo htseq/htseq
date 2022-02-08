@@ -93,11 +93,13 @@ def _merge_counts(
 
 def _count_results_to_tsv(
         results,
+        samples_name,
         attributes,
         additional_attributes,
         output_filename,
         output_delimiter,
         output_append=False,
+        add_tsv_header=False
         ):
 
     barcodes = 'cell_barcodes' in results
@@ -118,6 +120,22 @@ def _count_results_to_tsv(
                 f.write(line)
                 f.write('\n')
 
+    elif add_tsv_header:
+        # Write the header.
+        # Only get here if we don't have cell barcodes, i.e. this is not called by htseq-count-barcode,
+        # and user wants the tsv header
+        file_header = output_delimiter.join([''] + pad + samples_name)
+
+        if output_filename == '':
+            print(file_header)
+        else:
+            # If append to existing file, then open as a
+            file_open_opt = 'a' if output_append else 'w'
+
+            with open(output_filename, file_open_opt) as f:
+                f.write(file_header)
+                f.write('\n')
+
     # Each feature is a row with feature id, additional attrs, and counts
     feature_attr = sorted(attributes.keys())
     for ifn, fn in enumerate(feature_attr):
@@ -130,7 +148,7 @@ def _count_results_to_tsv(
         if output_filename == '':
             print(line)
         else:
-            omode = 'a' if output_append or (ifn > 0) or barcodes else 'w'
+            omode = 'a' if output_append or (ifn > 0) or barcodes or add_tsv_header else 'w'
             with open(output_filename, omode) as f:
                 f.write(line)
                 f.write('\n')
@@ -266,17 +284,35 @@ def _write_output(
     output_append,
     sparse=False,
     dtype=np.float32,
+    add_tsv_header=False
     ):
+
+    """
+    Export the gene counts as tsv/csv, mtx, loom, h5ad files.
+    Note, need to update the parameter documentations.
+
+    Parameters
+    ----------
+    results : list
+        List of dictionaries with each element representing the counts for an input BAM file.
+        Note, the list is in order of the samples parameter. So the first element in the list corresponds to
+        the first file in samples parameter.
+    samples : list
+        List of input BAM files.
+
+    """
 
     # Write output to stdout or TSV/CSV
     if output_filename == '':
         _count_results_to_tsv(
             results,
+            samples,
             attributes,
             additional_attributes,
             output_filename,
             output_delimiter,
             output_append=False,
+            add_tsv_header=add_tsv_header
         )
         return
 
@@ -286,11 +322,13 @@ def _write_output(
     if output_sfx in ('csv', 'tsv'):
         _count_results_to_tsv(
             results,
+            samples,
             attributes,
             additional_attributes,
             output_filename,
             output_delimiter,
             output_append,
+            add_tsv_header=add_tsv_header
         )
         return
 

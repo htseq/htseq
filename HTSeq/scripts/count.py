@@ -98,6 +98,7 @@ def count_reads_in_features(args):
         args.output_append,
         sparse=args.counts_output_sparse,
         dtype=np.float32,
+        add_tsv_header=args.with_header
     )
 
 
@@ -428,6 +429,16 @@ def _parse_sanitize_cmdline_arguments():
         dest="quiet",
         help="Suppress progress report",
     )  # and warnings" )
+
+    pa.add_argument(
+        "--with-header",
+        action="store_true",
+        dest="with_header",
+        help="Whether to add a column header to the output TSV file indicating which column "
+             + "corresponds to which input BAM file. Only used if output to console or tsv or csv file. "
+             + "Default to False."
+    )
+
     args = pa.parse_args()
 
     # Deal with custom id_attribute lists. This is never shorter than 1 because

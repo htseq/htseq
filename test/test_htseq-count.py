@@ -209,6 +209,87 @@ class HTSeqCount(HTSeqCountBase):
             'expected_fn': f'{data_folder}/bamfile_no_qualities.loom',
             })
 
+    def test_output_tsv_header(self):
+        # Header must be there
+        self._run({
+            'call': [
+                self.cmd,
+                '--with-header', ' ',
+                '-c', f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell1.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell2.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell3.bam',
+                f'{data_folder}/10x_pbmc1k/HomoSapiens.GRCh38-2020-A_subsampled.gtf',
+            ],
+            'expected_fn': f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+        }, remove_res_files=False)
+
+        try:
+            dat = pd.read_csv(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv', delimiter='\t')
+            self.assertEqual(len(dat.columns), 4)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell1.bam' in dat.columns)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell2.bam' in dat.columns)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell3.bam' in dat.columns)
+        finally:
+            os.remove(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv')
+
+    def test_output_tsv_no_header(self):
+        # Backwards compatibility of no header
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell1.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell2.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell2.bam',
+                f'{data_folder}/10x_pbmc1k/HomoSapiens.GRCh38-2020-A_subsampled.gtf',
+            ],
+            'expected_fn': f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+        }, remove_res_files=False)
+        try:
+            dat = pd.read_csv(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv', delimiter='\t', header=None)
+            self.assertEqual(dat.shape[0], 7)
+            self.assertEqual(dat.loc[0,0], 'ENSG00000188976')
+        finally:
+            os.remove(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv')
+
+    def test_output_tsv_header_and_append(self):
+        # Make sure append still works properly
+        self._run({
+            'call': [
+                self.cmd,
+                '--with-header', ' ',
+                '-c', f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell1.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell2.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell3.bam',
+                f'{data_folder}/10x_pbmc1k/HomoSapiens.GRCh38-2020-A_subsampled.gtf',
+            ],
+            'expected_fn': f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+        }, remove_res_files=False)
+
+        self._run({
+            'call': [
+                self.cmd,
+                '--append-output', ' ',
+                '-c', f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell1.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell2.bam',
+                f'{data_folder}/10x_pbmc1k/3_cells/cell3.bam',
+                f'{data_folder}/10x_pbmc1k/HomoSapiens.GRCh38-2020-A_subsampled.gtf',
+            ],
+            'expected_fn': f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv',
+        }, remove_res_files=False)
+        try:
+            dat = pd.read_csv(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv', delimiter='\t')
+            self.assertEqual(dat.shape[0], 14)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell1.bam' in dat.columns)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell2.bam' in dat.columns)
+            self.assertTrue(f'{data_folder}10x_pbmc1k/3_cells/cell3.bam' in dat.columns)
+        finally:
+            os.remove(f'{data_folder}/10x_pbmc1k/test_tsv_header.tsv')
+
+
     # Testing multiple cores on travis makes a mess
     #{'call': [
     #    'htseq-count',
