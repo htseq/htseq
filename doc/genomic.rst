@@ -60,7 +60,7 @@ Instantiation
 
 
 Representation and string conversion
-   The class's ``__str__`` method gives a spcae-saving description of the
+   The class's ``__str__`` method gives a space-saving description of the
    interval, the ``__repr__`` method is a bit more verbose::
    
       >>> iv = HTSeq.GenomicInterval("chr3", 123203, 127245, "+")
