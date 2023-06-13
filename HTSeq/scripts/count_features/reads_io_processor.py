@@ -72,6 +72,18 @@ class ReadsIO(object):
         else:
             self.read_seq_file = HTSeq.BAM_Reader(sam_filename)
 
+    def get_bam_contigs(self):
+        """ Reads BAM header and returns a set of contigs, or None if no SQ in header """
+        contigs = None
+        sq = self.read_seq_file.get_header_dict().get("SQ")
+        if sq is not None:
+            contigs = set()
+            for sq_record in sq:
+                sn = sq_record.get("SN")
+                if sn:
+                    contigs.add(sn)
+        return contigs
+
     def _set_read_seq(
         self,
         supplementary_alignment_mode,
