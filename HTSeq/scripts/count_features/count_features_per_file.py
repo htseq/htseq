@@ -101,6 +101,15 @@ def count_reads_single_file(
             order=order,
             max_buffer_size=max_buffer_size,
         )
+
+        bam_contigs = read_io_obj.get_bam_contigs()
+        if bam_contigs is not None:
+            feature_contigs = set(features.chrom_vectors.keys())
+            if not (bam_contigs & feature_contigs):
+                sys.stderr.write("Alignment file '%s' has no contigs in common with GFF/feature file. This will result "
+                                 "in zero feature counts. Please check the references match, they can often vary "
+                                 "eg using 'chr1' vs '1' as chromosome names\n" % sam_filename)
+
     except:
         sys.stderr.write("Error occurred when reading beginning of SAM/BAM file.\n")
         raise

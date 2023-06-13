@@ -1,0 +1,5 @@
+2358 GFF lines processed.
+Alignment file '{FILENAME}' has no contigs in common with GFF/feature file. This will result in zero feature counts. Please check the references match, they can often vary eg using 'chr1' vs '1' as chromosome names
+100000 alignment records processed.
+200000 alignment records processed.
+299973 alignment records processed.

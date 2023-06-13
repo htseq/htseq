@@ -1,0 +1,2 @@
+2358 GFF lines processed.
+9997 alignment records processed.

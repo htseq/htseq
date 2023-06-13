@@ -85,6 +85,7 @@ class HTSeqCountBase(unittest.TestCase):
 
     def _run(self, t, remove_res_files=True):
         expected_fn = t.get('expected_fn', None)
+        expected_stderr = t.get('expected_stderr', None)
         call = t['call']
 
         # Replace with injected variable
@@ -99,10 +100,16 @@ class HTSeqCountBase(unittest.TestCase):
         #    call = ['python', 'HTSeq/scripts/count_with_barcodes.py'] + call[1:]
 
         print(' '.join(call))
-        output = sp.check_output(
-                ' '.join(call),
-                shell=True,
-        ).decode()
+        p = sp.run(
+            ' '.join(call),
+            shell=True,
+            check=True,
+            capture_output=True,
+        )
+        if expected_stderr:
+            actual_stderr_str = p.stderr.decode()
+            self.assertEqual(actual_stderr_str, expected_stderr)
+        output = p.stdout.decode()
 
         if '-c' in call:
             output_fn = call[call.index('-c') + 1]
@@ -496,6 +503,39 @@ class HTSeqCount(HTSeqCountBase):
                 ],
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_withNH_counts_ignore_secondary.tsv',
             })
+
+    def test_no_contig_overlap_warning(self):
+        """ Ensures that no contig warning is present in stderr
+            @see https://github.com/htseq/htseq/issues/63 """
+
+        # We reference a file in the stderr, so have to replace it from template
+        bam_file = os.path.join(data_folder, 'SRR001432_head_sorted.bam')
+        stderr_template = open(f'{data_folder}/no_contig_overlap_warning_stderr.txt').read()
+        expected_stderr = stderr_template.format(FILENAME=bam_file)
+        self._run({
+            'call': [
+                self.cmd,
+                bam_file,
+                f'{data_folder}/bamfile_no_qualities.gtf',
+                ],
+                'expected_stderr': expected_stderr,
+            })
+
+    def test_contig_overlap_no_warning(self):
+        """ Ensures that warning is NOT present in stderr when there are contig overlaps
+            @see https://github.com/htseq/htseq/issues/63 """
+
+        bam_file = os.path.join(data_folder, 'bamfile_no_qualities.sam')
+        expected_stderr = open(f'{data_folder}/contig_overlap_no_warning_stderr.txt').read()
+        self._run({
+            'call': [
+                self.cmd,
+                bam_file,
+                f'{data_folder}/bamfile_no_qualities.gtf',
+                ],
+                'expected_stderr': expected_stderr,
+            })
+
 
 
 class HTSeqCountBarcodes(HTSeqCountBase):
