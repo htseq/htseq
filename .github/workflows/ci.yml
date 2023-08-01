@@ -36,15 +36,43 @@ jobs:
       run:
         /io/testwheels.sh
 
-  build:
+  build_ubuntu:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
-        include:
-          - os: ubuntu-latest
-          - python-version: "3.11"
+        os: ubuntu-latest
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.os }}
 
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      env:
+        OS_NAME: ${{ matrix.os }}
+        CONDA_PY: ${{ matrix.python-version }}
+      run: ./.ci_deps.sh
+
+    - name: Install HTSeq
+      env:
+        OS_NAME: ${{ matrix.os }}
+        CONDA_PY: ${{ matrix.python-version }}
+      run: ./.ci_install.sh
+
+    - name: Test with pytest
+      env:
+        OS_NAME: ${{ matrix.os }}
+        CONDA_PY: ${{ matrix.python-version }}
+      run: ./.ci_test.sh
+
+  build_mac:
+    strategy:
+      matrix:
+        os: macos-latest
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     runs-on: ${{ matrix.os }}
 
     steps:
