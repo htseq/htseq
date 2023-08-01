@@ -39,7 +39,7 @@ jobs:
   build_ubuntu:
     strategy:
       matrix:
-        os: ubuntu-latest
+        os: [ubuntu-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     runs-on: ${{ matrix.os }}
 
@@ -71,7 +71,7 @@ jobs:
   build_mac:
     strategy:
       matrix:
-        os: macos-latest
+        os: [macos-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
     runs-on: ${{ matrix.os }}
 
