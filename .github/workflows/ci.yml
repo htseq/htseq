@@ -12,8 +12,13 @@ jobs:
 
     steps:
     - name: Clone repo
-      run:
-        git clone -b $(echo ${GITHUB_REF} | cut -d/ -f3) --single-branch https://github.com/${GITHUB_REPOSITORY}.git
+      run: |
+        if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+          export BRANCH_NAME=${GITHUB_HEAD_REF}
+        else
+          export BRANCH_NAME=$(echo ${GITHUB_REF} | cut -d/ -f3)
+        fi
+        git clone -b $(echo ${BRANCH_NAME} | cut -d/ -f3) --single-branch https://github.com/${GITHUB_REPOSITORY}.git
     - name: Move repo folder
       run:
         mv htseq /io
