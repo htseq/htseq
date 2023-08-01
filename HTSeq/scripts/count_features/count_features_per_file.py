@@ -110,9 +110,11 @@ def count_reads_single_file(
             bam_chroms = set(bam_chroms)
             feature_chroms = set(features.chrom_vectors.keys())
             if not (bam_chroms & feature_chroms):
-                sys.stderr.write("Alignment file '%s' has no chromosomes in common with GFF/feature file. This will result "
-                                 "in zero feature counts. Please check the references match, they can often vary "
-                                 "eg using 'chr1' vs '1' as chromosome names\n" % sam_filename)
+                sys.stderr.write(
+                    f"The alignment file has no chromosomes in common with the GFF/GTF "
+                    "file. This will result in zero feature counts. Please check if the "
+                    "references match, e.g. if you are using 'chr1' or '1' as "
+                    "chromosome names.\n")
 
     except:
         sys.stderr.write("Error occurred when reading beginning of SAM/BAM file.\n")
