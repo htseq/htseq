@@ -102,11 +102,15 @@ def count_reads_single_file(
             max_buffer_size=max_buffer_size,
         )
 
-        bam_contigs = read_io_obj.get_bam_contigs()
-        if bam_contigs is not None:
-            feature_contigs = set(features.chrom_vectors.keys())
-            if not (bam_contigs & feature_contigs):
-                sys.stderr.write("Alignment file '%s' has no contigs in common with GFF/feature file. This will result "
+        # If the BAM header is available, check that at least one of the
+        # chromosomes is also found in the GTF/GFF file, otherwise the user
+        # is probably doing something wrong (e.g. "chr1" vs "1").
+        bam_chroms = read_io_obj.get_chromosome_names_header()
+        if bam_chroms is not None:
+            bam_chroms = set(bam_chroms)
+            feature_chroms = set(features.chrom_vectors.keys())
+            if not (bam_chroms & feature_chroms):
+                sys.stderr.write("Alignment file '%s' has no chromosomes in common with GFF/feature file. This will result "
                                  "in zero feature counts. Please check the references match, they can often vary "
                                  "eg using 'chr1' vs '1' as chromosome names\n" % sam_filename)
 
