@@ -508,7 +508,7 @@ class HTSeqCount(HTSeqCountBase):
         """ Ensures that no contig warning is present in stderr
             @see https://github.com/htseq/htseq/issues/63 """
 
-        # We reference a file in the stderr, so have to replace it from template
+        # We print full file path in the error message, so have to use template & replace
         bam_file = os.path.join(data_folder, 'SRR001432_head_sorted.bam')
         stderr_template = open(f'{data_folder}/no_contig_overlap_warning_stderr.txt').read()
         expected_stderr = stderr_template.format(FILENAME=bam_file)
