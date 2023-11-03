@@ -196,8 +196,11 @@ Options
 
    Feature type (3rd column in GTF file) to be used, all
    features of other type are ignored (default, suitable
-   for RNA-Seq analysis using an `Ensembl GTF`_ file: ``exon``)
-   
+   for RNA-Seq analysis using an `Ensembl GTF`_ file: ``exon``).
+   You can call this option multiple times. Features of all
+   specified types will be included. E.g. to include both genes
+   and pseudogenes you might use -t gene -t pseudogene.
+
 .. _`Ensembl GTF`: http://mblab.wustl.edu/GTF22.html
 
 .. cmdoption:: -i <id attribute>, --idattr=<id attribute>
