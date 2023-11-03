@@ -7,7 +7,7 @@ Features
 
 .. currentmodule:: HTSeq
 
-.. doctest:: 
+.. doctest::
    :hide:
 
    >>> import HTSeq
@@ -66,73 +66,73 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
 
    As a subclass of :class:`FileOrSequence`, GFF_Reader can be initialized either
    with a file name or with an open file or another sequence of lines.
-   
+
    When requesting an iterator, it generates objects of type :class:`GenomicFeature`.
-   
+
    The GFF specification is unclear on whether the end coordinate marks the last
    base-pair of the feature (closed intervals, ``end_included=True``) or the one
    after (half-open intervals, ``end_included=False``). The default, True, is
    correct for Ensembl GTF files. If in doubt, look for a CDS or stop_codon
    feature in you GFF file. Its length should be divisible by 3. If "end-start"
    is divisible by 3, you need ``end_included=False``. If "end-start+1" is
-   divisible by 3, you need ``end_included=True``. 
-   
+   divisible by 3, you need ``end_included=True``.
+
    GFF_Reader will convert the coordinates from GFF standard (1-based, end
    maybe included) to HTSeq standard (0-base, end not included) by subtracting
    1 from the start position. This is also Python's indexing standard. If
    ``end_included=False``, the end was one-after already in the GFF, so HTSeq
    will also subtract 1 from the end position.
-   
+
       .. attribute:: GFF_Reader.metadata
-      
+
          GFF_Reader skips all lines starting with a single '#' as this marks
          a comment. However, lines starying with '##' contain meta data (at least
          accoring to the Sanger Institute's version of the GFF standard.) Such meta
          data has the format ``##key value``. When a metadata line is encountered,
          it is added to the ``metadata`` dictionary.
-         
-  
+
+
 .. class:: GenomicFeature(name, type_, interval)
 
    A GenomicFeature object always contains the following attributes:
-   
+
       .. attribute:: GenomicFeature.name
-      
+
          A name of ID for the feature. As the GFF format does not have a dedicated
          field for this, the value of the first attribute in the *attributes* column is
          assumed to be the name of ID.
-         
+
       .. attribute:: GenomicFeature.type
-      
+
          The type of the feature, i.e., a string like ``"exon"`` or ``"gene"``. For GFF
          files, the 3rd column (*feature*) is taken as the type.
-         
+
       .. attribute:: GenomicFeature.interval
-      
+
          The interval that the feature covers on the genome. For GFF files, this information is taken
          from the first (*seqname*), the forth (*start*), the fifth (*end*), and the seventh (*strand*)
          column.
-         
+
    When created by a :class:`GFF_Reader` object, the following attributes are also present, with the information
    from the remaining GFF columns:
-   
+
       .. attribute:: GenomicFeature.source
-      
+
          The 2nd column, denoted *source* in the specification, and intended to specify the
          data source.
-     
+
       .. attribute:: GenomicFeature.frame
-      
+
          The 8th column (*frame*), giving the reading frame in case of a coding feature. Its value
          is an integer (0, 1, or 2), or the string ``'.'`` in case that a frame is not specified or would not make sense.
-   
+
       .. attribute:: GenomicFeature.score
-      
+
          The 6th column (*score*), giving some numerical score for the feature. Its value
          is a float, or ``'.'`` in case that a score is not specified or would not make sense
-      
+
       .. attribute:: GenomicFeature.attr
-      
+
          The last (9th) column of a GFF file contains *attributes*, i.e. a list of name/value pairs.
          These are transformed into a dict, such that, e.g., ``gf.attr['gene_id']`` gives the value
          of the attribute ``gene_id`` in the feature described by ``GenomicFeature`` object ``gf``.
@@ -142,14 +142,14 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
          required.
 
    In order to write a GFF file from a sequence of features, this method is provided:
-   
+
       .. method:: GenomicFeature.get_gff_line(with_equal_sign=False)
-   
-         Returns a line to describe the feature in the GFF format. This works even if the optional 
+
+         Returns a line to describe the feature in the GFF format. This works even if the optional
          attributes given above are missing. Call this for each of your ``GenomicFeature`` objects
          and write the lines into a file to get a GFF file.
-      
-.. function:: parse_GFF_attribute_string(attrStr, extra_return_first_value=False)      
+
+.. function:: parse_GFF_attribute_string(attrStr, extra_return_first_value=False)
 
    This is the function that :class:`GFF_Reader` uses to parse the attribute column. (See :attr:`GenomicFeature.attr`.)
    It returns a dict, or, if requested, a pair of the dict and the first value.
@@ -170,9 +170,9 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
    :type id_attribute: string or sequence of strings
 
    :param feature_type:
-     If None, collect all features. If a string, restrict to only one type of features,
-     e.g. 'exon'.
-   :type feature_type: string or None
+     If None, collect all features. If a list of strings, restrict to only
+     those types of features e.g. 'exon' or 'gene' and 'pseudogene'.
+   :type feature_type: list or None
 
    :param feature_query:
      If None, all features of the selected types will be collected. If a string, it has
