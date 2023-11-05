@@ -278,9 +278,12 @@ def _parse_sanitize_cmdline_arguments():
         default=["exon"],
         help="Feature type (3rd column in GTF file) to be used, "
         + "all features of other type are ignored (default, suitable for"
-        + "Ensembl GTF files: exon). You can call this option multiple times. "
-        + "Features of all specified types will be included. E.g. to include "
-        + "both genes and pseudogenes you might use -t gene -t pseudogene",
+        + "Ensembl GTF files: exon). If you can call this option multiple times, "
+        + "features of all specified types will be included, e.g. to include "
+        + "both genes and pseudogenes you might use -t gene -t pseudogene. "
+        + "Calling this option multiple times is a rare need and might result "
+        + "in excessive numbers of ambiguous counts: only use if you know what "
+        + "you are doing.",
     )
     pa.add_argument(
         "-i",

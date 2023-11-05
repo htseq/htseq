@@ -240,8 +240,16 @@ def make_feature_dict(
         feature_sequence (iterable of Feature): A sequence of features, e.g. as
             obtained from GFF_reader('myfile.gtf')
         feature_type (string, sequence of strings, or None): If None, collect
-            all features. If a string, restrict to only one type of features, e.g. 'exon'. If a sequence of strings, restrict to the types found
-            in the sequence, e.g. 'gene' and 'pseudogene'
+            all features. If a string, restrict to only one type of features,
+            e.g. 'exon' (this is the most common situation). If a sequence of
+            strings, restrict to the types found in the sequence, e.g.
+            ['gene', 'pseudogene']. Using a feature of strings is an uncommon
+            need and can lead to a higher number of ambiguous alignments: only
+            use if you know what you are doing. Even then, beware that this
+            option is designed to work for feature types that are "peers" and
+            not obviously overlapping, such as genes and pseudogenes. If you
+            select nested features types (e.g. "gene" and "exon"), you are
+            likely to end up with meaningless numbers.
         feature_query (string or None): If None, all features of the selected
             types will be collected. If a string, it has to be in the format:
 

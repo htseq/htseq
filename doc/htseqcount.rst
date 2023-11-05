@@ -198,8 +198,10 @@ Options
    features of other type are ignored (default, suitable
    for RNA-Seq analysis using an `Ensembl GTF`_ file: ``exon``).
    You can call this option multiple times. Features of all
-   specified types will be included. E.g. to include both genes
-   and pseudogenes you might use -t gene -t pseudogene.
+   specified types will be included. For instance, to include both genes
+   and pseudogenes, use -t gene -t pseudogene. Beware that calling this options
+   multiple times is a relatively uncommon need and might result in a lot of
+   ambiguous counts and, in extreme cases, result in incorrect results.
 
 .. _`Ensembl GTF`: http://mblab.wustl.edu/GTF22.html
 
