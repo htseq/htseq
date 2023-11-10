@@ -13,9 +13,9 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
-    - name: Clone repo
-      run:
-        git clone -b $(echo ${GITHUB_REF} | cut -d/ -f3) --single-branch https://github.com/${GITHUB_REPOSITORY}.git
+    - uses: actions/checkout@v3
+      with:
+        path: htseq
     - name: Move repo folder
       run:
         mv htseq /io
@@ -47,7 +47,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v3
