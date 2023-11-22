@@ -342,7 +342,7 @@ def _parse_sanitize_cmdline_arguments():
     pa.add_argument(
         "--additional-attr",
         type=str,
-        action=OverwriteUniqueAppendAction,
+        action='append',
         dest='additional_attributes',
         default=[],
         help="Additional feature attributes (default: none, "
@@ -397,7 +397,7 @@ def _parse_sanitize_cmdline_arguments():
         "--samout",
         type=str,
         dest="samouts",
-        action=OverwriteUniqueAppendAction,
+        action='append',
         default=[],
         help="Write out all SAM alignment records into "
         + "SAM/BAM files (one per input file needed), annotating each line "
