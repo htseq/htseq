@@ -11,14 +11,9 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
-    - name: Clone repo
-      run: |
-        if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-          export BRANCH_NAME=${GITHUB_HEAD_REF}
-        else
-          export BRANCH_NAME=$(echo ${GITHUB_REF} | cut -d/ -f3)
-        fi
-        git clone -b $(echo ${BRANCH_NAME} | cut -d/ -f3) --single-branch https://github.com/${GITHUB_REPOSITORY}.git
+    - uses: actions/checkout@v3
+      with:
+        path: htseq
     - name: Move repo folder
       run:
         mv htseq /io
@@ -72,7 +67,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     runs-on: ${{ matrix.os }}
 
     steps:
