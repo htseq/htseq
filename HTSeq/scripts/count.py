@@ -275,7 +275,6 @@ def _parse_sanitize_cmdline_arguments():
         type=str,
         dest="feature_type",
         action="append",
-        default=["exon"],
         help="Feature type (3rd column in GTF file) to be used, "
         + "all features of other type are ignored (default, suitable for"
         + "Ensembl GTF files: exon). If you can call this option multiple times, "
@@ -450,6 +449,10 @@ def _parse_sanitize_cmdline_arguments():
     )
 
     args = pa.parse_args()
+
+    # Set feature_type to 'exon' if user did not specify it
+    if args.feature_type is None:
+        args.feature_type = ['exon']
 
     # Deal with custom id_attribute lists. This is never shorter than 1 because
     # gene_id is the default. However, if the option was called at least once,
