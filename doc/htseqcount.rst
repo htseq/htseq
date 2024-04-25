@@ -295,7 +295,7 @@ Options
    Show software version and exit  
 
 
-Frequenctly asked questions
+Frequently asked questions
 ...........................
 
 *My shell reports "command not found" when I try to run "htseq-count". How can I launch the script?*
