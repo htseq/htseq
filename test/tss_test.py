@@ -1,9 +1,9 @@
 import os
 import sys
-import distutils.util
+import sysconfig
 import numpy
 
-build_dir = "build/lib.%s-%s" % (distutils.util.get_platform(), sys.version[0:3])
+build_dir = "build/lib.%s-%s" % (sysconfig.get_platform(), sys.version[0:3])
 
 sys.path.insert(0, os.path.join(os.getcwd(), build_dir))
 import HTSeq

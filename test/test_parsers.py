@@ -2,10 +2,10 @@ import pytest
 import sys
 import os
 import glob
-import distutils.util
+import sysconfig
 from pathlib import Path
 
-build_dir = "build/lib.%s-%s" % (distutils.util.get_platform(), sys.version[0:3])
+build_dir = "build/lib.%s-%s" % (sysconfig.get_platform(), sys.version[0:3])
 
 sys.path.insert(0, os.path.join(os.getcwd(), build_dir))
 import HTSeq
