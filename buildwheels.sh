@@ -24,6 +24,7 @@ for PYBIN in ${PYBINS}; do
     echo "Install requirements..."
     ${PYBIN}/pip install setuptools wheel Cython Pillow matplotlib pandas
     ${PYBIN}/pip install -r /io/requirements.txt
+    ${PYBIN}/pip install HTseq
 
     echo "Build wheels..."
     ${PYBIN}/pip wheel /io/ -w wheelhouse/
