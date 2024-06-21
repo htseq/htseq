@@ -3,6 +3,7 @@ import os
 import sys
 from setuptools import setup, Command, Extension
 from setuptools.command.build_py import build_py
+import numpy
 
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -193,7 +194,8 @@ setup(name='HTSeq',
          Extension(
              'HTSeq._HTSeq',
              ['src/_HTSeq.c'],
-             include_dirs=[lazy_numpy_include_dir()],#+get_include_dirs(),
+             #include_dirs=[lazy_numpy_include_dir()],#+get_include_dirs(),
+             include_dirs=[numpy.get_include()],
              extra_compile_args=['-w']),
          Extension(
              'HTSeq._StepVector',
