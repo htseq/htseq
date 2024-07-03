@@ -591,10 +591,13 @@ def main():
 
     pa.add_argument(
             "-t", "--type", type=str, dest="featuretype",
-            default="exon",
-            help="Feature type (3rd column in GTF file) to be used, " +
-            "all features of other type are ignored (default, suitable for Ensembl " +
-            "GTF files: exon)")
+            action="append", default=["exon"],
+            help="Feature type (3rd column in GTF file) to be used, all "
+            + "features of other type are ignored (default, suitable for"
+            + "Ensembl GTF files: exon). You can call this option multiple "
+            + "times. Features of all specified types will be included. "
+            + "E.g. to include both genes and pseudogenes you might use "
+            + "-t gene -t pseudogene")
 
     pa.add_argument(
             "-i", "--idattr", type=str, dest="idattr",

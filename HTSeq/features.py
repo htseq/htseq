@@ -239,8 +239,17 @@ def make_feature_dict(
     Args:
         feature_sequence (iterable of Feature): A sequence of features, e.g. as
             obtained from GFF_reader('myfile.gtf')
-        feature_type (string or None): If None, collect all features. If a
-            string, restrict to only one type of features, e.g. 'exon'.
+        feature_type (string, sequence of strings, or None): If None, collect
+            all features. If a string, restrict to only one type of features,
+            e.g. 'exon' (this is the most common situation). If a sequence of
+            strings, restrict to the types found in the sequence, e.g.
+            ['gene', 'pseudogene']. Using a feature of strings is an uncommon
+            need and can lead to a higher number of ambiguous alignments: only
+            use if you know what you are doing. Even then, beware that this
+            option is designed to work for feature types that are "peers" and
+            not obviously overlapping, such as genes and pseudogenes. If you
+            select nested features types (e.g. "gene" and "exon"), you are
+            likely to end up with meaningless numbers.
         feature_query (string or None): If None, all features of the selected
             types will be collected. If a string, it has to be in the format:
 
@@ -280,7 +289,7 @@ def make_feature_dict(
 
     features = {}
     for f in feature_sequence:
-        if feature_type in (None, f.type):
+        if any(ft in (None, f.type) for ft in feature_type):
             if f.type not in features:
                 features[f.type] = {}
             res_ftype = features[f.type]
@@ -322,8 +331,10 @@ def make_feature_genomicarrayofsets(
             attributes, separated by colons (:), will be used as an identifier.
             For instance, ['gene_id', 'exon_number'] uniquely identifies
             specific exons.
-        feature_type (string or None): If None, collect all features. If a
-            string, restrict to only one type of features, e.g. 'exon'.
+        feature_type (string, sequence of strings, or None): If None, collect
+            all features. If a string, restrict to only one type of features,
+            e.g. 'exon'. If a sequence of strings, restrict to the types found
+            in the sequence, e.g. 'gene' and 'pseudogene'
         feature_query (string or None): If None, all features of the selected
             types will be collected. If a string, it has to be in the format:
 
@@ -401,7 +412,7 @@ def make_feature_genomicarrayofsets(
     i = 0
     try:
         for f in feature_sequence:
-            if feature_type in (None, f.type):
+            if any(ft in (None, f.type) for ft in feature_type):
                 feature_id = get_id_attr(f, id_attribute)
 
                 if stranded and f.iv.strand == ".":
