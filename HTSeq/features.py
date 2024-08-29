@@ -137,7 +137,7 @@ class GFF_Reader(FileOrSequence):
                 continue
             (seqname, source, feature, start, end, score,
              strand, frame, attributeStr) = line.split("\t", 8)
-            (attr, name) = self.parse_GFF_attribute_string(
+            (attr_tuples, name) = self.parse_GFF_attribute_string_as_tuples(
                     attributeStr,
                     True,
                     self.gff_version,
@@ -154,17 +154,18 @@ class GFF_Reader(FileOrSequence):
             f.source = source
             f.score = score
             f.frame = frame
-            f.attr = attr
+            f.attr_tuples = attr_tuples
+            f.attr = dict(attr_tuples)
             yield f
 
     @staticmethod
-    def parse_GFF_attribute_string(
+    def parse_GFF_attribute_string_as_tuples(
             attrStr,
             extra_return_first_value=False,
             gff_version=2,
         ):
-        """Parses a GFF attribute string and returns it as a dictionary.
-    
+        """Parses a GFF attribute string and returns it as a list of (tag,value) tuples
+
         If 'extra_return_first_value' is set, a pair is returned: the dictionary
         and the value of the first attribute. This might be useful if this is the
         ID.
@@ -176,8 +177,7 @@ class GFF_Reader(FileOrSequence):
         """
         if attrStr.endswith("\n"):
             attrStr = attrStr[:-1]
-        d = {}
-        first_val = "_unnamed_"
+        d = []
 
         if gff_version == 2:
             iterator = quotesafe_split(attrStr.encode())
@@ -185,7 +185,7 @@ class GFF_Reader(FileOrSequence):
             # GFF3 does not care about quotes
             iterator = attrStr.encode().split(b';')
 
-        for (i, attr) in enumerate(iterator):
+        for attr in iterator:
             attr = attr.decode()
             if _re_attr_empty.match(attr):
                 continue
@@ -201,13 +201,29 @@ class GFF_Reader(FileOrSequence):
             # GFF3 does not split quotes
             if (gff_version == 2) and val.startswith('"') and val.endswith('"'):
                 val = val[1:-1]
-            d[sys.intern(mo.group(1))] = sys.intern(val)
-            if extra_return_first_value and i == 0:
-                first_val = val
+            d.append((sys.intern(mo.group(1)), sys.intern(val)))
+
         if extra_return_first_value:
+            first_val = "_unnamed_"
+            if extra_return_first_value:
+                for _key, val in d:
+                    first_val = val
+                    break
             return (d, first_val)
         else:
             return d
+
+    @staticmethod
+    def parse_GFF_attribute_string(
+            attrStr,
+            extra_return_first_value=False,
+            gff_version=2,
+        ):
+        ret = GFF_Reader.parse_GFF_attribute_string_as_tuples(attrStr, extra_return_first_value, gff_version)
+        if extra_return_first_value:
+            attr_tuples, first_val = ret
+            return dict(attr_tuples), first_val
+        return dict(ret)
 
 
 def _parse_feature_query(feature_query):
