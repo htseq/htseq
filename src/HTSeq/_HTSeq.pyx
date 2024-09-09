@@ -1168,7 +1168,7 @@ cdef class Sequence(object):
 
     cpdef object add_bases_to_count_array(Sequence self, numpy.ndarray count_array_):
 
-        cdef numpy.ndarray[numpy.int_t, ndim = 2] count_array = count_array_
+        cdef numpy.ndarray[numpy.int64_t, ndim = 2] count_array = count_array_
         cdef int seq_length = len(self.seq)
 
         if numpy.PyArray_DIMS(count_array)[0] < seq_length:
@@ -1383,7 +1383,7 @@ cdef class SequenceWithQualities(Sequence):
     cpdef object add_qual_to_count_array(SequenceWithQualities self,
                                          numpy.ndarray count_array_):
 
-        cdef numpy.ndarray[numpy.int_t, ndim = 2] count_array = count_array_
+        cdef numpy.ndarray[numpy.int64_t, ndim = 2] count_array = count_array_
         if self._qualarr is None:
             self._fill_qual_arr()
         cdef numpy.ndarray[numpy.uint8_t, ndim = 1] qual_array = self._qualarr

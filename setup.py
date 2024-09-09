@@ -3,6 +3,7 @@ import os
 import sys
 from setuptools import setup, Command, Extension
 from setuptools.command.build_py import build_py
+import numpy
 
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -77,48 +78,6 @@ kwargs = dict(
         ],
     },
   )
-
-try:
-    import numpy
-except ImportError:
-    sys.stderr.write("Setup script for HTSeq: Failed to import 'numpy'.\n")
-    sys.stderr.write("Please install numpy and then try again to install" +
-                     " HTSeq.\n")
-    sys.exit(1)
-
-
-numpy_include_dir = os.path.join(
-        os.path.dirname(numpy.__file__),
-        'core',
-        'include',
-        )
-
-
-#def get_include_dirs(cpp=False):
-#    '''OSX 10.14 and later split the /usr/include contents everywhere'''
-#    include_dirs = []
-#    if sys.platform != 'darwin':
-#        return include_dirs
-#
-#    paths = {
-#        'C': [
-#            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/',
-#        ],
-#        'C++': [
-#            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/',
-#        ],
-#    }
-#
-#    for path in paths['C']:
-#        if os.path.isdir(path):
-#            include_dirs.append(path)
-#    if cpp:
-#        for path in paths['C++']:
-#            if os.path.isdir(path):
-#                include_dirs.append(path)
-#
-#    return include_dirs
-
 
 def get_library_dirs_cpp():
     '''OSX 10.14 and later messed up C/C++ library locations'''
@@ -200,6 +159,16 @@ class Build_with_preprocess(build_py):
         build_py.run(self)
 
 
+def lazy_numpy_include_dir():
+    """Lazily obtain NumPy include directory."""
+    try:
+        import numpy
+        return os.path.join(os.path.dirname(numpy.__file__), 'core', 'include')
+    except ImportError:
+        sys.stderr.write("Failed to import 'numpy'. It is required for building HTSeq.\n")
+        sys.exit(1)
+
+
 setup(name='HTSeq',
       version=version,
       author='Simon Anders, Fabio Zanini',
@@ -225,7 +194,8 @@ setup(name='HTSeq',
          Extension(
              'HTSeq._HTSeq',
              ['src/_HTSeq.c'],
-             include_dirs=[numpy_include_dir],#+get_include_dirs(),
+             #include_dirs=[lazy_numpy_include_dir()],#+get_include_dirs(),
+             include_dirs=[numpy.get_include()],
              extra_compile_args=['-w']),
          Extension(
              'HTSeq._StepVector',

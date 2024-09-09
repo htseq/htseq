@@ -4,9 +4,28 @@
 Version history
 ***************
 
+Version 2.0.8
+=============
+2024-07-03
+
+Fixes building issues on OSX related to numpy importing. Users on non-linux OSes are encouraged to upgrade. Thanks to @seechange0710 for the PR.
+
+Version 2.0.7
+=============
+2024-06-04
+
+Expands building system to Python 3.12. Users with 2.0.5 need not necessarily upgrade.
+
+Version 2.0.5
+=============
+2023-12-13
+
+Fixes installation on some platforms, only upgrade if necessary if you already have 2.0.4 (though it does not hurt).
+
+- Bugfix for poetry and other package managers courtesy of @cameronraysmith.
+
 Version 2.0.4
 =============
-2023-08-XX
 
 All users are encouraged to upgrade.
 

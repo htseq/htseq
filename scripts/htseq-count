@@ -2,4 +2,5 @@
 
 import HTSeq.scripts.count
 
-HTSeq.scripts.count.main()
+if __name__ == "__main__":
+    HTSeq.scripts.count.main()
