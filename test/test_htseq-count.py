@@ -536,14 +536,25 @@ class HTSeqCount(HTSeqCountBase):
                 'expected_stderr': expected_stderr,
             })
 
-    def test_non_default_type(self):
+    def test_default_feature_type(self):
         self._run({
             'call': [
                 self.cmd,
                 '-c', 'test_output.tsv',
-                '--type', 'start_codon',
                 f'{data_folder}/yeast_RNASeq_excerpt.sam',
-                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56.gtf.gz',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_default_type.tsv',
+            })
+
+    def test_non_default_feature_type(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', 'test_output.tsv',
+                '--type', 'pseudogene',
+                f'{data_folder}/yeast_RNASeq_excerpt.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
                 ],
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_non_default_type.tsv',
             })
@@ -553,10 +564,10 @@ class HTSeqCount(HTSeqCountBase):
             'call': [
                 self.cmd,
                 '-c', 'test_output.tsv',
-                '--type', 'start_codon',
-                '--type', 'stop_codon',
+                '--type', 'exon',
+                '--type', 'pseudogene',
                 f'{data_folder}/yeast_RNASeq_excerpt.sam',
-                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56.gtf.gz',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
                 ],
             'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_multiple_types.tsv',
             })

@@ -2634,7 +2634,7 @@ YGR188C	2
 YGR189C	1
 YGR190C	0
 YGR191W	5
-YGR192C	13
+YGR192C	169
 YGR193C	4
 YGR194C	1
 YGR195W	1
@@ -4257,7 +4257,7 @@ YLR106C	15
 YLR107W	0
 YLR108C	0
 YLR109W	25
-YLR110C	47
+YLR110C	96
 YLR111W	0
 YLR112W	0
 YLR113W	2
@@ -6742,9 +6742,6 @@ YPR202W	0
 YPR203W	0
 YPR204C-A	0
 YPR204W	8
-pseudo-1	12
-pseudo-2	0
-pseudo-3	1
 snR10	0
 snR11	0
 snR128	1
@@ -7125,8 +7122,8 @@ tY(GUA)M1	0
 tY(GUA)M2	0
 tY(GUA)O	0
 tY(GUA)Q	0
-__no_feature	1424
-__ambiguous	272
+__no_feature	1437
+__ambiguous	67
 __too_low_aQual	0
 __not_aligned	1336
 __alignment_not_unique	0
