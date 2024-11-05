@@ -4,6 +4,15 @@
 Version history
 ***************
 
+Version 2.0.9
+=============
+2024-09-12
+
+Minor feature release:
+
+- Adds support for multiple feature types (thanks Gleb Ebert)
+- Uses new manylinux image for linux wheels
+
 Version 2.0.8
 =============
 2024-07-03

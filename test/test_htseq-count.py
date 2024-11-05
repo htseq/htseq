@@ -536,6 +536,41 @@ class HTSeqCount(HTSeqCountBase):
                 'expected_stderr': expected_stderr,
             })
 
+    def test_default_feature_type(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', 'test_output.tsv',
+                f'{data_folder}/yeast_RNASeq_excerpt.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_default_type.tsv',
+            })
+
+    def test_non_default_feature_type(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', 'test_output.tsv',
+                '--type', 'pseudogene',
+                f'{data_folder}/yeast_RNASeq_excerpt.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_non_default_type.tsv',
+            })
+
+    def test_multiple_feature_types(self):
+        self._run({
+            'call': [
+                self.cmd,
+                '-c', 'test_output.tsv',
+                '--type', 'exon',
+                '--type', 'pseudogene',
+                f'{data_folder}/yeast_RNASeq_excerpt.sam',
+                f'{data_folder}/Saccharomyces_cerevisiae.SGD1.01.56_multiple_types.gtf.gz',
+                ],
+            'expected_fn': f'{data_folder}/yeast_RNASeq_excerpt_multiple_types.tsv',
+            })
 
 
 class HTSeqCountBarcodes(HTSeqCountBase):
@@ -670,13 +705,13 @@ class HTSeqCountBarcodes(HTSeqCountBase):
                              header=None,
                              delimiter='\t')
             df.columns = ['gene_ids', 'count']
-            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000188976']['count']), 1)
-            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000251562']['count']), 1)
+            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000188976']['count'].iloc[0]), 1)
+            self.assertEqual(int(df.loc[df['gene_ids'] == 'ENSG00000251562']['count'].iloc[0]), 1)
 
             other_genes = ['__no_feature', '__ambiguous', '__too_low_aQual', '__not_aligned', '__alignment_not_unique']
 
             for g in other_genes:
-                self.assertEqual(int(df.loc[df['gene_ids'] == g]['count']), 0)
+                self.assertEqual(int(df.loc[df['gene_ids'] == g]['count'].iloc[0]), 0)
 
             samfile = pysam.AlignmentFile(data_folder + "/10x_pbmc1k/subsampled_with_missing_barcodes_counts.sam")
             read_assignments = {

@@ -176,6 +176,43 @@ def _check_samouts(sam_filenames, samout_format, samouts):
                         pass
 
 
+
+# Adapted from: https://github.com/python/cpython/issues/60603
+class OverwriteUniqueAppendAction(argparse.Action):
+    """Custom action to append unique values to a list, overwriting the default.
+
+    When using the `append` action, the default value is not removed
+    from the list. This problem is described in
+    https://github.com/python/cpython/issues/60603
+
+    This custom action aims to fix this problem by removing the default
+    value when the argument is specified for the first time.
+
+    Moreover, it only appends if the value is not already there, so the resulting
+    list has unique elements.
+    """
+
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        """Initialize the action."""
+        self.called_times = 0
+        self.default_value = kwargs.get("default")
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        """When the argument is specified on the commandline."""
+        current_values = getattr(namespace, self.dest)
+
+        if self.called_times == 0 and current_values == self.default_value:
+            current_values = []
+
+        # Only add if not already present (unique values)
+        if values not in current_values:
+            current_values.append(values)
+
+        setattr(namespace, self.dest, current_values)
+        self.called_times += 1
+
+
 def _parse_sanitize_cmdline_arguments():
     pa = argparse.ArgumentParser(
         add_help=False,
@@ -274,17 +311,23 @@ def _parse_sanitize_cmdline_arguments():
         "--type",
         type=str,
         dest="feature_type",
-        default="exon",
+        action=OverwriteUniqueAppendAction,
+        default=["exon"],
         help="Feature type (3rd column in GTF file) to be used, "
-        + "all features of other type are ignored (default, suitable for Ensembl "
-        + "GTF files: exon)",
+        + "all features of other type are ignored (default, suitable for"
+        + "Ensembl GTF files: exon). If you can call this option multiple times, "
+        + "features of all specified types will be included, e.g. to include "
+        + "both genes and pseudogenes you might use -t gene -t pseudogene. "
+        + "Calling this option multiple times is a rare need and might result "
+        + "in excessive numbers of ambiguous counts: only use if you know what "
+        + "you are doing.",
     )
     pa.add_argument(
         "-i",
         "--idattr",
         type=str,
         dest="idattr",
-        action="append",
+        action=OverwriteUniqueAppendAction,
         default=["gene_id"],
         help="GTF attribute to be used as feature ID (default, "
         + "suitable for Ensembl GTF files: gene_id). All feature of the "
@@ -299,7 +342,7 @@ def _parse_sanitize_cmdline_arguments():
     pa.add_argument(
         "--additional-attr",
         type=str,
-        action="append",
+        action='append',
         dest='additional_attributes',
         default=[],
         help="Additional feature attributes (default: none, "
@@ -354,7 +397,7 @@ def _parse_sanitize_cmdline_arguments():
         "--samout",
         type=str,
         dest="samouts",
-        action="append",
+        action='append',
         default=[],
         help="Write out all SAM alignment records into "
         + "SAM/BAM files (one per input file needed), annotating each line "
@@ -444,13 +487,6 @@ def _parse_sanitize_cmdline_arguments():
     )
 
     args = pa.parse_args()
-
-    # Deal with custom id_attribute lists. This is never shorter than 1 because
-    # gene_id is the default. However, if the option was called at least once,
-    # that should _override_ the default, which means skipping the first
-    # element (i.e., gene_id).
-    if len(args.idattr) > 1:
-        del args.idattr[0]
 
     # Never use more CPUs than files
     args.nprocesses = min(args.nprocesses, len(args.samfilenames))
