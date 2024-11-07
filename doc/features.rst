@@ -137,9 +137,14 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
          These are transformed into a dict, such that, e.g., ``gf.attr['gene_id']`` gives the value
          of the attribute ``gene_id`` in the feature described by ``GenomicFeature`` object ``gf``.
          The parser for the attribute field is reasonably flexible to deal with format variations
-         (it was never clearly established whetehr name and value should be sperarated by a colon or an
-         equal sign, and whether quotes need to be used) and also does a URL style decoding, as is often
+         (it was never clearly established whether name and value should be separated by a colon or an
+         equals sign, and whether quotes need to be used) and also does a URL style decoding, as is often
          required.
+
+      .. attribute:: GenomicFeature.attr_tuples
+
+		Same as ``attr`` above, but a list of tuples, so as to be able to handle multiple entries with the
+		same key.
 
    In order to write a GFF file from a sequence of features, this method is provided:
 

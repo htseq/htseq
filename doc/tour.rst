@@ -524,7 +524,7 @@ it provides:
 .. doctest::
 
    >>> dir(feature)   #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS
-   ['__class__', ..., '__weakref__', 'attr', 'frame', 'get_gff_line', 
+   ['__class__', ..., '__weakref__', 'attr', 'attr_tuples', 'frame', 'get_gff_line',
    'iv', 'name', 'score', 'source', 'type']
    
 Ignoring the attributes starting with an underscore, we can see now how to access 
@@ -540,7 +540,11 @@ table is accessible as follows::
    >>> feature.score
    '.'
 
-The last column (the attributes) is parsed and presented as a dict:
+The last column (the attributes) is parsed and presented as ``attr`` (dict) or
+``attr_tuples`` (a list of tuples).
+
+These will generally be the same, except if there are multiple attributes using
+the same key, only the last one will available in the dict:
 
 .. doctest::
 
@@ -558,7 +562,7 @@ stored in the slot :attr:`name <GenomicFeature.name>`:
    >>> feature.name
    'R0030W'
 
-To deal with this data, we will use the :class:`GenomicArrayOfSets` introuced in the
+To deal with this data, we will use the :class:`GenomicArrayOfSets` introduced in the
 previous section.
 
    >>> exons = HTSeq.GenomicArrayOfSets("auto", stranded=False)
