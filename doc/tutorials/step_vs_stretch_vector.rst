@@ -47,4 +47,4 @@ The methods of this class will work independently of the storage chosen, even th
 
 If you are juggling more than one chromosome at once, including whole genomes, your friend is :class:`GenomicArray`, which is essentially a dictionary of :class:`ChromVector` entries, one per chromosome for unstranded data and two (strands) per chromosome if the data is stranded.
 
-Ultimately, :class:`GenomicArray` is a good starting point if you are just dipping your feet in the ``HTSeq`` API, while :class:`StepVector` and :class:`StretchVector` might becomemore useful as you become more familiar with the library and want to develop custom analyses.
+Ultimately, :class:`GenomicArray` is a good starting point if you are just dipping your feet in the ``HTSeq`` API, while :class:`StepVector` and :class:`StretchVector` might become more useful as you become more familiar with the library and want to develop custom analyses.

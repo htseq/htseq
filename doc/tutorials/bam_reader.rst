@@ -6,9 +6,9 @@ Tutorial: Using the SAM/BAM/CRAM parsers
 
 .. currentmodule:: HTSeq
 
-High-throughput sequencing machines commonly produce fastq files. For many types of
-analysis, the reads are then *aligned* to a reference genome by a "mapper" or "aligner"
-software. Most of those software srote these output *alignments* as SAM/BAM/CRAM files.
+High-throughput sequencing machines commonly produce FASTQ files. For many analyses,
+reads are *aligned* to a reference genome by a "mapper" or "aligner," which typically
+writes the output *alignments* as SAM/BAM/CRAM files.
 ``HTSeq`` has a set of parsers for these file formats.
 
 This tutorial will walk you through a few routine operations with `SAM/BAM/CRAM`_ files.
@@ -22,7 +22,7 @@ What's the difference?
 tl;dr:
 
 - SAM is an uncompressed, text format
-- BAM is its compressed, binary sibiling
+- BAM is its compressed, binary sibling
 - CRAM is a newer compressed, binary format that evolved from BAM but is less widespread
 
 ``samtools`` can be used to simply convert between them from the command line.
@@ -56,7 +56,7 @@ at the first 3 reads only::
 
 Parsing a BAM file
 --------------------
-To parse a BAM (binary) file, you can use the sibiling class :class:`BAM_Reader`. Using a
+To parse a BAM (binary) file, you can use the sibling class :class:`BAM_Reader`. Using a
 context::
 
    >>> with HTSeq.BAM_Reader('SRR001432_head.bam') as f:

@@ -12,9 +12,9 @@ Parser and record classes
 =========================
 
 For all supported file formats, parser classes (called ``Reader``) are provided. These classes all
-instatiated by giving a file name or an open file or stream and the function as iterator generators,
+instantiated by giving a file name or an open file or stream and the function as iterator generators,
 i.e., the parser objects can be used, e.g., in a ``for`` loop to yield a sequence of objects, each
-desribing one record. The table gives the parse class and the record class yielded. For details,
+describing one record. The table gives the parse class and the record class yielded. For details,
 see the linked documentation 
 
 For most formats, functionality for writing files of the format is provided. See the detailed documentation 
@@ -42,7 +42,7 @@ Specifying genomic positions and intervals
 ==========================================
 
 The class :class:`GenomicInterval` specifies an interval on a chromosome (or contig or the like). It is defined by specifying the chromosome (or contig) name,
-the start and the end and the strand. Convenience methods are offered for different ways of accessing this information, and for tetsing
+the start and the end and the strand. Convenience methods are offered for different ways of accessing this information, and for testing
 for overlap between intervals. A :class:`GenomicPosition`, technically a GenomicInterval of length 1, refers to a single nucleotide or base-pair
 position.  
 

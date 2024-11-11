@@ -38,7 +38,7 @@ and each describes one line of a VCF file. See below for an example.
       .. attribute:: VCF_Reader.metadata
 
          VCF_Reader skips all lines starting with a single '#' as this marks
-         a comment. However, lines starying with '##' contain meta data (Information about filters, and the fields in the 'info'-column).
+         a comment. However, lines starting with '##' contain meta data (Information about filters, and the fields in the 'info'-column).
 
       .. function:: parse_meta( header_filename = None )
 
@@ -47,7 +47,7 @@ and each describes one line of a VCF file. See below for an example.
       .. function:: make_info_dict( )
 
          This function will parse the info string and create the attribute :attr:`infodict` which contains a dict
-         with key:value-pairs containig the type-information for each entry of the :class:`VariantCall`'s info field.
+         with key:value-pairs containing the type-information for each entry of the :class:`VariantCall`'s info field.
 
 .. class:: VariantCall( line, nsamples = 0, sampleids=[]  )
 
@@ -100,7 +100,7 @@ and each describes one line of a VCF file. See below for an example.
 
       .. function:: VariantCall.unpack_info( infodict )
 
-         This function parses the info-string and replaces it with a dict rperesentation if the infodict of the
+         This function parses the info-string and replaces it with a dict representation if the infodict of the
          originating VCF_Reader is provided.
 
 Example Workflow for reading the dbSNP in VCF-format (obtained from `dbSNP <ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606/VCF/v4.0/00-All.vcf.gz>_`):
@@ -130,7 +130,7 @@ The class :class:`WiggleReader` is parser for such files.
 
 .. class:: WiggleReader( filename_or_sequence, verbose=True )
 
-   The class is instatiated with the file name of a Wiggle file, or a sequence of lines in Wiggle format. A ``WiggleReader``
+   The class is instantiated with the file name of a Wiggle file, or a sequence of lines in Wiggle format. A ``WiggleReader``
    object generates an iterator, which yields pairs of the form ``(iv, score)``, where ``iv`` is a :class:`GenomicInterval`
    object and ``score`` is a ``float`` with the score that the file assigns to the specified interval. If ``verbose`` is set to
    True, the user is alerted to skipped lines (comments or ``browser`` lines) by a message printed to the standard output.
@@ -145,7 +145,7 @@ The `BED format`_  is a format originally used to describe gene models but is al
 
 .. class:: BED_Reader(filename_or_sequence)
 
-   The class is instatiated with the file name of a BED file, or a sequence of lines in BED format. A ``BED_Reader``
+   The class is instantiated with the file name of a BED file, or a sequence of lines in BED format. A ``BED_Reader``
    object generates an iterator, which yields a :class:`GenomicFeature` object for each line in the BED file (except for
    lines starting with ``track``, which are skipped).
 

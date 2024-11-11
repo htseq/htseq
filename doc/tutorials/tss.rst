@@ -170,7 +170,7 @@ line, to extend the read to 200 bp. Using this, we now put the whole script toge
 
 .. literalinclude:: /code_examples/tss1.py 
 
-The script produces a ``profile`` variable whhich we can plot by adding these lines
+The script produces a ``profile`` variable which we can plot by adding these lines
 to it:
 
 .. doctest::
@@ -198,7 +198,7 @@ is required. Here, however, we can do otherwise.
 Using indexed BAM files
 -----------------------
 
-We do not need the coverage everythere. We only need it close to the TSSs. We can
+We do not need the coverage everywhere. We only need it close to the TSSs. We can
 sort our BAM file by position (``samtools sort``) and index it (``samtools index``)
 and then use random access, as HTSeq exposes this functionality of SAMtools. 
 

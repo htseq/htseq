@@ -79,7 +79,7 @@ or :class:`SolexaExportAlignment`. See below for their properties.
 Adding support for a new format is very easy. Ask me if you need something and
 I can probably add it right-away.
 Alternatively, you can convert your format to the SAM format. The SAMtools_
-contain Perl skripts to convert nearly all common formats.
+contain Perl scripts to convert nearly all common formats.
    
 .. _SAMtools: http://samtools.sourceforge.net/
 
@@ -137,7 +137,7 @@ contain Perl skripts to convert nearly all common formats.
       Some aligners store the reverse complement of the read if it was
       aligned to the '-' strand. For these aligners, the Alignment class is derived
       from ``AlignmentWithSequenceReversal``, which undoes the reverse-complement if necessary
-      to ensure that the ``read`` attribute always presents the read in the ordder in which
+      to ensure that the ``read`` attribute always presents the read in the order in which
       it was sequenced.
       
       To get better performance, this is done via lazy evaluation, i.e., the 
@@ -289,7 +289,7 @@ object you typically never call the constructor yourself.
    file does not need to be sorted by read name beforehand. Rather, once the first alignment
    of a pair is encountered, it is stored in a buffer until its mated alignment is encountered,
    and then both are yielded together as pair. It is recommended that the data should be
-   sorted by position, because then, mated alignments will typicalle not be too distant from
+   sorted by position, because then, mated alignments will typically not be too distant from
    each other in the file and hence only a limited number of alignments have to be held
    concurrently in the buffer, thereby reducing memory needs. To avoid overflowing the
    system's memory, the function stops and raises an exception once the number of
@@ -365,7 +365,7 @@ objects in the list.
 
    chrom (str): the name of the chromosome.
 
-   strand (str): the strandness of the operation, must be +/-/. .
+   strand (str): the strandedness of the operation, must be +/-/. .
 
    check (bool, default True): whether to check the operation for internal consistency.
 

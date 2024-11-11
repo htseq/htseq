@@ -6,11 +6,11 @@ Tutorials
 
 .. currentmodule:: HTSeq
 
-This page contains a few tutorials to help you familiarize yourself with ``HTSeq``, including ``htseq-count`` and its barcode sibiling ``htseq-count-barcodes``.
+This page contains a few tutorials to help you familiarize yourself with ``HTSeq``, including ``htseq-count`` and its barcode sibling ``htseq-count-barcodes``.
 
 Parsers
 --------
-- :ref:`tutorial_fastx`: Simple tutorial on hadling fasta and fastq files with ``HTSeq``.
+- :ref:`tutorial_fastx`: Simple tutorial on handling fasta and fastq files with ``HTSeq``.
 - :ref:`tutorial_bam`: Simple tutorial on handling SAM/BAM/CRAM files.
 - :ref:`step_vs_stretch`: Explanation of the different data structures used to store sparse genomic data.
 

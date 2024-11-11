@@ -86,8 +86,8 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
       .. attribute:: GFF_Reader.metadata
 
          GFF_Reader skips all lines starting with a single '#' as this marks
-         a comment. However, lines starying with '##' contain meta data (at least
-         accoring to the Sanger Institute's version of the GFF standard.) Such meta
+         a comment. However, lines starting with '##' contain meta data (at least
+         according to the Sanger Institute's version of the GFF standard.) Such meta
          data has the format ``##key value``. When a metadata line is encountered,
          it is added to the ``metadata`` dictionary.
 
@@ -196,7 +196,7 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
    :param bool verbose:  Whether to output progress and error messages
    :param bool add_chromosome_info:
       Whether to add chromosome information for each feature. If this option is True,
-      the fuction appends at the end of the "additional_attributes" list a
+      the function appends at the end of the "additional_attributes" list a
       "Chromosome" attribute.
 
    :return: A dict with two keys, 'features' with the GenomicArrayOfSets populated
@@ -215,5 +215,5 @@ and each describes one line of a GFF file. See Section :ref:`tour` for an exampl
 
    This function is related but distinct from ``HTSeq.make_feature_dict``. This
    function is used in htseq-count and its barcoded twin to count gene
-   expression because the output GenomicArrayofSets is very efficient. You
+   expression because the output GenomicArrayOfSets is very efficient. You
    can use it in performance-critical scans of GFF files.

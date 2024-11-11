@@ -77,7 +77,7 @@ you wish, and use ``setuptools``::
 Typical setuptools options are available (e.g. ``--prefix``, ``--user``).
 
 To test the installation, change to another director than the build directory, start Python
-(by typing ``python`` or ``python2.7``) and then try whether typing ``import HTSeq`` causes an error meesage.
+(by typing ``python`` or ``python2.7``) and then try whether typing ``import HTSeq`` causes an error message.
 
 Remember that Python can only import from your ``PYTHONPATH`` list of folders and from direct subfolders of the current working directory: if you have a folder called ``HTSeq`` in the current directory, your import will likely fail: move somewhere else.
 
@@ -124,7 +124,7 @@ to install HTSeq for the current users. To make HTSeq available to all users, us
    sudo python setup.py install
 
 To test the installation, change to another director than the build directory, start Python
-(by typing ``python``) and then try whether typing ``import HTSeq`` causes an error meesage.
+(by typing ``python``) and then try whether typing ``import HTSeq`` causes an error message.
 
 
 MS Windows
@@ -154,7 +154,7 @@ and run it.
 .. _`HTSeq download page`: http://pypi.python.org/pypi/HTSeq
 
 To test your installation, start Python and then try whether typing ``import HTSeq`` 
-causes an error meesage.
+causes an error message.
 
 If you get the error message "ImportError: DLL load failed", you are most likely
 missing the file MSVCR110.DLL on your system, which you can get by downloading and

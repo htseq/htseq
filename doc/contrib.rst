@@ -25,7 +25,7 @@ HTSeq is exposed in and mostly written in Python 3.
 
 Several parts of HTSeq are written in Cython_. In case you don't know it
 yet: Cython, a fork from Pyrex, is a kind of Python compiler. You annotate
-Python code with additional type informations (the lines starting with
+Python code with additional type information (the lines starting with
 ``cdef`` in the source code). Cython will then transform the Cython source
 file (with extension ``pyx``) into a C file, which calls the appropriate
 functions of Python's C API. Without type annotation, this looks and feels
@@ -69,7 +69,7 @@ and to test specifically ``htseq-count`` and ``htseq-count-barcodes`` only::
   ./test.sh -o
 
 To use anaconda for testing, use the ``-a`` option and edit the test
-script to use your evironment.
+script to use your environment.
 
 If you are not modifying the low-level C/C++/Cython interfaces, you can do
 without Cython and SWIG. This is how users normally install HTSeq using
@@ -99,7 +99,7 @@ To wrap up a package, call::
  
 This makes a directory ``dists`` and in there, a tarball with all the source
 files (Python and C/C++). If you are a maintainer of HTSeq, you can upload
-this file onto PyPI on the testing server. Then, you should run the Tracis CI
+this file onto PyPI on the testing server. Then, you should run the Travis CI
 tests that try to install HTSeq directly from PyPI (without the source code).
 If all goes well, you can upload the tar file onto the live PyPI server.
 
@@ -116,7 +116,7 @@ Within each of those folders, the following files are found:
    whether an object is defined here or in ``_HTSeq.pyx``.
    
 ``src/HTSeq/_HTSeq.pyx``:
-   The core of HTSeq. All classes with perfomance-critical methods are defined here.
+   The core of HTSeq. All classes with performance-critical methods are defined here.
    For most of it, this file looks as a normal Python file. Only where performance
    is critical, type annotation has been added. See the Cython manual for details.
    
@@ -162,7 +162,7 @@ Within each of those folders, the following files are found:
    Sphinx. 
 
 ``test.sh``
-  Performs all the deoctests in the documentation, using the example data in the
+  Performs all the doctests in the documentation, using the example data in the
   ``example_data`` directory.
 
 Furthermore, there are these files to support development:

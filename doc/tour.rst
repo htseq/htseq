@@ -358,10 +358,10 @@ Hence, we start by defining a :class:`GenomicArray`:
    >>> cvg = HTSeq.GenomicArray("auto", stranded=True, typecode="i")
    
 Instead of listing all chromosomes, we instruct the GenomicArray to add chromosome
-vectors as needed, by specifiyng ``"auto"``. As we set ``stranded=True``, there are now two 
+vectors as needed, by specifying ``"auto"``. As we set ``stranded=True``, there are now two
 chromosome vectors for each
 chromosome, all holding integer values (``typecode="i"``). They all have an
-"infinte" length as we did not specify the actual lengths of the chromosomes.
+"infinite" length as we did not specify the actual lengths of the chromosomes.
 
 To build the coverage vectors, we now simply iterate
 through all the reads and add the value 1 at the interval to which each read was aligned

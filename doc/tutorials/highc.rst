@@ -54,7 +54,7 @@ We can then proceed to create our output data structure, a matrix of integers co
 
 Step 3: scanning the BAM file and assign each read pair
 ----------------------------------------------------------------------
-We then parse the reads from the BAM file. Becase we want to parse both reads from each pair at the same time, we use the helper function :func:``pair_SAM_alignments``::
+We then parse the reads from the BAM file. Because we want to parse both reads from each pair at the same time, we use the helper function :func:``pair_SAM_alignments``::
 
     >>> bampairs = HTSeq.pair_SAM_alignments(bamfile, primary_only=True)
 

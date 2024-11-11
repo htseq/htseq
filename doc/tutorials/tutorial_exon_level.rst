@@ -21,7 +21,7 @@ Because exons do not have canonical names, this call creates a table where each 
 
 Caveats with this approach
 --------------------------
-Because of splicing, counting at the exon level is intrinsically more noisy than at the gene level. The molecules captures in typical assays, such as RNA-Seq, correspond to spliced isoforms or unspliced transcripts, not directly to exons. Therefore, whenever a read is spannig an exon-exon junction, an exon-level counter can be confused.
+Because of splicing, counting at the exon level is intrinsically more noisy than at the gene level. The molecules captures in typical assays, such as RNA-Seq, correspond to spliced isoforms or unspliced transcripts, not directly to exons. Therefore, whenever a read is spanning an exon-exon junction, an exon-level counter can be confused.
 
 If the data comes from single-end sequencing, a single exon-exon spanning read might be considered ambiguous by ``htseq-count``. To count it 50%-50% for each exon, you can use the option ``--nonunique=fraction``. The option ``--nonunique=random`` assigns the read to either exon at random, which gives fairly similar results to using fractions while maintaining integer (not floating point) results.
 

@@ -108,7 +108,7 @@ The ``<gtf_file>`` contains the features in the `GTF format`_.
 The script outputs a table with counts for each feature, followed by
 the special counters, which count reads that were not counted for any feature
 for various reasons. The names of the special counters all start with 
-a double underscore, to facilitate filtering. (Note: The double unscore
+a double underscore, to facilitate filtering. (Note: The double underscore
 was absent up to version 0.5.4). The special counters are:
 
 * ``__no_feature``: reads (or read pairs) which could not be assigned to any feature 
@@ -228,7 +228,7 @@ Options
 
 .. cmdoption:: --feature-query=<query>
 
-   Restrict to features descibed in this expression. Currently supports a single
+   Restrict to features described in this expression. Currently supports a single
    kind of expression: attribute == "one attr" to restrict the GFF to a single
    gene or transcript, e.g. --feature-query 'gene_name == "ACTB"' - notice the
    single quotes around the argument of this option and the double quotes around
@@ -317,10 +317,10 @@ Frequently asked questions
    genes within a sample. Now, consider two genes, which share a stretch of common sequence 
    such that for a read mapping to this stretch, the aligner cannot decide which of the two genes 
    the read originated from and hence reports a multiple alignment. If we discard all such reads, 
-   we undercount the total output of the genes, but the *ratio* of expression strength (the "fold 
+   we undercount the total output of the genes, but the *ratio* of expression strength (the "fold
    change") between samples or experimental condition will still be correct, because we discard the 
-   same fratcion of reads in all samples. On the other hand, if we counted these reads for both 
-   genes, a subsequent diffential-expression analysis might find false positives: Even if only one of the
+   same fraction of reads in all samples. On the other hand, if we counted these reads for both
+   genes, a subsequent differential-expression analysis might find false positives: Even if only one of the
    gene changes increases its expression in reaction to treatment, the additional read caused by this
    would be counted for both genes, giving the wrong appearance that both genes reacted to the treatment.
 
@@ -337,7 +337,7 @@ Frequently asked questions
    transcripts will then be considered ambiguous. (See second question.) Counting them for each transcript 
    that contains the exons would be possible but makes little sense for typical use cases. (See first
    question.) If you want to perform differential expression analysis on the level of
-   individual transcripts, maybe ahve a look at `our paper on DEXSeq`_ for a discussion on why we
+   individual transcripts, maybe have a look at `our paper on DEXSeq`_ for a discussion on why we
    prefer performing such analyses on the level of exons instead.
 
 .. _`our paper on DEXSeq`: http://dx.doi.org/10.1101/gr.133744.111
@@ -350,7 +350,7 @@ Frequently asked questions
 *What happens if the two reads in a pair overlap two different features?*
    The same as if one read overlaps two features: The read or read pair is counted as ambiguous.
 
-*What happend if the mate of an aligned read is not aligned?*
+*What happened if the mate of an aligned read is not aligned?*
    For the default mode "union", only the aligned read determines how the read pair is counted. For the
    other modes, see their description.
 
@@ -358,7 +358,7 @@ Frequently asked questions
    Common causes include:
    - The ``--stranded`` option was set wrongly. Use a genome browser (e.g., IGV) to check.
    - The GTF file uses coordinates from another reference assembly as the SAM file.
-   - The chromosome names differ between GTF and SAM file (e.g., ``chr1`` in one file and jsut ``1`` in the other).
+   - The chromosome names differ between GTF and SAM file (e.g., ``chr1`` in one file and just ``1`` in the other).
 
 *Which overlap mode should I use?*
    When I wrote ``htseq-count``, I was not sure which option is best and included three possibilities. Now, 

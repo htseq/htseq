@@ -153,7 +153,7 @@ New features:
   the output count table, and unique molecular identifiers.
 - ``htseq-count`` has new option ``-n`` for multicore parallel processing
 - ``htseq-count`` has new option ``-d`` for separating output columns by arbitrary character
-  (defalt TAB, ``,`` is also common)
+  (default TAB, ``,`` is also common)
 - ``htseq-count`` has new option ``-c`` for output into a file instead of stdout
 - ``htseq-count`` has new option ``--append-output`` for output into a file by appending to
   any existing test (e.g. a header with the feature attribute names and sample names)
@@ -375,7 +375,7 @@ Patch versions:
 * v0.5.4p1 (2013-02-22):
 
   - changed default for GFF_Reader to end_included=True, which is actually the
-    correct style for Ensemble GTF files. Now the behavious should be as it 
+    correct style for Ensemble GTF files. Now the behaviour should be as it
     was before.
 
 * v0.5.4p2 (2013-04-18):
@@ -489,7 +489,7 @@ Version 0.5.0
   - The ``add_value`` methods had been replaced with an ``__iadd__`` method, to
     enable the ``+=`` semantics.
     
-  - Similarily, ``+=`` for ``GenomicArrayOfSets`` adds an element to the sets.
+  - Similarly, ``+=`` for ``GenomicArrayOfSets`` adds an element to the sets.
   
   - Instead of ``get_steps``, now use ``steps``.
   
@@ -531,7 +531,7 @@ Patch versions:
 
 * Version 0.4.7p1 (2011-02-14)
 
-  - bug fix: GFF files with empty attribute fiels are now read correctly
+  - bug fix: GFF files with empty attribute fields are now read correctly
 
 * Version 0.4.7p2 (2011-03-13)
 
@@ -660,13 +660,13 @@ Patch versions:
 
 * Version 0.4.4p5 (2010-07-13)
 
-  - rebuilt with Cython 0.12.1 (previous one was accidently built with 
+  - rebuilt with Cython 0.12.1 (previous one was accidentally built with
     Cython 0.11.1, causing it to fail with Python 2.5)
 
 * Version 0.4.4p6 (2010-07-21)
 
   - fixed bug in error reporting in count.py
-  - losened GFF attribute parsing
+  - loosened GFF attribute parsing
   - changed "mio" to "millions" in qa output
   - improved error reporting in GFF parser
   - made SAM parsing more tolerant
@@ -677,7 +677,7 @@ Version 0.4.3
 
 2010-05-01
 
-New argument to constructer of GFF_Reader: ``end_include``
+New argument to constructor of GFF_Reader: ``end_include``
 
 * Version 0.4.3-p1 (2010-05-04): version number was messed up; fixed
 

@@ -25,7 +25,7 @@ Overview
 
   This chapter explorer in detail the use case of counting the overlap of reads
   with annotation features and explains how to implement custom logic by
-  writing on's own customized counting scripts
+  writing one's own customized counting scripts
 
 
 * Reference documentation

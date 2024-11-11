@@ -17,9 +17,9 @@ Miscellaneous
 
 .. class:: FileOrSequence( filename_or_sequence )
 
-   This class is a a canvenience wrapper around a file.
+   This class is a a convenience wrapper around a file.
    
-   The construcutor takes one argument, which may either be a string,
+   The constructor takes one argument, which may either be a string,
    which is interpreted as a file name (possibly with path), or a
    connection, by which we mean a text file opened for reading, or 
    any other object that can provide an iterator over strings 

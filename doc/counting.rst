@@ -103,7 +103,7 @@ the value zero. (Users of Python 2.6 can use ``collections.defaultdict(int)`` in
 
 We then instantiate a :class:`SAM_Reader`` object (If you have a BAM file, use ``BAM_Reader``
 instead) and run through all its record in a ``for`` loop. As described in the Tour, each record 
-in the SAM file is vprovided to the loop body in the variable ``almnt``. 
+in the SAM file is provided to the loop body in the variable ``almnt``.
 
 We first check whether the read might be unaligned, and if so, increment a special counter
 that we call ``_unmapped`` (with an underscore as prefix to distinguish it from gene IDs).
@@ -120,7 +120,7 @@ even if we see the same gene in several steps (for example because the read over
 several exons), we still get it only once in ``gene_ids``.
 
 We then treat three possible cases, namely that the set ``gene_ids`` contains exactly one element,
-that it is empty, or that it contains mroe than one element. The first case is the desired one:
+that it is empty, or that it contains more than one element. The first case is the desired one:
 The read overlaps with precisely one gene, and we hence increase the count for this gene by one.
 Note that we need the idiom ``list(gene_ids)[0]`` to extract the name of this single gene from
 the set. If the read did not overlap with a gene (``len(gene_ids) == 0``), we increase a special
@@ -142,7 +142,7 @@ CIGAR Operations
 
 The above code can be used as is e.g. for ChIP-Seq data, but for RNA-Seq data, we need an additional
 ingredient: When sequencing RNA, many reads will pass over an exon-exon junction and hence align
-to two (or more) disjunct intervals on the genome, tyically with an intron in between. If the reads
+to two (or more) disjunct intervals on the genome, typically with an intron in between. If the reads
 have been aligned with a splice-aware alignment tool, such gapped alignment is indicated in
 the SAM file by the CIGAR string.
 
@@ -220,7 +220,7 @@ function:`bundle_multiple_alignments`. It takes an iterator over :class:`SAM_Ali
 (e.g., a :class:`SAM_Reader` or :class:`BAM_Reader` object) and returns an iterator over 
 lists of :class:`SAM_Alignment` objects. Each list contains only records describing alignments 
 for the same read. For this to work, the SAM file has to be sorted by read name to ensure that
-mutiple alignments for the same read appear in adjacent records.
+multiple alignments for the same read appear in adjacent records.
 
 
 Handling paired-end reads
