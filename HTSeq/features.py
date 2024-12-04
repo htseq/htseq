@@ -110,7 +110,8 @@ class GFF_Reader(FileOrSequence):
         self.end_included = end_included
         self.metadata = {}
         if gff_version is None:
-            self._guess_gff_version()
+            gff_version = self._guess_gff_version()
+        self.gff_version = gff_version
 
     def _guess_gff_version(self):
         if not self.fos_is_path:
@@ -121,7 +122,7 @@ class GFF_Reader(FileOrSequence):
                 gff_version = 2
             else:
                 gff_version = 3
-        self.gff_version = gff_version
+        return gff_version
 
     def __iter__(self):
         for line in super().__iter__():
