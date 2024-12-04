@@ -148,6 +148,17 @@ def test_GFF3(data_folder):
     print("Test passed")
 
 
+def test_GFF3_explicit_version(data_folder):
+    """
+        Test for https://github.com/htseq/htseq/issues/97 used to crash with:
+        AttributeError: 'GFF_Reader' object has no attribute 'gff_version'
+    """
+    with HTSeq.GFF_Reader(data_folder+'GCF_000001405.39_GRCh38.p13_genomic_subsample.gff.gz', gff_version=3) as reader:
+        for line in reader:
+            pass
+    print("Test passed")
+
+
 def test_pickle():
     import pickle
 
