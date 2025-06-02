@@ -11,9 +11,9 @@ from HTSeq.utils import FileOrSequence
 
 
 # GFF regular expressions for cache
-_re_attr_main = re.compile("\s*([^\s\=]+)[\s=]+(.*)")
-_re_attr_empty = re.compile("^\s*$")
-_re_gff_meta_comment = re.compile("##\s*(\S+)\s+(\S*)")
+_re_attr_main = re.compile(r"\s*([^\s\=]+)[\s=]+(.*)")
+_re_attr_empty = re.compile(r"^\s*$")
+_re_gff_meta_comment = re.compile(r"##\s*(\S+)\s+(\S*)")
 
 
 
