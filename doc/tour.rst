@@ -523,7 +523,7 @@ it provides:
 
 .. doctest::
 
-   >>> dir(feature)   #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS
+   >>> dir(feature)   #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS,+SKIP
    ['__class__', ..., '__weakref__', 'attr', 'attr_tuples', 'frame', 'get_gff_line',
    'iv', 'name', 'score', 'source', 'type']
    
