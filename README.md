@@ -18,7 +18,7 @@ and similar experiments.
 
 To use ``HTSeq`` you need:
 
--  ``Python >= 3.7`` (**note**: ``Python 2.7`` support has been dropped)
+-  ``Python >= 3.10`` (**note**: ``Python 2`` support has been dropped)
 -  ``numpy``
 -  ``pysam``
 
