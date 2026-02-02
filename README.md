@@ -1,5 +1,6 @@
 ![CI](https://github.com/htseq/htseq/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Documentation Status](https://readthedocs.org/projects/htseq/badge/?version=latest)](https://htseq.readthedocs.io)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/htseq)](https://pypi.python.org/pypi/htseq)
 
 # HTSeq
 **DEVS**: https://github.com/htseq/htseq
