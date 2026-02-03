@@ -111,6 +111,7 @@ class HTSeqCountBase(unittest.TestCase):
         )
         if expected_stderr:
             actual_stderr_str = p.stderr.decode()
+            actual_stderr_str = conftest._clean_Python_warnings(actual_stderr_str)
             self.assertEqual(actual_stderr_str, expected_stderr)
         output = p.stdout.decode()
 
