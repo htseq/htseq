@@ -1,5 +1,4 @@
 # Docs
-include VERSION
 include MANIFEST.in
 include README.md
 exclude todo.txt
@@ -20,4 +19,3 @@ include HTSeq/*.py
 
 # Script
 include HTSeq/scripts/*
-include scripts/*
