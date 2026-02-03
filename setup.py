@@ -1,22 +1,12 @@
 #!/usr/bin/env python
 import os
 import sys
-from setuptools import setup, Command, Extension
-from setuptools.command.build_py import build_py
 import numpy
-
-
-this_directory = os.path.abspath(os.path.dirname(__file__))
-
-
-def update_version():
-    with open(os.path.join(this_directory, "HTSeq", "_version.py"), "rt") as fversion:
-        version = fversion.read().strip().split("=")[1].strip().strip('"')
-
-    return version
-
-
-version = update_version()
+from setuptools import (
+    setup,
+    Extension,
+)
+from setuptools.command.build_py import build_py
 
 
 # Check OS-specific quirks
@@ -36,111 +26,78 @@ def get_extra_args_cpp():
         return []
 
 
-class Preprocess_command(Command):
-    """Cython and SWIG preprocessing"""
+class BuildWithPreprocess(build_py):
+    """Cython and SWIG preprocessing followed by normal build"""
 
-    description = "preprocess Cython and SWIG files for HTSeq"
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        self.swig_and_cython()
-
-    def swig_and_cython(self):
-        import os
+    def preprocess_cython_swig(self):
         from shutil import copy
-        from subprocess import check_call
-        from subprocess import SubprocessError
+        import subprocess as sp
 
-        def c(x):
-            return check_call(x, shell=True)
+        def check(x):
+            return sp.run(x, shell=True, check=True)
 
-        def p(x):
+        def announce(x):
             return self.announce(x, level=2)
 
         # CYTHON
-        p("cythonizing")
+        announce("cythonizing")
         cython = os.getenv("CYTHON", "cython")
         try:
-            c(cython + " --version")
-        except SubprocessError:
+            check(cython + " --version")
+        except sp.SubprocessError:
             if os.path.isfile("src/_HTSeq.c"):
-                p("Cython not found, but transpiled file found")
+                announce("Cython not found, but transpiled file found")
             else:
                 raise
         else:
-            c(cython + " -3 src/HTSeq/_HTSeq.pyx -o src/_HTSeq.c")
+            check(cython + " -3 src/HTSeq/_HTSeq.pyx -o src/_HTSeq.c")
 
         # SWIG
-        p("SWIGging")
+        announce("SWIGging")
         swig = os.getenv("SWIG", "swig")
         pyswigged = "src/StepVector.py"
         try:
-            c(swig + " -Wall -c++ -python -py3 src/StepVector.i")
-            p("Files transpiled")
-        except SubprocessError:
+            check(swig + " -Wall -c++ -python -py3 src/StepVector.i")
+            announce("Files transpiled")
+        except sp.SubprocessError:
             if os.path.isfile("src/StepVector_wrap.cxx") and os.path.isfile(
                 "src/StepVector.py"
             ):
-                p("SWIG not found, but transpiled files found")
+                announce("SWIG not found, but transpiled files found")
             else:
-                p(
+                announce(
                     "swig not found and traspiled files not found.\n"
                     + "Install SWIG via your package manager (linux) or "
                     + 'via "brew install swig" (OSX - via homebrew)'
                 )
                 raise
-        p("moving swigged .py module")
+        announce("moving swigged .py module")
         copy(pyswigged, "HTSeq/StepVector.py")
 
-        p("done")
+        announce("done")
 
-
-class Build_with_preprocess(build_py):
     def run(self):
-        self.run_command("preprocess")
-        build_py.run(self)
-
-
-def lazy_numpy_include_dir():
-    """Lazily obtain NumPy include directory."""
-    try:
-        import numpy
-
-        return os.path.join(os.path.dirname(numpy.__file__), "core", "include")
-    except ImportError:
-        sys.stderr.write(
-            "Failed to import 'numpy'. It is required for building HTSeq.\n"
-        )
-        sys.exit(1)
+        self.preprocess_cython_swig()
+        super().run()
 
 
 setup(
-    version=version,
     ext_modules=[
         Extension(
             "HTSeq._HTSeq",
             ["src/_HTSeq.c"],
-            # include_dirs=[lazy_numpy_include_dir()],#+get_include_dirs(),
             include_dirs=[numpy.get_include()],
             extra_compile_args=["-w"],
         ),
         Extension(
             "HTSeq._StepVector",
             ["src/StepVector_wrap.cxx"],
-            # include_dirs=get_include_dirs(cpp=True),
             library_dirs=get_library_dirs_cpp(),
             extra_compile_args=["-w"] + get_extra_args_cpp(),
             extra_link_args=get_extra_args_cpp(),
         ),
     ],
     cmdclass={
-        "preprocess": Preprocess_command,
-        "build_py": Build_with_preprocess,
+        "build_py": BuildWithPreprocess,
     },
 )

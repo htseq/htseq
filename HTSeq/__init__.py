@@ -3,18 +3,25 @@
 See htseq.readthedocs.io/en/master/index.html for documentation.
 """
 
+import importlib.metadata
 import itertools
 import warnings
 import os
 import shlex
 import sys
+import re
 
 import HTSeq
 from HTSeq._HTSeq import *
 from HTSeq.utils import FileOrSequence
 from HTSeq.features import *
 from HTSeq.StretchVector import StretchVector
-from HTSeq._version import __version__
+
+
+#########################
+# Version
+#########################
+__version__ = importlib.metadata.version("HTSeq")
 
 
 #########################

@@ -1,16 +1,9 @@
-import itertools
-import warnings
 import os
-import shlex
-import sys
-
-import HTSeq
-from HTSeq._HTSeq import *
-from HTSeq._version import __version__
+import gzip
 
 
 class FileOrSequence:
-    """ The construcutor takes one argument, which may either be a string,
+    """The construcutor takes one argument, which may either be a string,
     which is interpreted as a file name (possibly with path), or a
     connection, by which we mean a text file opened for reading, or
     any other object that can provide an iterator over strings
@@ -43,7 +36,7 @@ class FileOrSequence:
             fos = os.fspath(self.fos)
             self.should_close = True
             if fos.lower().endswith((".gz", ".gzip")):
-                lines = gzip.open(self.fos, 'rt')
+                lines = gzip.open(self.fos, "rt")
             else:
                 lines = open(self.fos)
         else:
@@ -78,10 +71,14 @@ class FileOrSequence:
     def __repr__(self):
         if isinstance(self.fos, str):
             return "<%s object, connected to file name '%s'>" % (
-                self.__class__.__name__, self.fos)
+                self.__class__.__name__,
+                self.fos,
+            )
         else:
             return "<%s object, connected to %s >" % (
-                self.__class__.__name__, repr(self.fos))
+                self.__class__.__name__,
+                repr(self.fos),
+            )
 
     def get_line_number_string(self):
         if self.line_no is None:
