@@ -10,76 +10,16 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 
 
 def update_version():
-    import subprocess as sp
-
-    # Try getting the latest release tag
-    version = None
-    try:
-        output = sp.check_output(
-            "git describe --tags --abbrev=0",
-            shell=True,
-        )
-        if not isinstance(output, str):
-            output = output.decode().strip("\n")
-        if output.startswith("release_"):
-            version = output.split("_")[1]
-        print("VERSION updated: " + version)
-    except:
-        pass
-
-    # Fallback is reading from VERSION file
-    if version is not None:
-        with open(os.path.join(this_directory, "VERSION"), "wt") as fversion:
-            fversion.write(version + "\n")
-    else:
-        with open(os.path.join(this_directory, "VERSION")) as fversion:
-            version = fversion.readline().rstrip()
-
-    # Update version from VERSION file into module
-    with open(os.path.join(this_directory, "HTSeq", "_version.py"), "wt") as fversion:
-        fversion.write('__version__ = "' + version + '"')
+    with open(os.path.join(this_directory, "HTSeq", "_version.py"), "rt") as fversion:
+        version = fversion.read().strip().split("=")[1].strip().strip('"')
 
     return version
 
 
-if (sys.version_info[0] == 2) or (sys.version_info[0] == 3 and sys.version_info[1] < 7):
-    sys.stderr.write("Error in setup script for HTSeq:\n")
-    sys.stderr.write("HTSeq requires Python 3.7+.")
-    sys.exit(1)
-
-
-# Get version
 version = update_version()
 
-# Get README file content
-with open(os.path.join(this_directory, "README.md")) as f:
-    long_description = f.read()
 
 # Check OS-specific quirks
-# NOTE: setuptools < 18.0 has issues with Cython as a dependency
-# NOTE: old setuptools < 18.0 has issues with extras
-kwargs = dict(
-    setup_requires=[
-        "Cython",
-        "numpy",
-        "pysam",
-    ],
-    install_requires=[
-        "numpy",
-        "pysam",
-    ],
-    extras_require={
-        "htseq-qa": ["matplotlib>=1.4"],
-        "test": [
-            "scipy>=1.5.0",
-            "pytest>=6.2.5",
-            "pandas>=1.1.0",
-            "matplotlib>=1.4",
-        ],
-    },
-)
-
-
 def get_library_dirs_cpp():
     """OSX 10.14 and later messed up C/C++ library locations"""
     if sys.platform == "darwin":
@@ -181,31 +121,7 @@ def lazy_numpy_include_dir():
 
 
 setup(
-    name="HTSeq",
     version=version,
-    author="Simon Anders, Fabio Zanini",
-    author_email="fabio.zanini@unsw.edu.au",
-    maintainer="Fabio Zanini",
-    maintainer_email="fabio.zanini@unsw.edu.au",
-    url="https://github.com/htseq",
-    description="A framework to process and analyze data from "
-    + "high-throughput sequencing (HTS) assays",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    license="GPL3",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Topic :: Scientific/Engineering :: Bio-Informatics",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License (GPL)",
-        "Operating System :: POSIX",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: 3.14",
-    ],
     ext_modules=[
         Extension(
             "HTSeq._HTSeq",
@@ -223,29 +139,8 @@ setup(
             extra_link_args=get_extra_args_cpp(),
         ),
     ],
-    py_modules=[
-        "HTSeq._HTSeq_internal",
-        "HTSeq.StepVector",
-        "HTSeq.StretchVector",
-        "HTSeq._version",
-        "HTSeq.scripts.qa",
-        "HTSeq.scripts.count",
-        "HTSeq.scripts.count_with_barcodes",
-        "HTSeq.scripts.utils",
-        "HTSeq.utils",
-        "HTSeq.features",
-        "HTSeq.scripts.count_features.count_features_per_file",
-        "HTSeq.scripts.count_features.reads_io_processor",
-        "HTSeq.scripts.count_features.reads_stats",
-    ],
-    scripts=[
-        "scripts/htseq-qa",
-        "scripts/htseq-count",
-        "scripts/htseq-count-barcodes",
-    ],
     cmdclass={
         "preprocess": Preprocess_command,
         "build_py": Build_with_preprocess,
     },
-    **kwargs,
 )

@@ -1,3 +1,76 @@
 [build-system]
-requires = ["setuptools", "wheel", "numpy", "Cython"]
+requires = ["setuptools>=74.1", "wheel", "numpy", "Cython", "pysam"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "HTSeq"
+description = "A framework to process and analyze data from high-throughput sequencing (HTS) assays"
+authors= [
+  {name = "Simon Anders"}, {name = "Fabio Zanini", email = "fabio.zanini@unsw.edu.au"}
+]
+maintainers= [
+  {name = "Fabio Zanini", email = "fabio.zanini@unsw.edu.au"}
+]
+
+requires-python = ">=3.11"
+readme = "README.md"
+dynamic = ["version"]
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+dependencies = [
+  "numpy",
+  "pysam",
+]
+
+[project.optional-dependencies]
+htseq-qa = ["matplotlib>=1.4"]
+test = [
+    "scipy>=1.5.0",
+    "pytest>=6.2.5",
+    "pandas>=1.1.0",
+    "matplotlib>=1.4",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/htseq/htseq"
+Documentation = "https://readthedocs.org/htseq"
+Repository = "https://github.com/htseq/htseq.git"
+"Bug Tracker" = "https://github.com/htseq/htseq/issues"
+Changelog = "https://htseq.readthedocs.io/en/latest/history.html"
+
+[project.scripts]
+htseq-qa = "HTSeq.scripts.qa:main"
+htseq-count = "HTSeq.scripts.count:main"
+htseq-count-barcodes = "HTSeq.scripts.count_with_barcodes:main"
+
+
+[tool.setuptools]
+py-modules=[
+    "HTSeq._HTSeq_internal",
+    "HTSeq.StepVector",
+    "HTSeq.StretchVector",
+    "HTSeq._version",
+    "HTSeq.scripts.qa",
+    "HTSeq.scripts.count",
+    "HTSeq.scripts.count_with_barcodes",
+    "HTSeq.scripts.utils",
+    "HTSeq.utils",
+    "HTSeq.features",
+    "HTSeq.scripts.count_features.count_features_per_file",
+    "HTSeq.scripts.count_features.reads_io_processor",
+    "HTSeq.scripts.count_features.reads_stats",
+]

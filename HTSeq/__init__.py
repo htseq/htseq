@@ -21,17 +21,21 @@ from HTSeq._version import __version__
 # GenomicArray
 #########################
 
+
 def read_chrom_lens(filename, delimiter="\t"):
     return dict(
-        ((chrom, int(len))
-         for chrom, len in csv.reader(open(filename), delimiter=delimiter)))
+        (
+            (chrom, int(len))
+            for chrom, len in csv.reader(open(filename), delimiter=delimiter)
+        )
+    )
 
 
 #########################
 # Sequence readers
 #########################
 
-_re_fasta_header_line = re.compile(r'>\s*(\S+)\s*(.*)')
+_re_fasta_header_line = re.compile(r">\s*(\S+)\s*(.*)")
 
 
 class FastaReader(FileOrSequence):
@@ -97,37 +101,38 @@ class FastaReader(FileOrSequence):
             import pysam
         except ImportError:
             sys.stderr.write(
-                "Please install the 'pysam' package to be able to use the Fasta indexing functionality.")
+                "Please install the 'pysam' package to be able to use the Fasta indexing functionality."
+            )
             raise
 
     def build_index(self, force=False):
         self._import_pysam()
         if not isinstance(self.fos, str):
             raise TypeError(
-                "This function only works with FastaReader objects " +
-                "connected to a fasta file via file name")
+                "This function only works with FastaReader objects "
+                + "connected to a fasta file via file name"
+            )
         index_filename = self.fos + ".fai"
         if os.access(index_filename, os.R_OK):
-            if (not force) and os.stat(self.filename_or_sequence).st_mtime <= \
-                 os.stat(index_filename).st_mtime:
+            if (not force) and os.stat(self.filename_or_sequence).st_mtime <= os.stat(
+                index_filename
+            ).st_mtime:
                 # index is up to date
                 return
         pysam.faidx(self.fos)
         if not os.access(index_filename, os.R_OK):
-            raise SystemError(
-                "Building of Fasta index failed due to unknown error.")
+            raise SystemError("Building of Fasta index failed due to unknown error.")
 
     def __getitem__(self, iv):
         if not isinstance(iv, GenomicInterval):
             raise TypeError("GenomicInterval expected as key.")
         if not isinstance(self.fos, str):
             raise TypeError(
-                "This function only works with FastaReader objects " +
-                "connected to a fasta file via file name")
+                "This function only works with FastaReader objects "
+                + "connected to a fasta file via file name"
+            )
         self._import_pysam()
-        fasta = pysam.faidx(
-                self.fos,
-                "%s:%d-%d" % (iv.chrom, iv.start, iv.end - 1))
+        fasta = pysam.faidx(self.fos, "%s:%d-%d" % (iv.chrom, iv.start, iv.end - 1))
         ans = list(FastaReader(fasta))
         assert len(ans) == 1
         ans[0].name = str(iv)
@@ -180,7 +185,8 @@ class FastqReader(FileOrSequence):
                     warnings.warn(
                         "Number of lines in FASTQ file is not "
                         "a multiple of 4. Discarding the last, "
-                        "incomplete record")
+                        "incomplete record"
+                    )
                 break
 
             if not qual.endswith("\n"):
@@ -189,23 +195,22 @@ class FastqReader(FileOrSequence):
                 raise ValueError(
                     "Primary ID line in FASTQ file does "
                     "not start with '@'. Either this is not FASTQ data or the "
-                    "parser got out of sync.")
+                    "parser got out of sync."
+                )
             if not id2.startswith("+"):
                 raise ValueError(
                     "Secondary ID line in FASTQ file does"
-                    "not start with '+'. Maybe got out of sync.")
+                    "not start with '+'. Maybe got out of sync."
+                )
             if len(id2) > 2 and id1[1:] != id2[1:]:
-                raise ValueError(
-                    "Primary and secondary ID line in FASTQ"
-                    "disagree.")
+                raise ValueError("Primary and secondary ID line in FASTQdisagree.")
 
             if self.raw_iterator:
                 s = (seq[:-1], id1[1:-1], qual[:-1], self.qual_scale)
             else:
                 s = SequenceWithQualities(
-                        seq[:-1].encode(), id1[1:-1],
-                        qual[:-1].encode(),
-                        self.qual_scale)
+                    seq[:-1].encode(), id1[1:-1], qual[:-1].encode(), self.qual_scale
+                )
             yield s
 
 
@@ -224,7 +229,8 @@ class BowtieReader(FileOrSequence):
                 warnings.warn(
                     "BowtieReader: Ignoring the following line, which could "
                     "not be parsed:\n%s\n" % line,
-                    RuntimeWarning)
+                    RuntimeWarning,
+                )
             yield algnt
 
 
@@ -268,10 +274,15 @@ class SolexaExportAlignment(Alignment):
     def __repr__(self):
         if self.aligned:
             return "< %s object: Read '%s', aligned to %s >" % (
-              self.__class__.__name__, self.read.name, self.iv)
+                self.__class__.__name__,
+                self.read.name,
+                self.iv,
+            )
         else:
             return "< %s object: Non-aligned read '%s' >" % (
-              self.__class__.__name__, self.read.name)
+                self.__class__.__name__,
+                self.read.name,
+            )
 
 
 class SolexaExportReader(FileOrSequence):
@@ -292,73 +303,82 @@ class SolexaExportReader(FileOrSequence):
         if line[-1] == "\n":
             line = line[:-1]
         res = {}
-        (res['machine'],
-         res['run_number'],
-         res['lane'],
-         res['tile'],
-         res['x_coord'],
-         res['y_coord'],
-         res['index_string'],
-         res['read_nbr'],
-         res['read_seq'],
-         res['qual_str'],
-         res['chrom'],
-         res['contig'],
-         res['pos'],
-         res['strand'],
-         res['match_descr'],
-         res['single_read_algnt_score'],
-         res['paired_read_algnt_score'],
-         res['partner_chrom'],
-         res['partner_contig'],
-         res['partner_offset'],
-         res['partner_strand'],
-         res['passed_filtering']) = line.split("\t")
+        (
+            res["machine"],
+            res["run_number"],
+            res["lane"],
+            res["tile"],
+            res["x_coord"],
+            res["y_coord"],
+            res["index_string"],
+            res["read_nbr"],
+            res["read_seq"],
+            res["qual_str"],
+            res["chrom"],
+            res["contig"],
+            res["pos"],
+            res["strand"],
+            res["match_descr"],
+            res["single_read_algnt_score"],
+            res["paired_read_algnt_score"],
+            res["partner_chrom"],
+            res["partner_contig"],
+            res["partner_offset"],
+            res["partner_strand"],
+            res["passed_filtering"],
+        ) = line.split("\t")
         return res
 
     def __iter__(self):
         for line in FileOrSequence.__iter__(self):
             record = SolexaExportAlignment()
             fields = SolexaExportReader.parse_line_bare(line)
-            if fields['read_nbr'] != "1":
+            if fields["read_nbr"] != "1":
                 warnings.warn(
                     "Paired-end read encountered. PE is so far supported only "
                     "for SAM files, not yet for SolexaExport. All PE-related "
-                    "fields are ignored.")
+                    "fields are ignored."
+                )
             record.read = SequenceWithQualities(
-                fields['read_seq'],
-                "%s:%s:%s:%s:%s#0" % (fields['machine'],
-                                      fields['lane'],
-                                      fields['tile'],
-                                      fields['x_coord'],
-                                      fields['y_coord']),
-                fields['qual_str'], self.qualscale)
-            if fields['passed_filtering'] == 'Y':
+                fields["read_seq"],
+                "%s:%s:%s:%s:%s#0"
+                % (
+                    fields["machine"],
+                    fields["lane"],
+                    fields["tile"],
+                    fields["x_coord"],
+                    fields["y_coord"],
+                ),
+                fields["qual_str"],
+                self.qualscale,
+            )
+            if fields["passed_filtering"] == "Y":
                 record.passed_filter = True
-            elif fields['passed_filtering'] == 'N':
+            elif fields["passed_filtering"] == "N":
                 record.passed_filter = False
             else:
                 raise ValueError(
-                    "Illegal 'passed filter' value in Solexa export data: '%s'." % fields['passed_filtering'])
-            record.index_string = fields['index_string']
-            if fields['pos'] == '':
+                    "Illegal 'passed filter' value in Solexa export data: '%s'."
+                    % fields["passed_filtering"]
+                )
+            record.index_string = fields["index_string"]
+            if fields["pos"] == "":
                 record.iv = None
-                record.nomatch_code = fields['chrom']
+                record.nomatch_code = fields["chrom"]
             else:
-                if fields['strand'] == 'F':
-                    strand = '+'
-                elif fields['strand'] == 'R':
-                    strand = '-'
+                if fields["strand"] == "F":
+                    strand = "+"
+                elif fields["strand"] == "R":
+                    strand = "-"
                 else:
-                    raise ValueError(
-                        "Illegal strand value in Solexa export data.")
-                start = int(fields['pos'])
-                chrom = fields['chrom']
-                if fields['chrom'] == "":
-                    chrom = fields['contig']
+                    raise ValueError("Illegal strand value in Solexa export data.")
+                start = int(fields["pos"])
+                chrom = fields["chrom"]
+                if fields["chrom"] == "":
+                    chrom = fields["contig"]
                 record.iv = GenomicInterval(
-                    chrom, start,
-                    start + len(fields['read_seq']), strand)
+                    chrom, start, start + len(fields["read_seq"]), strand
+                )
             yield record
 
 
@@ -370,8 +390,8 @@ class GenomicArrayOfSets(GenomicArray):
     the present set, and the set is split if necessary.
     """
 
-    def __init__(self, chroms, stranded=True, storage='step', memmap_dir=""):
-        GenomicArray.__init__(self, chroms, stranded, 'O', storage, memmap_dir)
+    def __init__(self, chroms, stranded=True, storage="step", memmap_dir=""):
+        GenomicArray.__init__(self, chroms, stranded, "O", storage, memmap_dir)
 
     def add_chrom(self, chrom, length=sys.maxsize, start_index=0):
         GenomicArray.add_chrom(self, chrom, length, start_index)
@@ -384,11 +404,9 @@ class GenomicArrayOfSets(GenomicArray):
 # paired-end handling
 ###########################
 
-def pair_SAM_alignments(
-        alignments,
-        bundle=False,
-        primary_only=False):
-    '''Iterate over SAM aligments, name-sorted paired-end
+
+def pair_SAM_alignments(alignments, bundle=False, primary_only=False):
+    """Iterate over SAM aligments, name-sorted paired-end
 
     Args:
         alignments (iterator of SAM/BAM alignments): the alignments to wrap
@@ -402,12 +420,12 @@ def pair_SAM_alignments(
     Yields:
         2-tuples with each pair of alignments or, if bundle==True, each bundled
         list of alignments.
-    '''
+    """
 
     mate_missing_count = [0]
 
     def process_list(almnt_list):
-        '''Transform a list of alignment with the same read name into pairs
+        """Transform a list of alignment with the same read name into pairs
 
         Args:
             almnt_list (list): alignments to process
@@ -425,7 +443,7 @@ def pair_SAM_alignments(
         and tries to find the first mate. So if read 1 is uniquely mapped but
         read 2 is mapped 4 times, only (read 1, read 2 - first occurrence) will
         yield; the other 3 alignments of read 2 are ignored.
-        '''
+        """
 
         while len(almnt_list) > 0:
             a1 = almnt_list.pop(0)
@@ -437,16 +455,23 @@ def pair_SAM_alignments(
                     continue
                 if not (a1.aligned and a2.aligned):
                     break
-                if a1.iv.chrom == a2.mate_start.chrom and a1.iv.start == a2.mate_start.pos and \
-                   a2.iv.chrom == a1.mate_start.chrom and a2.iv.start == a1.mate_start.pos:
+                if (
+                    a1.iv.chrom == a2.mate_start.chrom
+                    and a1.iv.start == a2.mate_start.pos
+                    and a2.iv.chrom == a1.mate_start.chrom
+                    and a2.iv.start == a1.mate_start.pos
+                ):
                     break
             else:
                 if a1.mate_aligned:
                     mate_missing_count[0] += 1
                     if mate_missing_count[0] == 1:
                         warnings.warn(
-                            "Read " + a1.read.name + " claims to have an aligned mate " +
-                            "which could not be found in an adjacent line.")
+                            "Read "
+                            + a1.read.name
+                            + " claims to have an aligned mate "
+                            + "which could not be found in an adjacent line."
+                        )
                 a2 = None
             if a2 is not None:
                 almnt_list.remove(a2)
@@ -461,10 +486,10 @@ def pair_SAM_alignments(
     for almnt in alignments:
         if not almnt.paired_end:
             raise ValueError(
-                "'pair_alignments' needs a sequence of paired-end alignments")
+                "'pair_alignments' needs a sequence of paired-end alignments"
+            )
         if almnt.pe_which == "unknown":
-            raise ValueError(
-                "Paired-end read found with 'unknown' 'pe_which' status.")
+            raise ValueError("Paired-end read found with 'unknown' 'pe_which' status.")
 
         # FIXME: almnt.not_primary_alignment currently means secondary
         if primary_only and (almnt.not_primary_alignment or almnt.supplementary):
@@ -486,15 +511,13 @@ def pair_SAM_alignments(
         for p in process_list(almnt_list):
             yield p
     if mate_missing_count[0] > 1:
-        warnings.warn("%d reads with missing mate encountered." %
-                      mate_missing_count[0])
+        warnings.warn("%d reads with missing mate encountered." % mate_missing_count[0])
 
 
 def pair_SAM_alignments_with_buffer(
-        alignments,
-        max_buffer_size=30000000,
-        primary_only=False):
-    '''Iterate over SAM aligments with buffer, position-sorted paired-end
+    alignments, max_buffer_size=30000000, primary_only=False
+):
+    """Iterate over SAM aligments with buffer, position-sorted paired-end
 
     Args:
         alignments (iterator of SAM/BAM alignments): the alignments to wrap
@@ -505,17 +528,19 @@ def pair_SAM_alignments_with_buffer(
 
     Yields:
         2-tuples with each pair of alignments.
-    '''
+    """
 
     almnt_buffer = {}
     ambiguous_pairing_counter = 0
     for almnt in alignments:
         if not almnt.paired_end:
             raise ValueError(
-                "Sequence of paired-end alignments expected, but got single-end alignment.")
+                "Sequence of paired-end alignments expected, but got single-end alignment."
+            )
         if almnt.pe_which == "unknown":
             raise ValueError(
-                "Cannot process paired-end alignment found with 'unknown' 'pe_which' status.")
+                "Cannot process paired-end alignment found with 'unknown' 'pe_which' status."
+            )
         # FIXME: almnt.not_primary_alignment currently means secondary
         if primary_only and (almnt.not_primary_alignment or almnt.supplementary):
             continue
@@ -527,7 +552,10 @@ def pair_SAM_alignments_with_buffer(
             almnt.mate_start.pos if almnt.mate_aligned else None,
             almnt.iv.chrom if almnt.aligned else None,
             almnt.iv.start if almnt.aligned else None,
-            -almnt.inferred_insert_size if almnt.aligned and almnt.mate_aligned else None)
+            -almnt.inferred_insert_size
+            if almnt.aligned and almnt.mate_aligned
+            else None,
+        )
 
         if matekey in almnt_buffer:
             if len(almnt_buffer[matekey]) == 1:
@@ -544,24 +572,30 @@ def pair_SAM_alignments_with_buffer(
                 yield (mate, almnt)
         else:
             almntkey = (
-                almnt.read.name, almnt.pe_which,
+                almnt.read.name,
+                almnt.pe_which,
                 almnt.iv.chrom if almnt.aligned else None,
                 almnt.iv.start if almnt.aligned else None,
                 almnt.mate_start.chrom if almnt.mate_aligned else None,
                 almnt.mate_start.pos if almnt.mate_aligned else None,
-                almnt.inferred_insert_size if almnt.aligned and almnt.mate_aligned else None)
+                almnt.inferred_insert_size
+                if almnt.aligned and almnt.mate_aligned
+                else None,
+            )
             if almntkey not in almnt_buffer:
                 almnt_buffer[almntkey] = [almnt]
             else:
                 almnt_buffer[almntkey].append(almnt)
             if len(almnt_buffer) > max_buffer_size:
                 raise ValueError(
-                    "Maximum alignment buffer size exceeded while pairing SAM alignments.")
+                    "Maximum alignment buffer size exceeded while pairing SAM alignments."
+                )
 
     if len(almnt_buffer) > 0:
         warnings.warn(
-            "Mate records missing for %d records; first such record: %s." %
-            (len(almnt_buffer), str(list(almnt_buffer.values())[0][0])))
+            "Mate records missing for %d records; first such record: %s."
+            % (len(almnt_buffer), str(list(almnt_buffer.values())[0][0]))
+        )
         for almnt_list in list(almnt_buffer.values()):
             for almnt in almnt_list:
                 if almnt.pe_which == "first":
@@ -571,8 +605,9 @@ def pair_SAM_alignments_with_buffer(
 
     if ambiguous_pairing_counter > 0:
         warnings.warn(
-            "Mate pairing was ambiguous for %d records; mate key for first such record: %s." %
-            (ambiguous_pairing_counter, str(ambiguous_pairing_first_occurance)))
+            "Mate pairing was ambiguous for %d records; mate key for first such record: %s."
+            % (ambiguous_pairing_counter, str(ambiguous_pairing_first_occurance))
+        )
 
 
 ###########################
@@ -583,32 +618,29 @@ def pair_SAM_alignments_with_buffer(
 _re_vcf_meta_comment = re.compile("^##([a-zA-Z]+)\=(.*)$")
 
 _re_vcf_meta_descr = re.compile(
-    'ID=[^,]+,?|Number=[^,]+,?|Type=[^,]+,?|Description="[^"]+",?')
+    'ID=[^,]+,?|Number=[^,]+,?|Type=[^,]+,?|Description="[^"]+",?'
+)
 
 _re_vcf_meta_types = re.compile("[INFO|FILTER|FORMAT]")
 
-_vcf_typemap = {
-    "Integer": int,
-    "Float": float,
-    "String": str,
-    "Flag": bool
-}
+_vcf_typemap = {"Integer": int, "Float": float, "String": str, "Flag": bool}
 
 
 class VariantCall:
-    '''Class representing a variant call, close to VCF format'''
+    """Class representing a variant call, close to VCF format"""
 
     def __init__(
-            self,
-            chrom=None,
-            pos=None,
-            identifier=None,
-            ref=None,
-            alt=None,
-            qual=None,
-            filtr=None,
-            info=None):
-        '''Class representing a variant call.
+        self,
+        chrom=None,
+        pos=None,
+        identifier=None,
+        ref=None,
+        alt=None,
+        qual=None,
+        filtr=None,
+        info=None,
+    ):
+        """Class representing a variant call.
 
         Arguments:
            chrom (str): Chromosome
@@ -619,7 +651,7 @@ class VariantCall:
            qual (str): Quality of the variant
            filtr (str): Filter flag indicating if the variant passed QC.
            info (str): Additional info on the variant
-        '''
+        """
         self.chrom = chrom
         self.pos = pos
         self.id = identifier
@@ -632,7 +664,7 @@ class VariantCall:
 
     @classmethod
     def fromdict(cls, dictionary):
-        '''Create a VariantCall instance from a dict of properties'''
+        """Create a VariantCall instance from a dict of properties"""
         ret = cls()
         ret.chrom = dictionary["chrom"]
         ret.pos = dictionary["pos"]
@@ -646,20 +678,40 @@ class VariantCall:
 
     @classmethod
     def fromline(cls, line, nsamples=0, sampleids=[]):
-        '''Create a VariantCall instance from a VCF line'''
+        """Create a VariantCall instance from a VCF line"""
         ret = cls()
         if nsamples == 0:
             ret.format = None
-            ret.chrom, ret.pos, ret.id, ret.ref, ret.alt, ret.qual, ret.filter, ret.info = line.rstrip("\n").split("\t", 7)
+            (
+                ret.chrom,
+                ret.pos,
+                ret.id,
+                ret.ref,
+                ret.alt,
+                ret.qual,
+                ret.filter,
+                ret.info,
+            ) = line.rstrip("\n").split("\t", 7)
         else:
             lsplit = line.rstrip("\n").split("\t")
-            ret.chrom, ret.pos, ret.id, ret.ref, ret.alt, ret.qual, ret.filter, ret.info = lsplit[:8]
+            (
+                ret.chrom,
+                ret.pos,
+                ret.id,
+                ret.ref,
+                ret.alt,
+                ret.qual,
+                ret.filter,
+                ret.info,
+            ) = lsplit[:8]
             ret.format = lsplit[8].split(":")
             ret.samples = {}
             spos = 9
             for sid in sampleids:
-                ret.samples[sid] = dict((name, value) for (
-                    name, value) in zip(ret.format, lsplit[spos].split(":")))
+                ret.samples[sid] = dict(
+                    (name, value)
+                    for (name, value) in zip(ret.format, lsplit[spos].split(":"))
+                )
                 spos += 1
         ret.pos = GenomicPosition(ret.chrom, int(ret.pos))
         ret.alt = ret.alt.split(",")
@@ -668,13 +720,16 @@ class VariantCall:
 
     def infoline(self):
         if self.info.__class__ == dict:
-            return ";".join(map((lambda key: str(key) + "=" + str(self.info[key])), self.info))
+            return ";".join(
+                map((lambda key: str(key) + "=" + str(self.info[key])), self.info)
+            )
         else:
             return self.info
 
     def get_original_line(self):
         warnings.warn(
-            "Original line is empty, probably this object was created from scratch and not from a line in a .vcf file!")
+            "Original line is empty, probably this object was created from scratch and not from a line in a .vcf file!"
+        )
         return self._original_line
 
     def sampleline(self):
@@ -692,17 +747,60 @@ class VariantCall:
         return "\t".join(ret)
 
     def to_line(self):
-        '''Convert into a VCF line'''
+        """Convert into a VCF line"""
         if self.format == None:
-            return "\t".join(map(str, [self.pos.chrom, self.pos.pos, self.id, self.ref, ",".join(self.alt), self.qual, self.filter, self.infoline()])) + "\n"
+            return (
+                "\t".join(
+                    map(
+                        str,
+                        [
+                            self.pos.chrom,
+                            self.pos.pos,
+                            self.id,
+                            self.ref,
+                            ",".join(self.alt),
+                            self.qual,
+                            self.filter,
+                            self.infoline(),
+                        ],
+                    )
+                )
+                + "\n"
+            )
         else:
-            return "\t".join(map(str, [self.pos.chrom, self.pos.pos, self.id, self.ref, ",".join(self.alt), self.qual, self.filter, self.infoline(), self.sampleline()])) + "\n"
+            return (
+                "\t".join(
+                    map(
+                        str,
+                        [
+                            self.pos.chrom,
+                            self.pos.pos,
+                            self.id,
+                            self.ref,
+                            ",".join(self.alt),
+                            self.qual,
+                            self.filter,
+                            self.infoline(),
+                            self.sampleline(),
+                        ],
+                    )
+                )
+                + "\n"
+            )
 
     def __descr__(self):
-        return "<VariantCall at %s, ref '%s', alt %s >" % (str(self.pos).rstrip("/."), self.ref, str(self.alt).strip("[]"))
+        return "<VariantCall at %s, ref '%s', alt %s >" % (
+            str(self.pos).rstrip("/."),
+            self.ref,
+            str(self.alt).strip("[]"),
+        )
 
     def __str__(self):
-        return "%s:'%s'->%s" % (str(self.pos).rstrip("/."), self.ref, str(self.alt).strip("[]"))
+        return "%s:'%s'->%s" % (
+            str(self.pos).rstrip("/."),
+            self.ref,
+            str(self.alt).strip("[]"),
+        )
 
     def unpack_info(self, infodict):
         tmp = {}
@@ -710,8 +808,7 @@ class VariantCall:
             if re.compile("=").search(token):
                 token = token.split("=")
                 if token[0] in infodict:
-                    tmp[token[0]] = list(
-                        map(infodict[token[0]], token[1].split(",")))
+                    tmp[token[0]] = list(map(infodict[token[0]], token[1].split(",")))
                 else:
                     tmp[token[0]] = token[1].split(",")
                 if len(tmp[token[0]]) == 1:
@@ -726,10 +823,10 @@ class VariantCall:
 
 
 class VCF_Reader(FileOrSequence):
-    '''Reader for VCF files.
+    """Reader for VCF files.
 
     This class parses text VCF files from scratch, independently of pysam.
-    '''
+    """
 
     def __init__(self, filename_or_sequence):
         FileOrSequence.__init__(self, filename_or_sequence)
@@ -752,26 +849,32 @@ class VCF_Reader(FileOrSequence):
             the_iter = open(header_filename, "r")
 
         for line in the_iter:
-            if line.startswith('#'):
+            if line.startswith("#"):
                 if line.startswith("##"):
                     mo = _re_vcf_meta_comment.match(line)
                     if mo:
                         value = mo.group(2)
                         if mo.group(1) == "INFO":
-                            value = dict(e.rstrip(",").split("=", 1)
-                                         for e in _re_vcf_meta_descr.findall(value))
+                            value = dict(
+                                e.rstrip(",").split("=", 1)
+                                for e in _re_vcf_meta_descr.findall(value)
+                            )
                             key = value["ID"]
                             del value["ID"]
                             self.info[key] = value
                         elif mo.group(1) == "FILTER":
-                            value = dict(e.rstrip(",").split("=", 1)
-                                         for e in _re_vcf_meta_descr.findall(value))
+                            value = dict(
+                                e.rstrip(",").split("=", 1)
+                                for e in _re_vcf_meta_descr.findall(value)
+                            )
                             key = value["ID"]
                             del value["ID"]
                             self.filters[key] = value
                         elif mo.group(1) == "FORMAT":
-                            value = dict(e.rstrip(",").split("=", 1)
-                                         for e in _re_vcf_meta_descr.findall(value))
+                            value = dict(
+                                e.rstrip(",").split("=", 1)
+                                for e in _re_vcf_meta_descr.findall(value)
+                            )
                             key = value["ID"]
                             del value["ID"]
                             self.formats[key] = value
@@ -792,7 +895,7 @@ class VCF_Reader(FileOrSequence):
             the_iter = open(header_filename, "r")
 
         for line in the_iter:
-            if line.startswith('#'):
+            if line.startswith("#"):
                 ret.append(line)
             else:
                 break
@@ -800,18 +903,17 @@ class VCF_Reader(FileOrSequence):
 
     def __iter__(self):
         for line in FileOrSequence.__iter__(self):
-            if line == "\n" or line.startswith('#'):
+            if line == "\n" or line.startswith("#"):
                 continue
             vc = VariantCall.fromline(line, self.nsamples, self.sampleids)
             yield vc
 
 
 class WiggleReader(FileOrSequence):
-
     def __init__(self, filename_or_sequence, verbose=True):
         FileOrSequence.__init__(self, filename_or_sequence)
         self.attributes = {}
-        self.stepType = 'none'
+        self.stepType = "none"
         self.verbose = verbose
 
     def __iter__(self):
@@ -820,64 +922,69 @@ class WiggleReader(FileOrSequence):
         step = None
         chrom = None
         for line in FileOrSequence.__iter__(self):
-            if line.startswith('track'):
+            if line.startswith("track"):
                 fields = shlex.split(line)[1:]
-                self.attributes = dict([(p[0], p[1].strip('"'))
-                                        for p in [x.split("=") for x in fields]])
-            elif line.startswith('fixedStep'):  # do fixed step stuff
-                self.stepType = 'fixed'
+                self.attributes = dict(
+                    [(p[0], p[1].strip('"')) for p in [x.split("=") for x in fields]]
+                )
+            elif line.startswith("fixedStep"):  # do fixed step stuff
+                self.stepType = "fixed"
                 fields = shlex.split(line)[1:]
-                declarations = dict([(p[0], p[1].strip('"'))
-                                     for p in [x.split("=") for x in fields]])
-                pos = int(declarations['start'])
-                step = int(declarations['step'])
-                chrom = declarations['chrom']
-                if 'span' in declarations:
-                    span = int(declarations['span'])
+                declarations = dict(
+                    [(p[0], p[1].strip('"')) for p in [x.split("=") for x in fields]]
+                )
+                pos = int(declarations["start"])
+                step = int(declarations["step"])
+                chrom = declarations["chrom"]
+                if "span" in declarations:
+                    span = int(declarations["span"])
                 else:
                     span = 1
-            elif line.startswith('variableStep'):  # do variable step stuff
-                self.stepType = 'variable'
+            elif line.startswith("variableStep"):  # do variable step stuff
+                self.stepType = "variable"
                 fields = shlex.split(line)[1:]
-                declarations = dict([(p[0], p[1].strip('"'))
-                                     for p in [x.split("=") for x in fields]])
-                chrom = declarations['chrom']
-                if 'span' in declarations:
-                    span = int(declarations['span'])
+                declarations = dict(
+                    [(p[0], p[1].strip('"')) for p in [x.split("=") for x in fields]]
+                )
+                chrom = declarations["chrom"]
+                if "span" in declarations:
+                    span = int(declarations["span"])
                 else:
                     span = 1
-            elif line.startswith('browser') or line.startswith('#'):  # Comment or ignored
+            elif line.startswith("browser") or line.startswith(
+                "#"
+            ):  # Comment or ignored
                 if self.verbose:
                     print("Ignored line:", line)
                 continue
             else:
-                if self.stepType == 'fixed':
-                    yield (GenomicInterval(chrom, pos, pos + span, '.'), float(line.strip()))
+                if self.stepType == "fixed":
+                    yield (
+                        GenomicInterval(chrom, pos, pos + span, "."),
+                        float(line.strip()),
+                    )
                     pos += step
-                elif self.stepType == 'variable':
+                elif self.stepType == "variable":
                     tmp = line.strip().split(" ")
                     pos = int(tmp[0])
-                    yield (GenomicInterval(chrom, pos, pos + span, '.'), float(tmp[1]))
+                    yield (GenomicInterval(chrom, pos, pos + span, "."), float(tmp[1]))
 
 
 class BAM_Reader:
-    '''Parser for SAM/BAM/CRAM files.
+    """Parser for SAM/BAM/CRAM files.
 
     This is a thin wrapper on top of pysam.AlignmentFile. It detects
     automatically whether the input file is text (SAM) or binary (BAM/CRAM) via
     the HTSlib library.
-    '''
+    """
 
-    def __init__(
-            self,
-            filename,
-            check_sq=True):
-        '''Parser for SAM/BAM/CRAM files, a thin layer over pysam.AlignmentFile.
+    def __init__(self, filename, check_sq=True):
+        """Parser for SAM/BAM/CRAM files, a thin layer over pysam.AlignmentFile.
 
         Arguments:
            filename (str, Path): The path to the input file to read
            check_sq (bool): check if SQ entries are present in header
-        '''
+        """
 
         global pysam
         self.filename = filename
@@ -887,16 +994,15 @@ class BAM_Reader:
         try:
             import pysam
         except ImportError:
-            sys.stderr.write(
-                "Please install pysam to use the BAM_Reader class")
+            sys.stderr.write("Please install pysam to use the BAM_Reader class")
             raise
         self._open_file()
 
     def _open_file(self):
         self.sf = pysam.AlignmentFile(
-                self.filename,
-                check_sq=self.check_sq,
-                )
+            self.filename,
+            check_sq=self.check_sq,
+        )
 
     def close(self):
         """Close the BAM file for clean up"""
@@ -924,7 +1030,8 @@ class BAM_Reader:
             if e.message == "fetch called on bamfile without index":
                 print("Error: ", e.message)
                 print(
-                    "Your bam index file is missing or wrongly named, convention is that file 'x.bam' has index file 'x.bam.bai'!")
+                    "Your bam index file is missing or wrongly named, convention is that file 'x.bam' has index file 'x.bam.bai'!"
+                )
             else:
                 raise
         except:
@@ -939,13 +1046,15 @@ class BAM_Reader:
     def __getitem__(self, iv):
         if not isinstance(iv, GenomicInterval):
             raise TypeError(
-                "Use a HTSeq.GenomicInterval to access regions within .bam-file!")
+                "Use a HTSeq.GenomicInterval to access regions within .bam-file!"
+            )
         if self.sf is None:
             self._open_file()
 
-        if (hasattr(self.sf, '_hasIndex') and (not self.sf._hasIndex())) or (not self.sf.has_index()):
-            raise ValueError(
-                "The .bam-file has no index, random-access is disabled!")
+        if (hasattr(self.sf, "_hasIndex") and (not self.sf._hasIndex())) or (
+            not self.sf.has_index()
+        ):
+            raise ValueError("The .bam-file has no index, random-access is disabled!")
         for pa in self.sf.fetch(iv.chrom, iv.start + 1, iv.end):
             yield SAM_Alignment.from_pysam_AlignedRead(pa, self.sf)
 
@@ -961,20 +1070,21 @@ SAM_Reader = BAM_Reader
 
 
 class BAM_Writer:
-    '''Writer for SAM/BAM/CRAM files, a thin layer over pysam.AlignmentFile'''
+    """Writer for SAM/BAM/CRAM files, a thin layer over pysam.AlignmentFile"""
+
     def __init__(
-            self,
-            filename,
-            template=None,
-            referencenames=None,
-            referencelengths=None,
-            text=None,
-            header=None):
+        self,
+        filename,
+        template=None,
+        referencenames=None,
+        referencelengths=None,
+        text=None,
+        header=None,
+    ):
         try:
             import pysam
         except ImportError:
-            sys.stderr.write(
-                "Please Install pysam to use the BAM_Writer Class")
+            sys.stderr.write("Please Install pysam to use the BAM_Writer Class")
             raise
 
         self.filename = filename
@@ -984,13 +1094,14 @@ class BAM_Writer:
         self.text = text
         self.header = header
         self.sf = pysam.AlignmentFile(
-                self.filename,
-                mode="wb",
-                template=self.template,
-                referencenames=self.referencenames,
-                referencelengths=self.referencelengths,
-                text=self.text,
-                header=self.header)
+            self.filename,
+            mode="wb",
+            template=self.template,
+            referencenames=self.referencenames,
+            referencelengths=self.referencelengths,
+            text=self.text,
+            header=self.header,
+        )
 
     @classmethod
     def from_BAM_Reader(cls, fn, br):
@@ -1010,7 +1121,7 @@ class BAM_Writer:
 
 
 class BED_Reader(FileOrSequence):
-    '''Reader for BED files.
+    """Reader for BED files.
 
     This class simply parses the BED as a text file and converts the various
     columns into HTSeq objects. For each row it extracts:
@@ -1035,7 +1146,7 @@ class BED_Reader(FileOrSequence):
       currently ignored, this might change in the future.
 
     Rows starting with "track" are skipped.
-    '''
+    """
 
     def __init__(self, filename_or_sequence):
         FileOrSequence.__init__(self, filename_or_sequence)
@@ -1053,38 +1164,38 @@ class BED_Reader(FileOrSequence):
                 fields[0],
                 int(fields[1]),
                 int(fields[2]),
-                fields[5] if len(fields) > 5 else ".")
+                fields[5] if len(fields) > 5 else ".",
+            )
             f = GenomicFeature(
-                fields[3] if len(fields) > 3 else "unnamed",
-                "BED line",
-                iv)
+                fields[3] if len(fields) > 3 else "unnamed", "BED line", iv
+            )
             f.score = float(fields[4]) if len(fields) > 4 else None
-            f.thick = GenomicInterval(
-                iv.chrom,
-                int(fields[6]),
-                int(fields[7]),
-                iv.strand) if len(fields) > 7 else None
-            f.itemRgb = [int(a) for a in fields[8].split(",")
-                         ] if len(fields) > 8 else None
-            yield(f)
+            f.thick = (
+                GenomicInterval(iv.chrom, int(fields[6]), int(fields[7]), iv.strand)
+                if len(fields) > 7
+                else None
+            )
+            f.itemRgb = (
+                [int(a) for a in fields[8].split(",")] if len(fields) > 8 else None
+            )
+            yield (f)
 
 
 class BigWig_Reader:
-    '''A simple reader for BigWig files (using pyBigWig)'''
+    """A simple reader for BigWig files (using pyBigWig)"""
 
     def __init__(self, filename):
-        '''Parser for BigWig files, a thin layer over pyBigWig.
+        """Parser for BigWig files, a thin layer over pyBigWig.
 
         Arguments:
            filename (str, Path): The path to the input file to read
-        '''
+        """
         global pyBigWig
 
         try:
             import pyBigWig
         except ImportError:
-            sys.stderr.write(
-                "Please Install pyBigWig to use the BigWig_Reader Class")
+            sys.stderr.write("Please Install pyBigWig to use the BigWig_Reader Class")
             raise
 
         self.filename = filename
@@ -1100,16 +1211,16 @@ class BigWig_Reader:
         self.close()
 
     def chroms(self):
-        '''Return the list of chromosomes and their lengths, as a dictionary.
+        """Return the list of chromosomes and their lengths, as a dictionary.
 
         Example:
 
         bw.chroms() -> {'chr1': 4568999, 'chr2': 87422, ...}
-        '''
+        """
         return self.sf.chroms()
 
-    def intervals(self, chrom, strand='.', raw=False):
-        '''Lazy iterator over genomic intervals
+    def intervals(self, chrom, strand=".", raw=False):
+        """Lazy iterator over genomic intervals
 
         Args:
             chrom (str): The chromosome/scaffold to find intervals for.
@@ -1118,8 +1229,8 @@ class BigWig_Reader:
             raw (bool): If True, return the raw triplet from pyBigWig. If False,
               return the result wrapped in a GenomicInterval with the
               appropriate strandedness.
-        '''
-        for (chrom, start, end) in self.sf.intervals(chrom):
+        """
+        for chrom, start, end in self.sf.intervals(chrom):
             if raw:
                 yield (chrom, start, end)
             else:
