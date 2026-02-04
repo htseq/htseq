@@ -18,29 +18,32 @@ set -xeuo pipefail
 echo "PYTHON_VERSION: ${PYTHON_VERSION}"
 export PYTHON_FDN=cp$(echo ${PYTHON_VERSION} | sed 's/\.//')
 PYBINS="/opt/python/${PYTHON_FDN}*/bin"
+
+echo "Building wheels..."
 for PYBIN in ${PYBINS}; do
-    echo "PYBIN = ${PYBIN}"
+  echo "PYBIN = ${PYBIN}"
 
-    echo "Install requirements..."
-    ${PYBIN}/pip install setuptools wheel Cython Pillow matplotlib pandas
-    ${PYBIN}/pip install -r /io/requirements.txt
+  echo "Install requirements..."
+  ${PYBIN}/pip install setuptools wheel Cython Pillow matplotlib pandas
+  ${PYBIN}/pip install -r /io/requirements.txt
 
-    echo "Build wheels..."
-    ${PYBIN}/pip wheel /io/ -w wheelhouse/
+  echo "Build wheel..."
+  ${PYBIN}/pip wheel /io/ -w wheelhouse/
 done
 
+echo "Auditwheel repair wheels..."
 # Repair HTSeq wheels, copy libraries
 for whl in wheelhouse/*.whl; do
-    if [[ $whl == wheelhouse/HTSeq* ]]; then
-      echo "Repairing wheel: $whl"
-      auditwheel repair -L . $whl -w /io/wheelhouse/
-    else
-      echo 
-      echo "Make destination folder: /io/wheelhouse/"
-      mkdir -p /io/wheelhouse/
-      echo "Copying wheel: $whl"
-      cp $whl /io/wheelhouse/
-    fi
+  if [[ $whl == wheelhouse/htseq* ]]; then
+    echo "Repairing wheel: $whl"
+    auditwheel repair -L . $whl -w /io/wheelhouse/
+  else
+    echo
+    echo "Make destination folder: /io/wheelhouse/"
+    mkdir -p /io/wheelhouse/
+    echo "Copying wheel: $whl"
+    cp $whl /io/wheelhouse/
+  fi
 done
 
 # Created files are owned by root, so fix permissions.

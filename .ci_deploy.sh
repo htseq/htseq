@@ -19,7 +19,7 @@ if [ $OS_NAME == 'macos-latest' ]; then
     exit 0
   fi
 
-  # do not deploy on linux outside of manylinux
+  # only deploy OSX from this file (check out deploywheels.sh for manylinux)
   if [ -z $DOCKER_IMAGE ] && [ $OS_NAME != 'macos-latest' ]; then
     echo 'Not inside manylinux docker image and not OSX, exit'
     exit 0
@@ -53,7 +53,6 @@ if [ $OS_NAME == 'macos-latest' ]; then
     exit 1
   fi
 
-  HTSEQ_VERSION=$(cat VERSION)
   echo "TWINE_REPOSITORY=$TWINE_REPOSITORY"
   echo "TWINE_USERNAME=$TWINE_USERNAME"
   echo "TWINE_PASSWORD=$TWINE_PASSWORD"
@@ -61,7 +60,7 @@ if [ $OS_NAME == 'macos-latest' ]; then
   source $HOME/miniconda/bin/activate
   conda activate ci
 
-  # make wheel
+  echo "Build wheel for OSX..."
   mkdir wheelhouse
   pip wheel . -w wheelhouse/
   if [ $? != 0 ]; then
@@ -71,10 +70,21 @@ if [ $OS_NAME == 'macos-latest' ]; then
   echo "Contents of wheelhouse:"
   ls wheelhouse
 
+  # We have to query the actual line, and capitalisation can be finnicky
+  HTSEQ_WHEEL_FILE=$(ls wheelhouse/*.whl | grep -i htseq)
+  echo "HTSEQ_WHEEL_FILE: ${HTSEQ_WHEEL_FILE}"
+  HTSEQ_VERSION=$(echo $HTSEQ_WHEEL_FILE | sed -n 's/.*htseq-\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/ip')
+  echo "HTSEQ_VERSION: ${HTSEQ_VERSION}"
+
+  if [ $TAG1 != 'release' ] || [ $TAG2 != $HTSEQ_VERSION ]; then
+    echo 'No release tag or wrong version, exit'
+    exit 0
+  fi
+
   echo "Figure out architecture string for wheel..."
   PYVER=$(echo $CONDA_PY | sed 's/\.//')
   PYARCH=cp${PYVER}-cp${PYVER}
-  TWINE_WHEEL=$(ls wheelhouse/HTSeq-${HTSEQ_VERSION}-${PYARCH}*.whl)
+  TWINE_WHEEL=$(ls wheelhouse/htseq-${HTSEQ_VERSION}-${PYARCH}*.whl)
   echo "TWINE_WHEEL=$TWINE_WHEEL"
 
   echo "Install twine for upload..."
