@@ -73,7 +73,7 @@ if [ $OS_NAME == 'macos-latest' ]; then
   # We have to query the actual line, and capitalisation can be finnicky
   HTSEQ_WHEEL_FILE=$(ls wheelhouse/*.whl | grep -i htseq)
   echo "HTSEQ_WHEEL_FILE: ${HTSEQ_WHEEL_FILE}"
-  HTSEQ_VERSION=$(echo $HTSEQ_WHEEL_FILE | sed -n 's/.*htseq-\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/ip')
+  HTSEQ_VERSION=$(echo $HTSEQ_WHEEL_FILE | cut -f2 -d-)
   echo "HTSEQ_VERSION: ${HTSEQ_VERSION}"
 
   if [ $TAG1 != 'release' ] || [ $TAG2 != $HTSEQ_VERSION ]; then
