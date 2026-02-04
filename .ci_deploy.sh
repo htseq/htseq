@@ -92,7 +92,7 @@ if [ $OS_NAME == 'macos-latest' ]; then
   pip install twine
 
   echo "Uploading..."
-  twine upload --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" "${TWINE_WHEEL}"
+  twine upload --verbose --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" "${TWINE_WHEEL}"
   if [ $? != 0 ]; then
     echo "Upload of wheel failed"
     exit 1
