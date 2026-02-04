@@ -73,7 +73,7 @@ for PYBIN in ${PYBINS}; do
   if [ x$SOURCE_VERSION == x$PYTHON_VERSION ]; then
     echo "Deploy source code"
     # NOTE: setuptools now automatically uses lowercase for package files...
-    ${PYBIN}/twine upload --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" /io/wheelhouse/htseq-${HTSEQ_VERSION}.tar.gz
+    ${PYBIN}/twine upload --verbose --repository-url "${TWINE_REPOSITORY}" -u "${TWINE_USERNAME}" -p "${TWINE_PASSWORD}" /io/wheelhouse/htseq-${HTSEQ_VERSION}.tar.gz
     if [ $? != 0 ]; then
       ERRS=1
     fi
