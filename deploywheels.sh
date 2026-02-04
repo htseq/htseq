@@ -36,6 +36,12 @@ echo "HTSEQ_WHEEL_FILE: ${HTSEQ_WHEEL_FILE}"
 HTSEQ_VERSION=$(echo $HTSEQ_WHEEL_FILE | sed -n 's/.*htseq-\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/ip')
 echo "HTSEQ_VERSION: ${HTSEQ_VERSION}"
 
+FREE_THREADING_SENTINEL=$(echo $HTSEQ_WHEEL_FILE | cut -f4 -d-)
+if [ ${FREE_THREADING_SENTINEL: -1} == "t" ]; then
+  echo "free_threaded python, do not deploy"
+  exit 0
+fi
+
 if [ $TAG1 != 'release' ] || [ $TAG2 != $HTSEQ_VERSION ]; then
   echo 'No release tag or wrong version, exit'
   exit 0
